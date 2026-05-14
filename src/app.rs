@@ -1,12 +1,11 @@
 use crate::{
     components::sidebar,
     models::Page,
-    pages::{battery, cpu, memory, overview, storage},
-    styles,
+    pages::{firmware, hardware, software},
 };
 
 use iced::{
-    Element, Length,
+    Element, Length, Color,
     widget::{container, row},
 };
 
@@ -31,11 +30,9 @@ impl Probe {
 
     pub fn view(&self) -> Element<'_, Message> {
         let content = match self.page {
-            Page::Overview => overview::view(),
-            Page::Memory => memory::view(),
-            Page::Storage => storage::view(),
-            Page::Cpu => cpu::view(),
-            Page::Battery => battery::view(),
+            Page::Software => software::view(),
+            Page::Hardware => hardware::view(),
+            Page::Firmware => firmware::view(),
         };
 
         row![
@@ -45,7 +42,7 @@ impl Probe {
                 .height(Length::Fill)
                 .center_x(Length::Fill)
                 .center_y(Length::Fill)
-                .style(styles::content)
+                .style(|_| container::Style::default().background(Color::from_rgb8(235, 235, 235)))
         ]
         .into()
     }

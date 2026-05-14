@@ -5,3 +5,7 @@ edition = "2024"
 
 [dependencies]
 iced = { version = "0.14", default-features = false, features = ["wayland", "wgpu", "tokio"] }
+
+[profile.release]
+lto = true
+codegen-units = 1

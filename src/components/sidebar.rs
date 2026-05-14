@@ -7,40 +7,26 @@ use iced::{
 pub fn view<'a>(page: Page) -> Element<'a, Message> {
     container(
         column![
-            button("Overview")
-                .on_press(Message::Navigate(Page::Overview))
+            button("Software")
+                .on_press(Message::Navigate(Page::Software))
                 .padding(8)
                 .width(Length::Fill)
                 .style(move |theme, status| {
-                    styles::sidebar_button(theme, status, page == Page::Overview)
+                    styles::sidebar_button(theme, status, page == Page::Software)
                 }),
-            button("Memory")
-                .on_press(Message::Navigate(Page::Memory))
+            button("Hardware")
+                .on_press(Message::Navigate(Page::Hardware))
                 .padding(8)
                 .width(Length::Fill)
                 .style(move |theme, status| {
-                    styles::sidebar_button(theme, status, page == Page::Memory)
+                    styles::sidebar_button(theme, status, page == Page::Hardware)
                 }),
-            button("CPU")
-                .on_press(Message::Navigate(Page::Cpu))
+            button("Firmware")
+                .on_press(Message::Navigate(Page::Firmware))
                 .padding(8)
                 .width(Length::Fill)
                 .style(move |theme, status| {
-                    styles::sidebar_button(theme, status, page == Page::Cpu)
-                }),
-            button("Battery")
-                .on_press(Message::Navigate(Page::Battery))
-                .padding(8)
-                .width(Length::Fill)
-                .style(move |theme, status| {
-                    styles::sidebar_button(theme, status, page == Page::Battery)
-                }),
-            button("Storage")
-                .on_press(Message::Navigate(Page::Storage))
-                .padding(8)
-                .width(Length::Fill)
-                .style(move |theme, status| {
-                    styles::sidebar_button(theme, status, page == Page::Storage)
+                    styles::sidebar_button(theme, status, page == Page::Firmware)
                 }),
         ]
         .spacing(10),
