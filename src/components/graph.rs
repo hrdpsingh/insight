@@ -1,100 +1,106 @@
 use iced::{
-    Color, Element, Length, Point, Rectangle, Renderer, Size, Theme, mouse,
-    widget::canvas::{self, Canvas, Geometry, Path, Program},
+    Color, Element, Length, Rectangle, Renderer, Theme, mouse,
+    widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke},
 };
 
 pub struct Graph {
-    data: Vec<f32>,
-    max_value: f32,
+    height: f32,
+    background_color: Color,
     line_color: Color,
-    color_above_line: Color,
     color_below_line: Color,
+    data: Vec<f32>,
+    maximum_value: f32,
 }
 
 impl Graph {
     pub fn new(
-        data: Vec<f32>,
-        max_value: f32,
+        height: f32,
+        background_color: Color,
         line_color: Color,
-        color_above_line: Color,
         color_below_line: Color,
+        data: Vec<f32>,
+        maximum_value: f32,
     ) -> Self {
         Self {
-            data,
-            max_value,
+            height,
+            background_color,
             line_color,
-            color_above_line,
             color_below_line,
+            data,
+            maximum_value,
         }
     }
 }
 
-impl<Message> Program<Message, Theme, Renderer> for Graph {
-    type State = canvas::Cache;
+impl<Message> canvas::Program<Message> for Graph {
+    type State = ();
 
     fn draw(
         &self,
-        state: &Self::State,
+        _: &Self::State,
         renderer: &Renderer,
-        _theme: &Theme,
+        _: &Theme,
         bounds: Rectangle,
-        _cursor: mouse::Cursor,
+        _: mouse::Cursor,
     ) -> Vec<Geometry> {
-        let geometry = state.draw(renderer, bounds.size(), |frame| {
-            let Size { width, height } = bounds.size();
-            let steps = (self.data.len() - 1) as f32;
-            let x_step = width / steps;
+        let mut frame = Frame::new(renderer, bounds.size());
+        frame.fill_rectangle(iced::Point::ORIGIN, bounds.size(), self.background_color);
 
-            let get_point = |index: usize, val: f32| {
-                let x = index as f32 * x_step;
-                let normalized_y = (val / self.max_value).clamp(0.0, 1.0);
-                let y = height * (1.0 - normalized_y);
-                Point::new(x, y)
-            };
+        let width = bounds.width;
+        let height = bounds.height;
 
-            let above_path = Path::new(|p| {
-                p.move_to(Point::new(0.0, 0.0));
-                for (i, &val) in self.data.iter().enumerate() {
-                    p.line_to(get_point(i, val));
+        let gap = width / (self.data.len() - 1) as f32;
+
+        let line = Path::new(|builder| {
+            for (index, &value) in self.data.iter().enumerate() {
+                let x = index as f32 * gap;
+                let normalized_y = value / self.maximum_value;
+                let y = height - (normalized_y * height);
+                let point = iced::Point::new(x, y);
+
+                if index == 0 {
+                    builder.move_to(point);
+                } else {
+                    builder.line_to(point);
                 }
-                p.line_to(Point::new(width, 0.0));
-                p.close();
-            });
-            frame.fill(&above_path, self.color_above_line);
-
-            let below_path = Path::new(|p| {
-                p.move_to(Point::new(0.0, height));
-                for (i, &val) in self.data.iter().enumerate() {
-                    p.line_to(get_point(i, val));
-                }
-                p.line_to(Point::new(width, height));
-                p.close();
-            });
-            frame.fill(&below_path, self.color_below_line);
-
-            let line_path = Path::new(|p| {
-                if let Some(&first) = self.data.first() {
-                    p.move_to(get_point(0, first));
-                    for (i, &val) in self.data.iter().enumerate().skip(1) {
-                        p.line_to(get_point(i, val));
-                    }
-                }
-            });
-
-            let mut stroke = canvas::Stroke::default().with_color(self.line_color);
-            stroke.width = 2.0;
-            frame.stroke(&line_path, stroke);
+            }
         });
 
-        vec![geometry]
+        let filled_area = Path::new(|builder| {
+            builder.move_to(iced::Point::new(0.0, height));
+
+            for (index, &value) in self.data.iter().enumerate() {
+                let x = index as f32 * gap;
+                let normalized_y = value / self.maximum_value;
+                let y = height - (normalized_y * height);
+                builder.line_to(iced::Point::new(x, y));
+            }
+
+            builder.line_to(iced::Point::new(width, height));
+        });
+
+        frame.fill(&filled_area, self.color_below_line);
+
+        frame.stroke(
+            &line,
+            Stroke {
+                style: canvas::Style::Solid(self.line_color),
+                width: 2.0,
+                ..Stroke::default()
+            },
+        );
+
+        vec![frame.into_geometry()]
     }
 }
 
-impl<'a, Message: 'a> From<Graph> for Element<'a, Message, Theme, Renderer> {
+impl<'a, Message: 'a> From<Graph> for Element<'a, Message> {
     fn from(graph: Graph) -> Self {
+        let height = graph.height;
+
         Canvas::new(graph)
             .width(Length::Fill)
-            .height(Length::Fill)
+            .height(Length::Fixed(height))
             .into()
     }
 }

@@ -1,10 +1,11 @@
 mod app;
 mod components;
-mod models;
 mod pages;
-
-use app::Probe;
+mod state;
+use state::Probe;
 
 fn main() -> iced::Result {
-    iced::run(Probe::update, Probe::view)
+    iced::application(Probe::default, Probe::update, Probe::view)
+        .subscription(Probe::subscription)
+        .run()
 }

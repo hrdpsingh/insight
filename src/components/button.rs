@@ -1,4 +1,4 @@
-use crate::{app::Message, models::Page};
+use crate::{app::Message, state::Page};
 use iced::{Border, Color, Element, Length, border::Radius, widget::button};
 
 pub fn view(label: &str, target_page: Page, current_page: Page) -> Element<'_, Message> {
