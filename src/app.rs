@@ -14,15 +14,19 @@ use sysinfo::System;
 pub struct Probe {
     pub page: Page,
     pub system: System,
-    pub cpu_usage_history: Vec<f32>,
+    pub cpu_usage_history: Vec<Vec<f32>>,
 }
 
 impl Default for Probe {
     fn default() -> Self {
+        let mut system = System::new_all();
+        system.refresh_all();
+        let core_count = system.cpus().len();
+
         Self {
             page: Page::default(),
-            system: System::new_all(),
-            cpu_usage_history: vec![0.0; 60],
+            system,
+            cpu_usage_history: vec![vec![0.0; 60]; core_count],
         }
     }
 }

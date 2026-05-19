@@ -1,33 +1,36 @@
 use crate::app::Message;
 use crate::components::{category, graph::Graph};
-use iced::widget::{Space, column, row, text};
+use iced::widget::{Space, column, row, scrollable, text};
 use iced::{Color, Element, Length};
 
-pub fn view<'a>(cpu_usage_history: &[f32]) -> Element<'a, Message> {
-    let cpu_usage = match cpu_usage_history.last() {
-        Some(usage) => format!("{:.2}%", usage),
-        None => "Unavailable".to_string(),
-    };
+pub fn view<'a>(cpu_usage_history: &[Vec<f32>]) -> Element<'a, Message> {
+    let mut cores = column![].spacing(30);
 
-    column![category::view(
-        "CPU",
-        column![
+    for (i, core_history) in cpu_usage_history.iter().enumerate() {
+        let cpu_usage = match core_history.last() {
+            Some(usage) => format!("{:.2}%", usage),
+            None => "Unavailable".to_string(),
+        };
+
+        let core = column![
             Graph::new(
                 200.0,
                 Color::from_rgb8(215, 235, 255),
                 Color::from_rgb8(55, 155, 255),
                 Color::from_rgb8(175, 215, 255),
-                cpu_usage_history.to_vec(),
+                core_history.to_vec(),
                 100.0
             ),
             row![
-                text("Core 1"),
+                text(format!("Core {}", i + 1)),
                 Space::new().width(Length::Fill),
                 text!("Usage: {}", cpu_usage),
             ]
         ]
-        .spacing(20)
-    )]
-    .spacing(20)
-    .into()
+        .spacing(10);
+
+        cores = cores.push(core);
+    }
+
+    scrollable(column![category::view("CPU Usage", cores)].spacing(20)).into()
 }
