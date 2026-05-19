@@ -1,7 +1,8 @@
 use crate::{
     components::sidebar,
+    metrics::update_cpu_usage,
     models::Page,
-    pages::{firmware, hardware, software},
+    pages::{cpu, firmware, software},
 };
 use iced::{
     Color, Element, Length, Subscription, time,
@@ -11,9 +12,9 @@ use std::time::Duration;
 use sysinfo::System;
 
 pub struct Probe {
-    page: Page,
-    system: System,
-    cpu_usage_history: Vec<f32>,
+    pub page: Page,
+    pub system: System,
+    pub cpu_usage_history: Vec<f32>,
 }
 
 impl Default for Probe {
@@ -39,10 +40,7 @@ impl Probe {
                 self.page = page;
             }
             Message::Tick => {
-                self.system.refresh_cpu_all();
-                let cpu_usage = self.system.global_cpu_usage();
-                self.cpu_usage_history.remove(0);
-                self.cpu_usage_history.push(cpu_usage);
+                update_cpu_usage(self);
             }
         }
     }
@@ -50,7 +48,7 @@ impl Probe {
     pub fn view(&self) -> Element<'_, Message> {
         let content = match self.page {
             Page::Software => software::view(),
-            Page::Hardware => hardware::view(&self.cpu_usage_history),
+            Page::Cpu => cpu::view(&self.cpu_usage_history),
             Page::Firmware => firmware::view(),
         };
 

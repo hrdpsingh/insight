@@ -2,6 +2,6 @@
 pub enum Page {
     #[default]
     Software,
-    Hardware,
+    Cpu,
     Firmware,
 }

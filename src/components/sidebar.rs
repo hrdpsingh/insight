@@ -8,7 +8,7 @@ pub fn view<'a>(page: Page) -> Element<'a, Message> {
     container(
         column![
             button::view("Software", Page::Software, page),
-            button::view("Hardware", Page::Hardware, page),
+            button::view("CPU", Page::Cpu, page),
             button::view("Firmware", Page::Firmware, page),
         ]
         .spacing(10),
