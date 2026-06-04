@@ -1,7 +1,5 @@
-use crate::app::Message;
-use crate::components::{category, graph::Graph};
-use iced::widget::{Space, column, row, scrollable, text};
-use iced::{Color, Element, Length};
+use crate::{app::Message, components::{card, graph::Graph}};
+use iced::{Color, Element, Length, widget::{Space, column, row, text}};
 
 pub fn view<'a>(cpu_usage_history: &[Vec<f32>]) -> Element<'a, Message> {
     let mut cores = column![].spacing(30);
@@ -32,5 +30,5 @@ pub fn view<'a>(cpu_usage_history: &[Vec<f32>]) -> Element<'a, Message> {
         cores = cores.push(core);
     }
 
-    scrollable(column![category::view("CPU Usage", cores)].spacing(20)).into()
+    column![card::view(Length::Fill, cores)].spacing(20).into()
 }

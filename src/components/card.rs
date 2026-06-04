@@ -1,19 +1,14 @@
 use crate::app::Message;
 use iced::{
-    Color, Element, Font, Length, Renderer, Shadow, Theme, Vector, border,
-    font::Weight,
-    widget::{Column, column, container, text},
+    Color, Element, Length, Renderer, Shadow, Theme, Vector, border,
+    widget::{Column, column, container},
 };
 
 pub fn view<'a>(
-    title: &'a str,
+    width: impl Into<Length>,
     body: Column<'a, Message, Theme, Renderer>,
 ) -> Element<'a, Message> {
     column![
-        text(title).size(20).font(Font {
-            weight: Weight::Bold,
-            ..Font::default()
-        }),
         container(body)
             .style(|theme| {
                 let mut style = container::transparent(theme);
@@ -26,7 +21,7 @@ pub fn view<'a>(
                 };
                 style
             })
-            .width(Length::Fill)
+            .width(width)
             .padding(20),
     ]
     .spacing(20)

@@ -1,8 +1,7 @@
 use crate::{
-    components::sidebar,
     metrics::update_cpu_usage,
     models::Page,
-    pages::{cpu, firmware, software},
+    pages::{cpu, firmware, software}, sidebar,
 };
 use iced::{
     Color, Element, Length, Subscription, time,
@@ -51,8 +50,8 @@ impl Probe {
 
     pub fn view(&self) -> Element<'_, Message> {
         let content = match self.page {
-            Page::Software => software::view(),
             Page::Cpu => cpu::view(&self.cpu_usage_history),
+            Page::Software => software::view(),
             Page::Firmware => firmware::view(),
         };
 

@@ -1,5 +1,6 @@
 mod app;
 mod components;
+mod sidebar;
 mod metrics;
 mod models;
 mod pages;
