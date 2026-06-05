@@ -1,9 +1,9 @@
 mod app;
 mod components;
-mod sidebar;
 mod metrics;
 mod models;
 mod pages;
+mod sidebar;
 use app::Probe;
 use iced::{Size, window};
 

@@ -1,11 +1,7 @@
-use crate::{
-    metrics::update_cpu_usage,
-    models::Page,
-    pages::{cpu, firmware, software}, sidebar,
-};
+use crate::{metrics::update_cpu_usage, models::Page, pages::processor, sidebar};
 use iced::{
-    Color, Element, Length, Subscription, time,
-    widget::{container, row},
+    Color, Element, Length, Padding, Subscription, time,
+    widget::{container, row, scrollable},
 };
 use std::time::Duration;
 use sysinfo::System;
@@ -50,22 +46,26 @@ impl Probe {
 
     pub fn view(&self) -> Element<'_, Message> {
         let content = match self.page {
-            Page::Cpu => cpu::view(&self.cpu_usage_history),
-            Page::Software => software::view(),
-            Page::Firmware => firmware::view(),
+            Page::Processor => processor::view(&self.cpu_usage_history),
         };
 
         container(
             row![
-                sidebar::view(self.page),
-                container(content)
-                    .width(Length::Fill)
-                    .height(Length::Fill)
-                    .center_x(Length::Fill)
+                container(sidebar::view(self.page)),
+                scrollable(
+                    container(content)
+                        .width(Length::Fill)
+                        .center_x(Length::Fill)
+                        .padding(Padding {
+                            top: 40.0,
+                            right: 40.0,
+                            bottom: 40.0,
+                            left: 10.0,
+                        })
+                )
             ]
             .spacing(40),
         )
-        .padding(40)
         .style(|_| container::Style::default().background(Color::from_rgb8(235, 240, 245)))
         .into()
     }

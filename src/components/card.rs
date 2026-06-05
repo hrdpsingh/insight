@@ -15,7 +15,7 @@ pub fn view<'a>(
                 style.background = Some(Color::from_rgb8(255, 255, 255).into());
                 style.border.radius = border::radius(15.0);
                 style.shadow = Shadow {
-                    color: Color::from_rgb8(200, 200, 200),
+                    color: Color::from_rgb8(160, 160, 160),
                     offset: Vector::new(1.0, 1.0),
                     blur_radius: 5.0,
                 };

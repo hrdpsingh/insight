@@ -1,5 +1,11 @@
-use crate::{app::Message, components::{card, graph::Graph}};
-use iced::{Color, Element, Length, widget::{Space, column, row, text}};
+use crate::{
+    app::Message,
+    components::{card, graph::Graph},
+};
+use iced::{
+    Color, Element, Length,
+    widget::{Space, column, row, text},
+};
 
 pub fn view<'a>(cpu_usage_history: &[Vec<f32>]) -> Element<'a, Message> {
     let mut cores = column![].spacing(30);
@@ -12,7 +18,7 @@ pub fn view<'a>(cpu_usage_history: &[Vec<f32>]) -> Element<'a, Message> {
 
         let core = column![
             Graph::new(
-                200.0,
+                100.0,
                 Color::from_rgb8(215, 235, 255),
                 Color::from_rgb8(55, 155, 255),
                 Color::from_rgb8(175, 215, 255),
@@ -27,8 +33,9 @@ pub fn view<'a>(cpu_usage_history: &[Vec<f32>]) -> Element<'a, Message> {
         ]
         .spacing(10);
 
-        cores = cores.push(core);
+        let core_card = card::view(Length::Fill, core);
+        cores = cores.push(core_card);
     }
 
-    column![card::view(Length::Fill, cores)].spacing(20).into()
+    column![cores].spacing(20).into()
 }
