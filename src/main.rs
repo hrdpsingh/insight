@@ -12,7 +12,7 @@ fn main() -> iced::Result {
         .subscription(Probe::subscription)
         .title("Probe")
         .window(window::Settings {
-            min_size: Some(Size::new(600.0, 400.0)),
+            min_size: Some(Size::new(500.0, 400.0)),
             ..Default::default()
         })
         .run()

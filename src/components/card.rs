@@ -4,10 +4,10 @@ use iced::{
     widget::{Column, column, container},
 };
 
-pub fn view<'a>(
+pub fn view(
     width: impl Into<Length>,
-    body: Column<'a, Message, Theme, Renderer>,
-) -> Element<'a, Message> {
+    body: Column<Message, Theme, Renderer>,
+) -> Element<Message> {
     column![
         container(body)
             .style(|theme| {
