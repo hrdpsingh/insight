@@ -1,7 +1,10 @@
 use crate::{metrics::update_cpu_usage, models::Page, pages::processor, sidebar};
 use iced::{
-    Color, Element, Length, Padding, Subscription, time,
-    widget::{container, row, scrollable},
+    Background, Color, Element, Length, Padding, Subscription, Theme, time,
+    widget::{
+        container, row, scrollable,
+        scrollable::{Direction, Scrollbar},
+    },
 };
 use std::time::Duration;
 use sysinfo::System;
@@ -63,6 +66,36 @@ impl Probe {
                             left: 10.0,
                         })
                 )
+                .direction(Direction::Vertical(
+                    Scrollbar::default().width(6).scroller_width(6),
+                ))
+                .style(|theme: &Theme, status: scrollable::Status| {
+                    let mut base_style = scrollable::default(theme, status);
+
+                    match status {
+                        scrollable::Status::Hovered {
+                            is_vertical_scrollbar_hovered,
+                            ..
+                        } => {
+                            base_style.vertical_rail.scroller.background =
+                                Background::Color(if is_vertical_scrollbar_hovered {
+                                    Color::from_rgb8(160, 160, 160)
+                                } else {
+                                    Color::from_rgb8(180, 180, 180)
+                                });
+                        }
+                        scrollable::Status::Dragged { .. } => {
+                            base_style.vertical_rail.scroller.background =
+                                Background::Color(Color::from_rgb8(160, 160, 160));
+                        }
+                        scrollable::Status::Active { .. } => {
+                            base_style.vertical_rail.scroller.background =
+                                Background::Color(Color::from_rgb8(180, 180, 180));
+                        }
+                    }
+
+                    base_style
+                })
             ]
             .spacing(40),
         )

@@ -23,7 +23,7 @@ pub fn view<'a>(page: Page) -> Element<'a, Message> {
         style.background = Some(Color::from_rgb8(255, 255, 255).into());
         style.shadow = Shadow {
             color: Color::from_rgb8(160, 160, 160),
-            offset: Vector::new(1.0, 0.0),
+            offset: Vector::new(1.0, 1.0),
             blur_radius: 5.0,
         };
         style

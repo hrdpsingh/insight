@@ -1,6 +1,6 @@
 use crate::{
     app::Message,
-    components::{card, graph::Graph},
+    components::{card, graph::Graph, title},
 };
 use iced::{
     Color, Element, Length,
@@ -35,7 +35,7 @@ pub fn view<'a>(cpu_usage_history: &[Vec<f32>]) -> Element<'a, Message> {
                     row![
                         text(format!("Core {}", i + 1)),
                         Space::new().width(Length::Fill),
-                        text!("Usage: {}", cpu_usage),
+                        text!("{}", cpu_usage),
                     ]
                 ]
                 .spacing(10);
@@ -44,7 +44,7 @@ pub fn view<'a>(cpu_usage_history: &[Vec<f32>]) -> Element<'a, Message> {
             })
             .collect();
 
-        let mut rows = column![].spacing(20);
+        let mut rows = column![title::view()].spacing(20);
         while !cards.is_empty() {
             let take = column_count.min(cards.len());
             let mut row = row![].spacing(20);
