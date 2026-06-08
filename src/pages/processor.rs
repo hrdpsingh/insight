@@ -4,11 +4,17 @@ use crate::{
 };
 use iced::{
     Color, Element, Length,
-    widget::{Space, column, responsive, row, text},
+    widget::{Space, column, responsive, row, rule, text},
 };
 
-pub fn view<'a>(cpu_usage_history: &[Vec<f32>]) -> Element<'a, Message> {
+pub fn view<'a>(
+    cpu_usage_history: &[Vec<f32>],
+    cpu_name: &str,
+    cpu_architecture: &str,
+) -> Element<'a, Message> {
     let cpu_usage_history = cpu_usage_history.to_vec();
+    let cpu_name = cpu_name.to_string();
+    let cpu_architecture = cpu_architecture.to_string();
 
     responsive(move |size| {
         let available_width = size.width - 140.0;
@@ -44,7 +50,7 @@ pub fn view<'a>(cpu_usage_history: &[Vec<f32>]) -> Element<'a, Message> {
             })
             .collect();
 
-        let mut rows = column![title::view()].spacing(20);
+        let mut rows = column![title::view("Usage")].spacing(20);
         while !cards.is_empty() {
             let take = column_count.min(cards.len());
             let mut row = row![].spacing(20);
@@ -57,6 +63,28 @@ pub fn view<'a>(cpu_usage_history: &[Vec<f32>]) -> Element<'a, Message> {
             rows = rows.push(row);
         }
 
+        title::view("Information");
+        let cpu_info = column![
+            row![
+                text("Model").size(14),
+                Space::new().width(Length::Fill),
+                text(cpu_name.clone()).size(14),
+            ],
+            rule::horizontal(1).style(|theme| {
+                rule::Style {
+                    color: Color::from_rgb8(235, 240, 245),
+                    ..Default::default(),
+                }
+            }),
+            row![
+                text("Architecture").size(14),
+                Space::new().width(Length::Fill),
+                text(cpu_architecture.clone()).size(14),
+            ],
+        ]
+        .spacing(10);
+
+        rows = rows.push(card::view(Length::Fill, cpu_info));
         rows.into()
     })
     .into()

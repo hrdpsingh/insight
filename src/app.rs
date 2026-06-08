@@ -13,6 +13,8 @@ pub struct Probe {
     pub page: Page,
     pub system: System,
     pub cpu_usage_history: Vec<Vec<f32>>,
+    pub cpu_name: String,
+    pub cpu_architecture: String,
 }
 
 impl Default for Probe {
@@ -23,6 +25,12 @@ impl Default for Probe {
 
         Self {
             page: Page::default(),
+            cpu_name: system
+                .cpus()
+                .first()
+                .map(|c| c.brand().to_string())
+                .unwrap_or_else(|| "Unknown".to_string()),
+            cpu_architecture: System::cpu_arch().to_string(),
             system,
             cpu_usage_history: vec![vec![0.0; 60]; core_count],
         }
@@ -49,7 +57,11 @@ impl Probe {
 
     pub fn view(&self) -> Element<'_, Message> {
         let content = match self.page {
-            Page::Processor => processor::view(&self.cpu_usage_history),
+            Page::Processor => processor::view(
+                &self.cpu_usage_history,
+                &self.cpu_name,
+                &self.cpu_architecture,
+            ),
         };
 
         container(
