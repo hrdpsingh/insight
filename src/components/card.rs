@@ -1,27 +1,22 @@
 use crate::app::Message;
 use iced::{
-    Color, Element, Length, Renderer, Shadow, Theme, Vector, border,
+    Background, Border, Color, Element, Length, Renderer, Theme,
     widget::{Column, column, container},
 };
 
-pub fn view(
-    width: impl Into<Length>,
-    body: Column<Message, Theme, Renderer>,
-) -> Element<Message> {
+pub fn view(body: Column<Message, Theme, Renderer>) -> Element<Message> {
     column![
         container(body)
-            .style(|theme| {
-                let mut style = container::transparent(theme);
-                style.background = Some(Color::from_rgb8(255, 255, 255).into());
-                style.border.radius = border::radius(15.0);
-                style.shadow = Shadow {
-                    color: Color::from_rgb8(160, 160, 160),
-                    offset: Vector::new(1.0, 1.0),
-                    blur_radius: 5.0,
-                };
-                style
+            .style(|_| container::Style {
+                background: Some(Background::Color(Color::from_rgb8(255, 255, 255))),
+                border: Border {
+                    color: Color::from_rgb8(205, 210, 215),
+                    width: 1.0,
+                    radius: 5.0.into(),
+                },
+                ..container::Style::default()
             })
-            .width(width)
+            .width(Length::Fill)
             .padding(20),
     ]
     .spacing(20)

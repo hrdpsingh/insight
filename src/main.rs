@@ -1,9 +1,8 @@
 mod app;
 mod components;
+mod dashboard;
 mod metrics;
 mod models;
-mod pages;
-mod sidebar;
 use app::Probe;
 use iced::{Size, window};
 
@@ -12,7 +11,8 @@ fn main() -> iced::Result {
         .subscription(Probe::subscription)
         .title("Probe")
         .window(window::Settings {
-            min_size: Some(Size::new(500.0, 400.0)),
+            size: iced::Size::new(1000.0, 400.0),
+            min_size: Some(Size::new(1000.0, 400.0)),
             ..Default::default()
         })
         .run()
