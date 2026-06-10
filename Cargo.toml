@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-iced = { version = "0.14", default-features = false, features = ["wgpu", "tokio", "canvas", "svg"] }
+iced = { version = "0.14", default-features = false, features = ["wgpu", "tokio", "canvas"] }
 sysinfo = "0.39.2"
 
 [profile.release]

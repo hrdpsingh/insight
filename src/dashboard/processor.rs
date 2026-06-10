@@ -1,14 +1,14 @@
-use crate::app::Message;
+use crate::{state::Probe, app::Message};
 use crate::components::{card, graph::Graph};
 use iced::{
     Color, Element, Font, font::Weight,
     widget::{column, row, text},
 };
 
-pub fn view<'a>(cpu_usage_history: Vec<f32>, cpu_name: &'a str, cpu_architecture: &'a str, core_count: usize) -> Element<'a, Message> {
-    let cpu_usage = cpu_usage_history
+pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
+    let cpu_usage = probe.processor.usage_history
         .last()
-        .map(|u| format!("{:.2}%", u))
+        .map(|usage| format!("{:.2}%", usage))
         .unwrap_or_else(|| "Unavailable".to_string());
 
     card::view(
@@ -18,7 +18,7 @@ pub fn view<'a>(cpu_usage_history: Vec<f32>, cpu_name: &'a str, cpu_architecture
                 Color::from_rgb8(215, 235, 255),
                 Color::from_rgb8(55, 155, 255),
                 Color::from_rgb8(175, 215, 255),
-                cpu_usage_history,
+                probe.processor.usage_history.clone(),
                 100.0,
             ),
             row![
@@ -26,21 +26,21 @@ pub fn view<'a>(cpu_usage_history: Vec<f32>, cpu_name: &'a str, cpu_architecture
                     weight: Weight::Bold,
                     ..Font::DEFAULT
                 }),
-                text(cpu_name).size(14),
+                text(&probe.processor.name).size(14),
             ],
             row![
                 text("Architecture: ").size(14).font(Font {
                     weight: Weight::Bold,
                     ..Font::DEFAULT
                 }),
-                text(cpu_architecture).size(14),
+                text(&probe.processor.architecture).size(14),
             ],
             row![
                 text("Cores: ").size(14).font(Font {
                     weight: Weight::Bold,
                     ..Font::DEFAULT
                 }),
-                text(core_count).size(14),
+                text(probe.processor.core_count).size(14),
             ],
             row![
                 text("Usage: ").size(14).font(Font {

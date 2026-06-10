@@ -1,4 +1,4 @@
-use crate::app::Probe;
+use crate::state::Probe;
 
 pub fn update_cpu_usage(probe: &mut Probe) {
     probe.system.refresh_cpu_all();
@@ -10,10 +10,6 @@ pub fn update_cpu_usage(probe: &mut Probe) {
         cpus.iter().map(|cpu| cpu.cpu_usage()).sum::<f32>() / cpus.len() as f32
     };
 
-    probe.cpu_usage_history.remove(0);
-    probe.cpu_usage_history.push(average);
-}
-
-pub fn get_core_count(probe: &Probe) -> usize {
-    probe.system.cpus().len()
+    probe.processor.usage_history.remove(0);
+    probe.processor.usage_history.push(average);
 }

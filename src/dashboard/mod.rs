@@ -1,16 +1,11 @@
 pub mod processor;
 
-use crate::app::Message;
+use crate::{state::Probe, app::Message};
 use iced::{Element, widget::row};
 
-pub fn view<'a>(
-    cpu_usage_history: &[f32],
-    cpu_name: &'a str,
-    cpu_architecture: &'a str,
-    core_count: usize,
-) -> Element<'a, Message> {
+pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
     row![
-        processor::view(cpu_usage_history.to_vec(), cpu_name, cpu_architecture, core_count),
+        processor::view(probe),
     ]
     .spacing(20)
     .into()
