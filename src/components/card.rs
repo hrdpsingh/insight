@@ -12,7 +12,7 @@ pub fn view(body: Column<Message, Theme, Renderer>) -> Element<Message> {
                 border: Border {
                     color: Color::from_rgb8(205, 210, 215),
                     width: 1.0,
-                    radius: 5.0.into(),
+                    radius: 10.0.into(),
                 },
                 ..container::Style::default()
             })

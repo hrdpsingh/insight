@@ -1,6 +1,4 @@
-use crate::{
-    dashboard, metrics, state::Probe
-};
+use crate::{dashboard, metrics, state::Probe};
 use iced::{Color, Element, Length, Subscription, time, widget::container};
 use std::time::Duration;
 
@@ -14,6 +12,7 @@ impl Probe {
         match message {
             Message::Tick => {
                 metrics::update_cpu_usage(self);
+                metrics::update_processes(self);
             }
         }
     }
@@ -26,8 +25,6 @@ impl Probe {
             })
             .width(Length::Fill)
             .height(Length::Fill)
-            .center_x(Length::Fill)
-            .padding(40)
             .into()
     }
 

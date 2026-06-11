@@ -1,4 +1,5 @@
-use crate::state::Probe;
+use crate::state::{Probe, collect_processes};
+use sysinfo::ProcessesToUpdate;
 
 pub fn update_cpu_usage(probe: &mut Probe) {
     probe.system.refresh_cpu_all();
@@ -10,6 +11,11 @@ pub fn update_cpu_usage(probe: &mut Probe) {
         cpus.iter().map(|cpu| cpu.cpu_usage()).sum::<f32>() / cpus.len() as f32
     };
 
-    probe.processor.usage_history.remove(0);
-    probe.processor.usage_history.push(average);
+    probe.cpu.history.remove(0);
+    probe.cpu.history.push(average);
+}
+
+pub fn update_processes(probe: &mut Probe) {
+    probe.system.refresh_processes(ProcessesToUpdate::All, true);
+    probe.processes.entries = collect_processes(&probe.system);
 }
