@@ -38,5 +38,6 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
             ]
         ]
         .spacing(10),
+        Length::Fill
     )
 }

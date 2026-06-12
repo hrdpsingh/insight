@@ -4,7 +4,7 @@ use iced::{
     widget::{Column, column, container},
 };
 
-pub fn view(body: Column<Message, Theme, Renderer>) -> Element<Message> {
+pub fn view(body: Column<Message, Theme, Renderer>, width: Length) -> Element<Message> {
     column![
         container(body)
             .style(|_| container::Style {
@@ -16,7 +16,7 @@ pub fn view(body: Column<Message, Theme, Renderer>) -> Element<Message> {
                 },
                 ..container::Style::default()
             })
-            .width(Length::Fill)
+            .width(width)
             .padding(20),
     ]
     .spacing(20)

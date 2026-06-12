@@ -1,5 +1,5 @@
-use crate::state::{Probe, collect_processes};
-use sysinfo::ProcessesToUpdate;
+use crate::state::{Probe, Process};
+use sysinfo::System;
 
 pub fn update_cpu_usage(probe: &mut Probe) {
     probe.system.refresh_cpu_all();
@@ -15,7 +15,16 @@ pub fn update_cpu_usage(probe: &mut Probe) {
     probe.cpu.history.push(average);
 }
 
-pub fn update_processes(probe: &mut Probe) {
-    probe.system.refresh_processes(ProcessesToUpdate::All, true);
-    probe.processes.entries = collect_processes(&probe.system);
+pub fn get_processes(system: &System) -> Vec<Process> {
+    let mut processes: Vec<Process> = system
+        .processes()
+        .iter()
+        .map(|(pid, process)| Process {
+            pid: pid.as_u32(),
+            name: process.name().to_string_lossy().to_string(),
+            memory: process.memory() / (1024 * 1024),
+        })
+        .collect();
+    processes.sort_by_key(|process| std::cmp::Reverse(process.memory));
+    processes
 }

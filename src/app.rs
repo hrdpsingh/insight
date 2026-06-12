@@ -1,6 +1,7 @@
 use crate::{dashboard, metrics, state::Probe};
 use iced::{Color, Element, Length, Subscription, time, widget::container};
 use std::time::Duration;
+use sysinfo::ProcessesToUpdate;
 
 #[derive(Clone)]
 pub enum Message {
@@ -12,7 +13,8 @@ impl Probe {
         match message {
             Message::Tick => {
                 metrics::update_cpu_usage(self);
-                metrics::update_processes(self);
+                self.system.refresh_processes(ProcessesToUpdate::All, true);
+                self.processes = metrics::get_processes(&self.system);
             }
         }
     }
