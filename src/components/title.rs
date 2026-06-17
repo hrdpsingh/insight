@@ -1,9 +1,9 @@
 use crate::app::Message;
 use iced::{Color, Element, Font, font::Weight, widget::text};
 
-pub fn view<'a>(label: &'a str) -> Element<'a, Message> {
+pub fn view<'a>(label: String) -> Element<'a, Message> {
     text(label)
-        .size(20)
+        .size(24)
         .font(Font {
             weight: Weight::Bold,
             ..Font::MONOSPACE

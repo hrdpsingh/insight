@@ -3,33 +3,32 @@ use iced::{
     widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke},
 };
 
-pub struct Graph {
+struct Graph {
+    data: Vec<f32>,
+    maximum_value: f32,
+    background_color: Color,
+    line_color: Color,
+    color_below_line: Color,
+}
+
+pub fn view<Message: 'static>(
+    data: Vec<f32>,
+    maximum_value: f32,
     height: f32,
     background_color: Color,
     line_color: Color,
     color_below_line: Color,
-    data: Vec<f32>,
-    maximum_value: f32,
-}
-
-impl Graph {
-    pub fn new(
-        height: f32,
-        background_color: Color,
-        line_color: Color,
-        color_below_line: Color,
-        data: Vec<f32>,
-        maximum_value: f32,
-    ) -> Self {
-        Self {
-            height,
-            background_color,
-            line_color,
-            color_below_line,
-            data,
-            maximum_value,
-        }
-    }
+) -> Element<'static, Message> {
+    Canvas::new(Graph {
+        data,
+        maximum_value,
+        background_color,
+        line_color,
+        color_below_line,
+    })
+    .width(Length::Fill)
+    .height(Length::Fixed(height))
+    .into()
 }
 
 impl<Message> canvas::Program<Message> for Graph {
@@ -48,39 +47,31 @@ impl<Message> canvas::Program<Message> for Graph {
 
         let width = bounds.width;
         let height = bounds.height;
-
         let gap = width / (self.data.len() - 1) as f32;
 
-        let line = Path::new(|builder| {
-            for (index, &value) in self.data.iter().enumerate() {
+        let points: Vec<iced::Point> = self
+            .data
+            .iter()
+            .enumerate()
+            .map(|(index, &value)| {
                 let x = index as f32 * gap;
-                let normalized_y = value / self.maximum_value;
-                let y = height - (normalized_y * height);
-                let point = iced::Point::new(x, y);
+                let y = height - (value / self.maximum_value * height);
+                iced::Point::new(x, y)
+            })
+            .collect();
 
-                if index == 0 {
-                    builder.move_to(point);
-                } else {
-                    builder.line_to(point);
-                }
-            }
+        let line = Path::new(|builder| {
+            builder.move_to(points[0]);
+            points[1..].iter().for_each(|&point| builder.line_to(point));
         });
 
         let filled_area = Path::new(|builder| {
             builder.move_to(iced::Point::new(0.0, height));
-
-            for (index, &value) in self.data.iter().enumerate() {
-                let x = index as f32 * gap;
-                let normalized_y = value / self.maximum_value;
-                let y = height - (normalized_y * height);
-                builder.line_to(iced::Point::new(x, y));
-            }
-
+            points.iter().for_each(|&point| builder.line_to(point));
             builder.line_to(iced::Point::new(width, height));
         });
 
         frame.fill(&filled_area, self.color_below_line);
-
         frame.stroke(
             &line,
             Stroke {
@@ -91,16 +82,5 @@ impl<Message> canvas::Program<Message> for Graph {
         );
 
         vec![frame.into_geometry()]
-    }
-}
-
-impl<'a, Message: 'a> From<Graph> for Element<'a, Message> {
-    fn from(graph: Graph) -> Self {
-        let height = graph.height;
-
-        Canvas::new(graph)
-            .width(Length::Fill)
-            .height(Length::Fixed(height))
-            .into()
     }
 }

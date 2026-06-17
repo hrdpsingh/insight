@@ -1,5 +1,5 @@
 use crate::{dashboard, metrics, state::Probe};
-use iced::{Color, Element, Length, Subscription, time, widget::container};
+use iced::{Element, Length, Subscription, time, widget::container};
 use std::time::Duration;
 use sysinfo::ProcessesToUpdate;
 
@@ -21,10 +21,6 @@ impl Probe {
 
     pub fn view(&self) -> Element<'_, Message> {
         container(dashboard::view(self))
-            .style(|_theme| container::Style {
-                background: Some(Color::from_rgb8(240, 245, 250).into()),
-                ..Default::default()
-            })
             .width(Length::Fill)
             .height(Length::Fill)
             .into()
