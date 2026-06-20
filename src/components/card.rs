@@ -3,19 +3,19 @@ use iced::{Background, Border, Color, Element, Length, Renderer, Theme, widget::
 
 pub fn view<'a>(
     content: impl Into<Element<'a, Message, Theme, Renderer>>,
-    background: Color,
+    width: Length,
 ) -> Element<'a, Message, Theme, Renderer> {
     container(content)
         .style(move |_| container::Style {
-            background: Some(Background::Color(background)),
+            background: Some(Background::Color(Color::from_rgb8(250, 250, 250))),
             border: Border {
-                color: Color::from_rgb8(180, 185, 190),
+                color: Color::from_rgb8(200, 200, 200),
                 width: 1.0,
                 radius: 8.0.into(),
             },
             ..container::Style::default()
         })
-        .padding(16)
-        .width(Length::Fill)
+        .padding(20)
+        .width(width)
         .into()
 }

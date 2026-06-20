@@ -47,7 +47,7 @@ impl<Message> canvas::Program<Message> for Graph {
 
         let width = bounds.width;
         let height = bounds.height;
-        let gap = width / (self.data.len() - 1) as f32;
+        let gap = width / ((self.data.len() - 1) as f32);
 
         let points: Vec<iced::Point> = self
             .data

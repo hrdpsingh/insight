@@ -1,63 +1,65 @@
 use crate::{
     app::Message,
-    components::scroll,
-    state::{Probe, Process},
+    components::{card, scroll},
+    state::Probe,
 };
 
 use iced::{
-    Background, Border, Color, Element, Font,
+    Background, Border, Color, Element, Font, Length,
     font::Weight,
-    widget::{
-        container,
-        table::{self, Table},
-        text, tooltip,
-    },
+    widget::{column, container, row, text, tooltip},
 };
 
 pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
-    let columns = vec![
-        table::column(header("PID"), |process: &Process| {
-            cell(process.pid.to_string())
-        })
-        .width(100.0),
-        table::column(header("Name"), |process: &Process| {
-            cell(process.name.clone())
-        })
-        .width(148.0),
-        table::column(header("Memory"), |process: &Process| {
-            cell(format!("{} MB", process.memory))
-        })
-        .width(100.0),
-    ];
+    let header_row = row![
+        header("PID", 80.0),
+        header("Name", 148.0),
+        header("Memory", 108.0),
+        header("CPU", 100.0)
+    ]
+    .spacing(8);
 
-    container(scroll::view(
-        Table::new(columns, &probe.processes)
-            .width(360.0)
-            .separator(0)
-            .padding(8),
-    ))
-    .padding(12)
-    .style(|_| container::Style {
-        background: Some(Background::Color(Color::from_rgb8(255, 255, 255))),
-        ..container::Style::default()
-    })
+    let rows: Vec<Element<'a, Message>> = probe
+        .processes
+        .iter()
+        .map(|process| {
+            row![
+                cell(process.pid.to_string(), 80.0),
+                cell(process.name.clone(), 148.0),
+                cell(format!("{} MB", process.memory), 108.0),
+                cell(format!("{:.1}%", process.cpu), 100.0)
+            ]
+            .spacing(8)
+            .into()
+        })
+        .collect();
+
+    let content = column![header_row, scroll::view(column(rows))];
+
+    card::view(content, Length::Shrink)
+}
+
+fn header<'a>(column_name: &'a str, width: f32) -> Element<'a, Message> {
+    container(
+        text(column_name)
+            .color(Color::from_rgb8(55, 155, 255))
+            .size(16)
+            .font(Font {
+                weight: Weight::Bold,
+                ..Font::DEFAULT
+            }),
+    )
+    .width(Length::Fixed(width))
+    .padding(8)
     .into()
 }
 
-fn header(label: &str) -> Element<'_, Message> {
-    text(label)
-        .color(Color::from_rgb8(100, 150, 255))
-        .size(16)
-        .font(Font {
-            weight: Weight::Bold,
-            ..Font::DEFAULT
-        })
-        .into()
-}
-
-fn cell<'a>(content: String) -> Element<'a, Message> {
+fn cell<'a>(content: String, width: f32) -> Element<'a, Message> {
     tooltip(
-        container(text(content.clone()).size(16)).clip(true),
+        container(text(content.clone()).size(16))
+            .width(Length::Fixed(width))
+            .padding(8)
+            .clip(true),
         container(text(content).size(16))
             .padding(8)
             .style(|_| container::Style {

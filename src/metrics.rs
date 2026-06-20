@@ -23,6 +23,7 @@ pub fn get_processes(system: &System) -> Vec<Process> {
             pid: pid.as_u32(),
             name: process.name().to_string_lossy().to_string(),
             memory: process.memory() / (1024 * 1024),
+            cpu: process.cpu_usage() / system.cpus().len() as f32,
         })
         .collect();
     processes.sort_by_key(|process| std::cmp::Reverse(process.memory));
