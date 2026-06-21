@@ -1,5 +1,5 @@
 use crate::app::Message;
-use iced::{Background, Border, Color, Element, Length, Renderer, Theme, widget::container};
+use iced::{Border, Color, Element, Length, Renderer, Shadow, Theme, Vector, widget::container};
 
 pub fn view<'a>(
     content: impl Into<Element<'a, Message, Theme, Renderer>>,
@@ -7,11 +7,15 @@ pub fn view<'a>(
 ) -> Element<'a, Message, Theme, Renderer> {
     container(content)
         .style(move |_| container::Style {
-            background: Some(Background::Color(Color::from_rgb8(250, 250, 250))),
+            background: Some(Color::from_rgb8(255, 255, 250).into()),
             border: Border {
-                color: Color::from_rgb8(200, 200, 200),
-                width: 1.0,
                 radius: 8.0.into(),
+                ..Default::default()
+            },
+            shadow: Shadow {
+                color: Color::from_rgb8(200, 200, 200),
+                offset: Vector::new(1.0, 1.0),
+                blur_radius: 4.0,
             },
             ..container::Style::default()
         })

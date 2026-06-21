@@ -1,13 +1,12 @@
-use sysinfo::{ProcessesToUpdate, System};
-
-use crate::metrics;
+use sysinfo::System;
 
 pub struct Probe {
-    pub system: System,
     pub cpu: Cpu,
     pub memory: Memory,
     pub swap: Swap,
     pub processes: Vec<Process>,
+    pub page: usize,
+    pub system: System,
 }
 
 pub struct Cpu {
@@ -31,14 +30,11 @@ pub struct Process {
     pub pid: u32,
     pub name: String,
     pub memory: u64,
-    pub cpu: f32,
 }
 
 impl Default for Probe {
     fn default() -> Self {
-        let mut system = System::new_all();
-        system.refresh_processes(ProcessesToUpdate::All, true);
-        let processes = metrics::get_processes(&system);
+        let system = System::new_all();
 
         Self {
             cpu: Cpu {
@@ -59,7 +55,16 @@ impl Default for Probe {
                 used: system.used_swap(),
                 total: system.total_swap(),
             },
-            processes,
+            processes: system
+                .processes()
+                .iter()
+                .map(|(pid, process)| Process {
+                    pid: pid.as_u32(),
+                    name: process.name().to_string_lossy().to_string(),
+                    memory: process.memory() / (1024 * 1024),
+                })
+                .collect(),
+            page: 1,
             system,
         }
     }

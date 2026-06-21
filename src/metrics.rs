@@ -1,8 +1,6 @@
 use crate::state::{Probe, Process};
-use sysinfo::System;
 
 pub fn update_cpu_usage(probe: &mut Probe) {
-    probe.system.refresh_cpu_all();
     let cpus = probe.system.cpus();
 
     let average = if cpus.is_empty() {
@@ -15,17 +13,27 @@ pub fn update_cpu_usage(probe: &mut Probe) {
     probe.cpu.history.push(average);
 }
 
-pub fn get_processes(system: &System) -> Vec<Process> {
-    let mut processes: Vec<Process> = system
+pub fn update_memory_usage(probe: &mut Probe) {
+    probe.memory.used = probe.system.used_memory();
+    probe.memory.total = probe.system.total_memory();
+}
+
+pub fn update_swap_usage(probe: &mut Probe) {
+    probe.swap.used = probe.system.used_swap();
+    probe.swap.total = probe.system.total_swap();
+}
+
+pub fn get_processes(probe: &mut Probe) {
+    let mut processes: Vec<Process> = probe
+        .system
         .processes()
         .iter()
         .map(|(pid, process)| Process {
             pid: pid.as_u32(),
             name: process.name().to_string_lossy().to_string(),
             memory: process.memory() / (1024 * 1024),
-            cpu: process.cpu_usage() / system.cpus().len() as f32,
         })
         .collect();
     processes.sort_by_key(|process| std::cmp::Reverse(process.memory));
-    processes
+    probe.processes = processes;
 }
