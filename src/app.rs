@@ -42,8 +42,7 @@ impl Probe {
         scroll::view(
             container(
                 row![
-                    column![dashboard::cpu::view(self),]
-                        .spacing(24),
+                    column![dashboard::cpu::view(self),].spacing(24),
                     column![
                         row![dashboard::memory::view(self), dashboard::swap::view(self)]
                             .spacing(24),

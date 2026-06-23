@@ -82,7 +82,6 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for DonutChart {
                 Stroke {
                     style: canvas::Style::Solid(self.filled_color),
                     width: self.thickness,
-                    line_cap: canvas::LineCap::Round,
                     ..Stroke::default()
                 },
             );

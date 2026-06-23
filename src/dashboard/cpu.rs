@@ -4,7 +4,9 @@ use crate::{
     state::Probe,
 };
 use iced::{
-    Color, Element, Font, Length, font::Weight, widget::{column, text}
+    Color, Element, Font, Length,
+    font::Weight,
+    widget::{column, text},
 };
 
 pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {

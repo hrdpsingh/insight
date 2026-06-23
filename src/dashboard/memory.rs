@@ -1,6 +1,7 @@
 use iced::{
-    Color, Element, Length,
-    widget::{Space, column, row, text},
+    Border, Color, Element, Length,
+    alignment::Vertical,
+    widget::{Space, column, container, row, text},
 };
 
 use crate::{
@@ -20,16 +21,54 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
                 Color::from_rgb8(175, 215, 255),
                 16.0,
             ),
-            row![
-                Space::new().width(Length::Fill),
-                text(format!(
-                    "{:.1} GB / {:.1} GB",
-                    probe.memory.used as f32 / (1024 * 1024 * 1024) as f32,
-                    probe.memory.total as f32 / (1024 * 1024 * 1024) as f32
-                ))
-                .size(16),
-                Space::new().width(Length::Fill),
-            ],
+            column![
+                row![
+                    container(
+                        Space::new()
+                            .width(Length::Fixed(12.0))
+                            .height(Length::Fixed(12.0))
+                    )
+                    .style(move |_| container::Style {
+                        background: Some(Color::from_rgb8(175, 215, 255).into()),
+                        border: Border {
+                            radius: 8.0.into(),
+                            ..Default::default()
+                        },
+                        ..container::Style::default()
+                    }),
+                    text(format!(
+                        "Free: {:.1} GB",
+                        (probe.memory.total - probe.memory.used) as f32
+                            / (1024 * 1024 * 1024) as f32,
+                    ))
+                    .size(16)
+                ]
+                .spacing(8)
+                .align_y(Vertical::Center),
+                row![
+                    container(
+                        Space::new()
+                            .width(Length::Fixed(12.0))
+                            .height(Length::Fixed(12.0))
+                    )
+                    .style(move |_| container::Style {
+                        background: Some(Color::from_rgb8(55, 155, 255).into()),
+                        border: Border {
+                            radius: 8.0.into(),
+                            ..Default::default()
+                        },
+                        ..container::Style::default()
+                    }),
+                    text(format!(
+                        "Used: {:.1} GB",
+                        probe.memory.used as f32 / (1024 * 1024 * 1024) as f32,
+                    ))
+                    .size(16)
+                ]
+                .spacing(8)
+                .align_y(Vertical::Center)
+            ]
+            .spacing(8)
         ]
         .spacing(20),
         Length::Fill,
