@@ -1,7 +1,7 @@
 use crate::{components::scroll, dashboard, metrics, state::Probe};
 use iced::{
     Background, Color, Element, Length, Subscription, time,
-    widget::{column, container, row},
+    widget::{container, row},
 };
 use std::time::Duration;
 
@@ -20,7 +20,6 @@ impl Probe {
 
                 metrics::update_cpu_usage(self);
                 metrics::update_memory_usage(self);
-                metrics::update_swap_usage(self);
                 metrics::get_processes(self);
             }
             Message::Previous => {
@@ -29,7 +28,7 @@ impl Probe {
                 }
             }
             Message::Next => {
-                let count = self.processes.len().div_ceil(8);
+                let count = self.processes.len().div_ceil(6);
 
                 if self.page < count {
                     self.page += 1;
@@ -39,27 +38,24 @@ impl Probe {
     }
 
     pub fn view(&self) -> Element<'_, Message> {
-        scroll::view(
+        container(scroll::view(
             container(
                 row![
-                    column![dashboard::cpu::view(self),].spacing(24),
-                    column![
-                        row![dashboard::memory::view(self), dashboard::swap::view(self)]
-                            .spacing(24),
-                        dashboard::processes::view(self)
-                    ]
-                    .spacing(24),
+                    dashboard::cpu::view(self),
+                    dashboard::memory::view(self),
+                    dashboard::processes::view(self)
                 ]
                 .spacing(24),
             )
-            .width(Length::Fill)
-            .height(Length::Fill)
-            .padding(24)
-            .style(|_| container::Style {
-                background: Some(Background::Color(Color::from_rgb8(250, 250, 245))),
-                ..container::Style::default()
-            }),
-        )
+            .padding(24),
+        ))
+        .width(Length::Fill)
+        .height(Length::Fill)
+        .style(|_| container::Style {
+            background: Some(Background::Color(Color::from_rgb8(245, 245, 245))),
+            ..container::Style::default()
+        })
+        .into()
     }
 
     pub fn subscription(&self) -> Subscription<Message> {

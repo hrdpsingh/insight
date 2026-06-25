@@ -18,11 +18,6 @@ pub fn update_memory_usage(probe: &mut Probe) {
     probe.memory.total = probe.system.total_memory();
 }
 
-pub fn update_swap_usage(probe: &mut Probe) {
-    probe.swap.used = probe.system.used_swap();
-    probe.swap.total = probe.system.total_swap();
-}
-
 pub fn get_processes(probe: &mut Probe) {
     let mut processes: Vec<Process> = probe
         .system
@@ -31,7 +26,7 @@ pub fn get_processes(probe: &mut Probe) {
         .map(|(pid, process)| Process {
             pid: pid.as_u32(),
             name: process.name().to_string_lossy().to_string(),
-            memory: process.memory() / (1024 * 1024),
+            memory: process.memory(),
         })
         .collect();
     processes.sort_by_key(|process| std::cmp::Reverse(process.memory));

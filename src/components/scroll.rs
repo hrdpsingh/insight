@@ -1,13 +1,13 @@
 use iced::{
     Background, Color, Element,
     widget::{
-        container, scrollable,
+        scrollable,
         scrollable::{Direction, Scrollbar},
     },
 };
 
 pub fn view<'a, Message: 'a>(content: impl Into<Element<'a, Message>>) -> Element<'a, Message> {
-    scrollable(container(content))
+    scrollable(content)
         .direction(Direction::Vertical(
             Scrollbar::default().width(8).scroller_width(8).spacing(0),
         ))

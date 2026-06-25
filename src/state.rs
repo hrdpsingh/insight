@@ -3,7 +3,6 @@ use sysinfo::System;
 pub struct Probe {
     pub cpu: Cpu,
     pub memory: Memory,
-    pub swap: Swap,
     pub processes: Vec<Process>,
     pub page: usize,
     pub system: System,
@@ -17,11 +16,6 @@ pub struct Cpu {
 }
 
 pub struct Memory {
-    pub used: u64,
-    pub total: u64,
-}
-
-pub struct Swap {
     pub used: u64,
     pub total: u64,
 }
@@ -51,17 +45,13 @@ impl Default for Probe {
                 used: system.used_memory(),
                 total: system.total_memory(),
             },
-            swap: Swap {
-                used: system.used_swap(),
-                total: system.total_swap(),
-            },
             processes: system
                 .processes()
                 .iter()
                 .map(|(pid, process)| Process {
                     pid: pid.as_u32(),
                     name: process.name().to_string_lossy().to_string(),
-                    memory: process.memory() / (1024 * 1024),
+                    memory: process.memory(),
                 })
                 .collect(),
             page: 1,

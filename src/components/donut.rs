@@ -1,32 +1,32 @@
 use iced::alignment::Vertical;
 use iced::widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke, Text};
-use iced::{Color, Element, Length, Pixels, Radians, Rectangle, Renderer, Theme, mouse};
+use iced::{Color, Element, Pixels, Radians, Rectangle, Renderer, Theme, mouse};
+
+struct DonutChart {
+    used: u64,
+    total: u64,
+    first_arc_color: Color,
+    second_arc_color: Color,
+    thickness: f32,
+}
 
 pub fn view<'a, Message: 'a>(
     used: u64,
     total: u64,
-    filled_color: Color,
-    bg_color: Color,
+    first_arc_color: Color,
+    second_arc_color: Color,
     thickness: f32,
 ) -> Element<'a, Message, Theme, Renderer> {
     Canvas::new(DonutChart {
         used,
         total,
-        filled_color,
-        bg_color,
+        first_arc_color,
+        second_arc_color,
         thickness,
     })
-    .width(Length::Fill)
+    .width(140)
     .height(140)
     .into()
-}
-
-struct DonutChart {
-    used: u64,
-    total: u64,
-    filled_color: Color,
-    bg_color: Color,
-    thickness: f32,
 }
 
 impl<Message> canvas::Program<Message, Theme, Renderer> for DonutChart {
@@ -41,68 +41,75 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for DonutChart {
         _: mouse::Cursor,
     ) -> Vec<Geometry> {
         let mut frame = Frame::new(renderer, bounds.size());
+
         let center = frame.center();
+        let outer_radius = bounds.width.min(bounds.height) / 2.0;
+        let middle_radius = (outer_radius - self.thickness / 2.0).max(0.0);
 
-        let max_radius = bounds.width.min(bounds.height) / 2.0;
+        let percentage = self.used as f32 / self.total as f32;
 
-        let middle_radius = (max_radius - self.thickness / 2.0).max(0.0);
-        let inner_radius = (max_radius - self.thickness).max(0.0);
+        let start_angle = -std::f32::consts::FRAC_PI_2;
+        let end_angle = start_angle + percentage * 2.0 * std::f32::consts::PI;
 
-        let percentage = if self.total > 0 {
-            (self.used as f32 / self.total as f32).clamp(0.0, 1.0)
-        } else {
-            0.0
-        };
+        let gap_pixels = self.thickness + 4.0;
+        let gap_angle = gap_pixels / middle_radius;
 
-        let bg_path = Path::circle(center, middle_radius);
-        frame.stroke(
-            &bg_path,
-            Stroke {
-                style: canvas::Style::Solid(self.bg_color),
-                width: self.thickness,
-                ..Stroke::default()
-            },
-        );
+        let filled_start = start_angle + gap_angle / 2.0;
+        let filled_end = end_angle - gap_angle / 2.0;
 
-        if percentage > 0.0 {
-            let start_angle = -std::f32::consts::FRAC_PI_2;
-            let end_angle = start_angle + percentage * 2.0 * std::f32::consts::PI;
+        let bg_start = end_angle + gap_angle / 2.0;
+        let bg_end = start_angle + 2.0 * std::f32::consts::PI - gap_angle / 2.0;
 
-            let progress_path = Path::new(|builder| {
-                builder.arc(canvas::path::Arc {
+        if filled_end > filled_start {
+            let filled_path = Path::new(|b| {
+                b.arc(canvas::path::Arc {
                     center,
                     radius: middle_radius,
-                    start_angle: Radians(start_angle),
-                    end_angle: Radians(end_angle),
+                    start_angle: Radians(filled_start),
+                    end_angle: Radians(filled_end),
                 });
             });
-
             frame.stroke(
-                &progress_path,
+                &filled_path,
                 Stroke {
-                    style: canvas::Style::Solid(self.filled_color),
+                    style: canvas::Style::Solid(self.first_arc_color),
                     width: self.thickness,
+                    line_cap: canvas::LineCap::Round,
                     ..Stroke::default()
                 },
             );
         }
 
-        let text_content = format!("{:.1}%", percentage * 100.0);
-
-        let font_size = inner_radius * 0.45;
-
-        if font_size > 0.0 {
-            let text = Text {
-                content: text_content,
-                position: center,
-                color: Color::BLACK,
-                size: Pixels(font_size),
-                align_x: iced::widget::text::Alignment::Center,
-                align_y: Vertical::Center,
-                ..Text::default()
-            };
-            frame.fill_text(text);
+        if bg_end > bg_start {
+            let bg_path = Path::new(|b| {
+                b.arc(canvas::path::Arc {
+                    center,
+                    radius: middle_radius,
+                    start_angle: Radians(bg_start),
+                    end_angle: Radians(bg_end),
+                });
+            });
+            frame.stroke(
+                &bg_path,
+                Stroke {
+                    style: canvas::Style::Solid(self.second_arc_color),
+                    width: self.thickness,
+                    line_cap: canvas::LineCap::Round,
+                    ..Stroke::default()
+                },
+            );
         }
+
+        let text = Text {
+            content: format!("{:.1}%", percentage * 100.0),
+            position: center,
+            color: Color::BLACK,
+            size: Pixels(20.0),
+            align_x: iced::widget::text::Alignment::Center,
+            align_y: Vertical::Center,
+            ..Text::default()
+        };
+        frame.fill_text(text);
 
         vec![frame.into_geometry()]
     }

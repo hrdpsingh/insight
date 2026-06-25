@@ -13,14 +13,21 @@ use crate::{
 pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
     card::view(
         column![
-            title::view("Memory".to_string()),
-            donut::view(
-                probe.memory.used,
-                probe.memory.total,
-                Color::from_rgb8(55, 155, 255),
-                Color::from_rgb8(175, 215, 255),
-                16.0,
-            ),
+            title::view(format!(
+                "Memory {:.1} GB",
+                probe.memory.total as f32 / (1024 * 1024 * 1024) as f32,
+            )),
+            row![
+                Space::new().width(Length::Fill),
+                donut::view(
+                    probe.memory.used,
+                    probe.memory.total,
+                    Color::from_rgb8(150, 150, 255),
+                    Color::from_rgb8(200, 200, 255),
+                    12.0,
+                ),
+                Space::new().width(Length::Fill),
+            ],
             column![
                 row![
                     container(
@@ -29,7 +36,7 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
                             .height(Length::Fixed(12.0))
                     )
                     .style(move |_| container::Style {
-                        background: Some(Color::from_rgb8(175, 215, 255).into()),
+                        background: Some(Color::from_rgb8(200, 200, 255).into()),
                         border: Border {
                             radius: 8.0.into(),
                             ..Default::default()
@@ -52,7 +59,7 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
                             .height(Length::Fixed(12.0))
                     )
                     .style(move |_| container::Style {
-                        background: Some(Color::from_rgb8(55, 155, 255).into()),
+                        background: Some(Color::from_rgb8(150, 150, 255).into()),
                         border: Border {
                             radius: 8.0.into(),
                             ..Default::default()
@@ -66,11 +73,11 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
                     .size(16)
                 ]
                 .spacing(8)
-                .align_y(Vertical::Center)
+                .align_y(Vertical::Center),
             ]
-            .spacing(8)
+            .spacing(8),
         ]
-        .spacing(20),
-        Length::Fill,
+        .spacing(24),
+        Length::Shrink,
     )
 }

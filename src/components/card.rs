@@ -7,7 +7,7 @@ pub fn view<'a>(
 ) -> Element<'a, Message, Theme, Renderer> {
     container(content)
         .style(move |_| container::Style {
-            background: Some(Color::from_rgb8(255, 255, 250).into()),
+            background: Some(Color::from_rgb8(250, 250, 250).into()),
             border: Border {
                 radius: 8.0.into(),
                 ..Default::default()
