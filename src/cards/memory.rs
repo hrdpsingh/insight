@@ -7,21 +7,21 @@ use iced::{
 use crate::{
     app::Message,
     components::{card, donut, title},
-    state::Probe,
+    state::Insight,
 };
 
-pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
+pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
     card::view(
         column![
             title::view(format!(
                 "Memory {:.1} GB",
-                probe.memory.total as f32 / (1024 * 1024 * 1024) as f32,
+                insight.memory.total as f32 / (1024 * 1024 * 1024) as f32,
             )),
             row![
                 Space::new().width(Length::Fill),
                 donut::view(
-                    probe.memory.used,
-                    probe.memory.total,
+                    insight.memory.used,
+                    insight.memory.total,
                     Color::from_rgb8(150, 150, 255),
                     Color::from_rgb8(200, 200, 255),
                     12.0,
@@ -45,7 +45,7 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
                     }),
                     text(format!(
                         "Free: {:.1} GB",
-                        (probe.memory.total - probe.memory.used) as f32
+                        (insight.memory.total - insight.memory.used) as f32
                             / (1024 * 1024 * 1024) as f32,
                     ))
                     .size(16)
@@ -68,7 +68,7 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
                     }),
                     text(format!(
                         "Used: {:.1} GB",
-                        probe.memory.used as f32 / (1024 * 1024 * 1024) as f32,
+                        insight.memory.used as f32 / (1024 * 1024 * 1024) as f32,
                     ))
                     .size(16)
                 ]

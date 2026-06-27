@@ -1,16 +1,16 @@
 mod app;
+mod cards;
 mod components;
-mod dashboard;
 mod metrics;
 mod state;
 
 use iced::{Size, window};
-use state::Probe;
+use state::Insight;
 
 fn main() -> iced::Result {
-    iced::application(Probe::default, Probe::update, Probe::view)
-        .subscription(Probe::subscription)
-        .title("Probe")
+    iced::application(Insight::default, Insight::update, Insight::view)
+        .subscription(Insight::subscription)
+        .title("Insight")
         .window(window::Settings {
             size: iced::Size::new(960.0, 540.0),
             min_size: Some(Size::new(960.0, 540.0)),

@@ -1,7 +1,7 @@
-use crate::state::{Probe, Process};
+use crate::state::{Insight, Process};
 
-pub fn update_cpu_usage(probe: &mut Probe) {
-    let cpus = probe.system.cpus();
+pub fn update_cpu_usage(insight: &mut Insight) {
+    let cpus = insight.system.cpus();
 
     let average = if cpus.is_empty() {
         0.0
@@ -9,17 +9,17 @@ pub fn update_cpu_usage(probe: &mut Probe) {
         cpus.iter().map(|cpu| cpu.cpu_usage()).sum::<f32>() / cpus.len() as f32
     };
 
-    probe.cpu.history.remove(0);
-    probe.cpu.history.push(average);
+    insight.cpu.history.remove(0);
+    insight.cpu.history.push(average);
 }
 
-pub fn update_memory_usage(probe: &mut Probe) {
-    probe.memory.used = probe.system.used_memory();
-    probe.memory.total = probe.system.total_memory();
+pub fn update_memory_usage(insight: &mut Insight) {
+    insight.memory.used = insight.system.used_memory();
+    insight.memory.total = insight.system.total_memory();
 }
 
-pub fn get_processes(probe: &mut Probe) {
-    let mut processes: Vec<Process> = probe
+pub fn get_processes(insight: &mut Insight) {
+    let mut processes: Vec<Process> = insight
         .system
         .processes()
         .iter()
@@ -30,5 +30,5 @@ pub fn get_processes(probe: &mut Probe) {
         })
         .collect();
     processes.sort_by_key(|process| std::cmp::Reverse(process.memory));
-    probe.processes = processes;
+    insight.processes = processes;
 }

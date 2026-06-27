@@ -1,4 +1,4 @@
-use crate::{components::scroll, dashboard, metrics, state::Probe};
+use crate::{cards, components::scroll, metrics, state::Insight};
 use iced::{
     Background, Color, Element, Length, Subscription, time,
     widget::{container, row},
@@ -12,7 +12,7 @@ pub enum Message {
     Next,
 }
 
-impl Probe {
+impl Insight {
     pub fn update(&mut self, message: Message) {
         match message {
             Message::Tick => {
@@ -41,9 +41,9 @@ impl Probe {
         container(scroll::view(
             container(
                 row![
-                    dashboard::cpu::view(self),
-                    dashboard::memory::view(self),
-                    dashboard::processes::view(self)
+                    cards::cpu::view(self),
+                    cards::memory::view(self),
+                    cards::processes::view(self)
                 ]
                 .spacing(24),
             )

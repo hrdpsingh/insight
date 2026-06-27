@@ -1,7 +1,7 @@
 use crate::{
     app::Message,
     components::{button, card},
-    state::Probe,
+    state::Insight,
 };
 
 use iced::{
@@ -11,7 +11,7 @@ use iced::{
     widget::{Space, column, container, row, text, tooltip},
 };
 
-pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
+pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
     let header_row = row![
         header("PID", 80.0),
         header("Name", 148.0),
@@ -21,10 +21,10 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
 
     let count = 6;
 
-    let rows: Vec<Element<'a, Message>> = probe
+    let rows: Vec<Element<'a, Message>> = insight
         .processes
         .iter()
-        .skip((probe.page - 1) * count)
+        .skip((insight.page - 1) * count)
         .take(count)
         .map(|process| {
             row![
@@ -40,14 +40,14 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
         })
         .collect();
 
-    let pages = probe.processes.len().div_ceil(count);
+    let pages = insight.processes.len().div_ceil(count);
     let navigation = row![
         Space::new().width(Length::Fill),
         container(
             row![
-                button::view("Back", (probe.page > 1).then_some(Message::Previous)),
-                text(format!("{} of {}", probe.page, pages)),
-                button::view("Next", (probe.page < pages).then_some(Message::Next)),
+                button::view("Back", (insight.page > 1).then_some(Message::Previous)),
+                text(format!("{} of {}", insight.page, pages)),
+                button::view("Next", (insight.page < pages).then_some(Message::Next)),
             ]
             .align_y(Vertical::Center)
             .spacing(8)

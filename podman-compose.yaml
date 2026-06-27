@@ -1,11 +1,11 @@
 services:
-  probe:
+  insight:
     build:
       context: .
       dockerfile: Containerfile
-    container_name: probe
+    container_name: insight
     volumes:
       - .:/app
     command: sleep infinity
     init: true
-    image: probe
+    image: insight

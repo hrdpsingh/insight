@@ -1,7 +1,7 @@
 use crate::{
     app::Message,
     components::{card, graph, title},
-    state::Probe,
+    state::Insight,
 };
 use iced::{
     Color, Element, Font, Length,
@@ -9,15 +9,15 @@ use iced::{
     widget::{column, text},
 };
 
-pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
+pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
     card::view(
         column![
             title::view(format!(
                 "CPU {:.1}%",
-                probe.cpu.history.last().copied().unwrap_or(0.0)
+                insight.cpu.history.last().copied().unwrap_or(0.0)
             )),
             graph::view(
-                probe.cpu.history.clone(),
+                insight.cpu.history.clone(),
                 100.0,
                 150.0,
                 Color::from_rgb8(220, 220, 255),
@@ -32,7 +32,7 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
                             weight: Weight::Bold,
                             ..Font::DEFAULT
                         }),
-                    text(probe.cpu.name.trim()).size(16),
+                    text(insight.cpu.name.trim()).size(16),
                 ],
                 column![
                     text("Cores")
@@ -42,7 +42,7 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
                             weight: Weight::Bold,
                             ..Font::DEFAULT
                         }),
-                    text(probe.cpu.core_count.to_string()).size(16),
+                    text(insight.cpu.core_count.to_string()).size(16),
                 ],
                 column![
                     text("Architecture")
@@ -52,7 +52,7 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
                             weight: Weight::Bold,
                             ..Font::DEFAULT
                         }),
-                    text(probe.cpu.architecture.clone()).size(16),
+                    text(insight.cpu.architecture.clone()).size(16),
                 ],
             ]
             .spacing(8),

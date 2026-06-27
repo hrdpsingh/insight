@@ -1,6 +1,6 @@
 use sysinfo::System;
 
-pub struct Probe {
+pub struct Insight {
     pub cpu: Cpu,
     pub memory: Memory,
     pub processes: Vec<Process>,
@@ -26,7 +26,7 @@ pub struct Process {
     pub memory: u64,
 }
 
-impl Default for Probe {
+impl Default for Insight {
     fn default() -> Self {
         let system = System::new_all();
 

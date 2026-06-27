@@ -1,5 +1,5 @@
 cargo *args:
-    podman exec probe cargo {{args}}
+    podman exec insight cargo {{args}}
     
 do *args:
-    podman exec probe {{args}}
+    podman exec insight {{args}}
