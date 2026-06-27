@@ -53,7 +53,7 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
             .spacing(8)
         )
         .style(move |_| container::Style {
-            background: Some(Color::from_rgb8(255, 255, 255).into()),
+            background: Some(Color::from_rgb8(245, 245, 255).into()),
             border: Border {
                 radius: 8.0.into(),
                 ..Default::default()
@@ -109,7 +109,7 @@ fn cell<'a>(content: String, width: f32) -> Element<'a, Message> {
         container(text(content).size(16))
             .padding(8)
             .style(|_| container::Style {
-                background: Some(Background::Color(Color::from_rgb8(255, 255, 255))),
+                background: Some(Background::Color(Color::from_rgb8(245, 245, 255))),
                 border: Border {
                     radius: 8.0.into(),
                     ..Default::default()

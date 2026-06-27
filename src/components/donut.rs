@@ -54,23 +54,23 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for DonutChart {
         let gap_pixels = self.thickness + 4.0;
         let gap_angle = gap_pixels / middle_radius;
 
-        let filled_start = start_angle + gap_angle / 2.0;
-        let filled_end = end_angle - gap_angle / 2.0;
+        let first_arc_start = start_angle + gap_angle / 2.0;
+        let first_arc_end = end_angle - gap_angle / 2.0;
 
-        let bg_start = end_angle + gap_angle / 2.0;
-        let bg_end = start_angle + 2.0 * std::f32::consts::PI - gap_angle / 2.0;
+        let second_arc_start = end_angle + gap_angle / 2.0;
+        let second_arc_end = start_angle + 2.0 * std::f32::consts::PI - gap_angle / 2.0;
 
-        if filled_end > filled_start {
-            let filled_path = Path::new(|b| {
-                b.arc(canvas::path::Arc {
+        if first_arc_end > first_arc_start {
+            let first_arc_path = Path::new(|builder| {
+                builder.arc(canvas::path::Arc {
                     center,
                     radius: middle_radius,
-                    start_angle: Radians(filled_start),
-                    end_angle: Radians(filled_end),
+                    start_angle: Radians(first_arc_start),
+                    end_angle: Radians(first_arc_end),
                 });
             });
             frame.stroke(
-                &filled_path,
+                &first_arc_path,
                 Stroke {
                     style: canvas::Style::Solid(self.first_arc_color),
                     width: self.thickness,
@@ -80,17 +80,17 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for DonutChart {
             );
         }
 
-        if bg_end > bg_start {
-            let bg_path = Path::new(|b| {
-                b.arc(canvas::path::Arc {
+        if second_arc_end > second_arc_start {
+            let second_arc_path = Path::new(|builder| {
+                builder.arc(canvas::path::Arc {
                     center,
                     radius: middle_radius,
-                    start_angle: Radians(bg_start),
-                    end_angle: Radians(bg_end),
+                    start_angle: Radians(second_arc_start),
+                    end_angle: Radians(second_arc_end),
                 });
             });
             frame.stroke(
-                &bg_path,
+                &second_arc_path,
                 Stroke {
                     style: canvas::Style::Solid(self.second_arc_color),
                     width: self.thickness,

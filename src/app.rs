@@ -52,7 +52,7 @@ impl Probe {
         .width(Length::Fill)
         .height(Length::Fill)
         .style(|_| container::Style {
-            background: Some(Background::Color(Color::from_rgb8(245, 245, 245))),
+            background: Some(Background::Color(Color::from_rgb8(235, 235, 245))),
             ..container::Style::default()
         })
         .into()

@@ -21,8 +21,7 @@ pub fn view<'a>(probe: &'a Probe) -> Element<'a, Message> {
                 100.0,
                 150.0,
                 Color::from_rgb8(220, 220, 255),
-                Color::from_rgb8(120, 120, 255),
-                Color::from_rgb8(180, 180, 255),
+                Color::from_rgb8(130, 130, 255),
             ),
             column![
                 column![

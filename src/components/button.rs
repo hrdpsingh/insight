@@ -7,7 +7,7 @@ pub fn view(content: &str, navigate: Option<Message>) -> Element<'_, Message> {
             .on_press(message)
             .padding(8)
             .style(move |_, _| button::Style {
-                text_color: Color::from_rgb8(120, 120, 255),
+                text_color: Color::from_rgb8(150, 150, 255),
                 border: Border {
                     radius: Radius::from(8.0),
                     ..Default::default()
@@ -15,7 +15,7 @@ pub fn view(content: &str, navigate: Option<Message>) -> Element<'_, Message> {
                 ..button::Style::default()
             }),
         None => button(content).padding(8).style(move |_, _| button::Style {
-            text_color: Color::from_rgb8(180, 180, 255),
+            text_color: Color::from_rgb8(190, 190, 255),
             border: Border {
                 radius: Radius::from(8.0),
                 ..Default::default()
