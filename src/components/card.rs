@@ -13,7 +13,7 @@ pub fn view<'a>(
                 ..Default::default()
             },
             shadow: Shadow {
-                color: Color::from_rgb8(200, 200, 200),
+                color: Color::from_rgb8(190, 190, 190),
                 offset: Vector::new(1.0, 1.0),
                 blur_radius: 4.0,
             },
@@ -21,5 +21,7 @@ pub fn view<'a>(
         })
         .padding(20)
         .width(width)
+        .height(Length::Shrink)
+        .clip(true)
         .into()
 }

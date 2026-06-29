@@ -12,8 +12,8 @@ fn main() -> iced::Result {
         .subscription(Insight::subscription)
         .title("Insight")
         .window(window::Settings {
-            size: iced::Size::new(960.0, 540.0),
-            min_size: Some(Size::new(960.0, 540.0)),
+            size: iced::Size::new(800.0, 450.0),
+            min_size: Some(Size::new(800.0, 450.0)),
             ..Default::default()
         })
         .run()

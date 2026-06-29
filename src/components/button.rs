@@ -7,7 +7,7 @@ pub fn view(content: &str, navigate: Option<Message>) -> Element<'_, Message> {
             .on_press(message)
             .padding(8)
             .style(move |_, _| button::Style {
-                text_color: Color::from_rgb8(150, 150, 255),
+                text_color: Color::from_rgb8(130, 130, 255),
                 border: Border {
                     radius: Radius::from(8.0),
                     ..Default::default()

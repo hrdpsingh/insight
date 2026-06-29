@@ -46,12 +46,14 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         container(
             row![
                 button::view("Back", (insight.page > 1).then_some(Message::Previous)),
-                text(format!("{} of {}", insight.page, pages)),
+                text(format!("{} of {}", insight.page, pages)).wrapping(text::Wrapping::None),
                 button::view("Next", (insight.page < pages).then_some(Message::Next)),
             ]
             .align_y(Vertical::Center)
             .spacing(8)
         )
+        .clip(true)
+        .padding(4)
         .style(move |_| container::Style {
             background: Some(Color::from_rgb8(245, 245, 255).into()),
             border: Border {
@@ -59,13 +61,12 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 ..Default::default()
             },
             shadow: Shadow {
-                color: Color::from_rgb8(200, 200, 200),
+                color: Color::from_rgb8(190, 190, 190),
                 offset: Vector::new(1.0, 1.0),
                 blur_radius: 4.0,
             },
             ..container::Style::default()
-        })
-        .padding(4),
+        }),
         Space::new().width(Length::Fill),
     ];
 
@@ -115,7 +116,7 @@ fn cell<'a>(content: String, width: f32) -> Element<'a, Message> {
                     ..Default::default()
                 },
                 shadow: Shadow {
-                    color: Color::from_rgb8(200, 200, 200),
+                    color: Color::from_rgb8(190, 190, 190),
                     offset: Vector::new(1.0, 1.0),
                     blur_radius: 4.0,
                 },
