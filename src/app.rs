@@ -1,7 +1,7 @@
 use crate::{cards, components::scroll, metrics, state::Insight};
 use iced::{
     Background, Color, Element, Length, Subscription, time,
-    widget::{container, row},
+    widget::{column, container, row},
 };
 use std::time::Duration;
 
@@ -21,6 +21,7 @@ impl Insight {
                 metrics::update_cpu_usage(self);
                 metrics::update_memory_usage(self);
                 metrics::get_processes(self);
+                metrics::update_storage(self);
             }
             Message::Previous => {
                 if self.page > 1 {
@@ -40,13 +41,18 @@ impl Insight {
     pub fn view(&self) -> Element<'_, Message> {
         container(scroll::view(
             container(
-                row![
-                    cards::cpu::view(self),
-                    cards::memory::view(self),
-                    cards::processes::view(self)
+                column![
+                    row![
+                        cards::cpu::view(self),
+                        cards::memory::view(self),
+                        cards::processes::view(self)
+                    ]
+                    .spacing(24),
+                    cards::storage::view(self)
                 ]
                 .spacing(24),
             )
+            .width(Length::Fill)
             .padding(24),
         ))
         .width(Length::Fill)

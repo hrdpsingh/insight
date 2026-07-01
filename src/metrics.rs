@@ -1,4 +1,4 @@
-use crate::state::{Insight, Process};
+use crate::state::{Disk, Insight, Process};
 
 pub fn update_cpu_usage(insight: &mut Insight) {
     let cpus = insight.system.cpus();
@@ -31,4 +31,18 @@ pub fn get_processes(insight: &mut Insight) {
         .collect();
     processes.sort_by_key(|process| std::cmp::Reverse(process.memory));
     insight.processes = processes;
+}
+
+pub fn update_storage(insight: &mut Insight) {
+    insight.disks.refresh(true);
+
+    insight.storage.disks = insight
+        .disks
+        .list()
+        .iter()
+        .map(|disk| Disk {
+            total: disk.total_space(),
+            available: disk.available_space(),
+        })
+        .collect();
 }
