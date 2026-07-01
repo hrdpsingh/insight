@@ -1,6 +1,6 @@
 use iced::{
     Color, Element, Length, Rectangle, Renderer, Theme, mouse,
-    widget::canvas::{self, Canvas, Frame, Geometry, Path, gradient},
+    widget::canvas::{self, Canvas, Frame, Geometry, Path},
 };
 
 struct Graph {
@@ -63,26 +63,7 @@ impl<Message> canvas::Program<Message> for Graph {
             builder.line_to(iced::Point::new(width, height));
         });
 
-        let gradient = gradient::Linear::new(
-            iced::Point::new(
-                0.0,
-                points
-                    .iter()
-                    .map(|point| point.y)
-                    .fold(f32::INFINITY, f32::min),
-            ),
-            iced::Point::new(0.0, height),
-        )
-        .add_stop(0.0, self.filled_color)
-        .add_stop(
-            1.0,
-            Color {
-                a: 0.75,
-                ..self.filled_color
-            },
-        );
-
-        frame.fill(&filled_area, gradient);
+        frame.fill(&filled_area, self.filled_color);
         vec![frame.into_geometry()]
     }
 }

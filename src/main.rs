@@ -14,6 +14,7 @@ fn main() -> iced::Result {
         .title("Insight")
         .settings(iced::Settings {
             default_text_size: Pixels(16.0),
+            vsync: false,
             ..Default::default()
         })
         .window(window::Settings {

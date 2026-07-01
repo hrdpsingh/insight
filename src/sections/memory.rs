@@ -1,8 +1,6 @@
 use iced::{
-    Border, Color, Element, Length,
-    alignment::Vertical,
-    padding,
-    widget::{Space, column, container, row, text},
+    Color, Element, Length, padding,
+    widget::{Space, column, row},
 };
 
 use crate::{
@@ -22,48 +20,17 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             ],
             row![
                 column![
-                    row![
-                        container(
-                            Space::new()
-                                .width(Length::Fixed(12.0))
-                                .height(Length::Fixed(12.0))
-                        )
-                        .style(move |_| container::Style {
-                            background: Some(Color::from_rgb8(200, 200, 255).into()),
-                            border: Border {
-                                radius: 8.0.into(),
-                                ..Default::default()
-                            },
-                            ..container::Style::default()
-                        }),
-                        text(format!(
-                            "Free: {:.1} GB",
+                    components::variable::view(
+                        "Free",
+                        format!(
+                            "{:.1} GB",
                             utilities::to_gb(insight.memory.total - insight.memory.used),
-                        ))
-                    ]
-                    .spacing(8)
-                    .align_y(Vertical::Center),
-                    row![
-                        container(
-                            Space::new()
-                                .width(Length::Fixed(12.0))
-                                .height(Length::Fixed(12.0))
                         )
-                        .style(move |_| container::Style {
-                            background: Some(Color::from_rgb8(150, 150, 255).into()),
-                            border: Border {
-                                radius: 8.0.into(),
-                                ..Default::default()
-                            },
-                            ..container::Style::default()
-                        }),
-                        text(format!(
-                            "Used: {:.1} GB",
-                            utilities::to_gb(insight.memory.used),
-                        ))
-                    ]
-                    .spacing(8)
-                    .align_y(Vertical::Center),
+                    ),
+                    components::variable::view(
+                        "Used",
+                        format!("{:.1} GB ", utilities::to_gb(insight.memory.used),)
+                    ),
                     Space::new().height(Length::Fill),
                     components::constant::view(
                         "Total",

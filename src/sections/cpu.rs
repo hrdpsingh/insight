@@ -24,7 +24,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 100.0,
                 150.0,
                 Color::from_rgb8(220, 220, 255),
-                Color::from_rgb8(130, 130, 255),
+                Color::from_rgb8(150, 150, 255),
             ),
             column![
                 components::constant::view("Name", insight.cpu.name.trim().to_string()),

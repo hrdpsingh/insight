@@ -1,6 +1,6 @@
 use crate::{
     app::Message,
-    components::{button, card},
+    components::{self, button, card},
     state::Insight,
     utilities,
 };
@@ -14,32 +14,44 @@ use iced::{
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
-    let header_row = row![
-        header("PID", 80.0),
-        header("Name", 148.0),
-        header("Memory", 108.0),
-    ]
-    .spacing(8);
-
     let count = 6;
+    let pages = insight.processes.len().div_ceil(count);
 
-    let rows: Vec<Element<'a, Message>> = insight
+    let displayed_processes: Vec<_> = insight
         .processes
         .iter()
         .skip((insight.page - 1) * count)
         .take(count)
-        .map(|process| {
-            row![
-                cell(process.pid.to_string(), 80.0),
-                cell(process.name.clone(), 148.0),
-                cell(format!("{:.1} MB", utilities::to_mb(process.memory)), 108.0,),
-            ]
-            .spacing(8)
-            .into()
-        })
         .collect();
 
-    let pages = insight.processes.len().div_ceil(count);
+    let table = row![
+        build_column(
+            "PID",
+            displayed_processes
+                .iter()
+                .map(|process| process.pid.to_string())
+                .collect(),
+            80.0
+        ),
+        build_column(
+            "Name",
+            displayed_processes
+                .iter()
+                .map(|process| process.name.clone())
+                .collect(),
+            148.0
+        ),
+        build_column(
+            "Memory",
+            displayed_processes
+                .iter()
+                .map(|process| format!("{:.1} MB", utilities::to_mb(process.memory)))
+                .collect(),
+            108.0
+        ),
+    ]
+    .spacing(8);
+
     let navigation = row![
         Space::new().width(Length::Fill),
         card::view(
@@ -49,58 +61,61 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 button::view("Next", (insight.page < pages).then_some(Message::Next)),
             ]
             .align_y(Vertical::Center)
-            .spacing(8),
+            .spacing(12),
             Length::Shrink,
             Color::from_rgb8(245, 245, 255),
-            padding::all(4)
+            padding::all(12)
         ),
         Space::new().width(Length::Fill),
     ];
 
-    let content = column![
-        header_row,
-        column(rows),
-        Space::new().height(Length::Fixed(12.0)),
-        navigation
-    ];
-
     card::view(
-        content,
+        column![
+            row![
+                Space::new().width(Length::Fill),
+                components::title::view(format!("Processes - {}", insight.processes.len())),
+                Space::new().width(Length::Fill),
+            ],
+            column![table, navigation].spacing(12).width(Length::Shrink)
+        ]
+        .spacing(16),
         Length::Shrink,
         Color::from_rgb8(240, 240, 250),
         padding::all(20.0),
     )
 }
 
-fn header<'a>(column_name: &'a str, width: f32) -> Element<'a, Message> {
-    container(
-        text(column_name)
-            .color(Color::from_rgb8(150, 150, 255))
-            .wrapping(text::Wrapping::None)
-            .font(Font {
-                weight: Weight::Bold,
-                ..Font::DEFAULT
-            }),
-    )
-    .clip(true)
-    .width(Length::Fixed(width))
-    .padding(8)
-    .into()
-}
+fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a, Message> {
+    let mut column = column![
+        container(
+            text(name)
+                .color(Color::from_rgb8(150, 150, 255))
+                .wrapping(text::Wrapping::None)
+                .font(Font {
+                    weight: Weight::Bold,
+                    ..Font::DEFAULT
+                }),
+        )
+        .clip(true)
+        .width(Length::Fixed(width))
+        .padding(8)
+    ];
 
-fn cell<'a>(content: String, width: f32) -> Element<'a, Message> {
-    tooltip(
-        container(text(content.clone()).wrapping(text::Wrapping::None))
-            .width(Length::Fixed(width))
-            .padding(8)
-            .clip(true),
-        card::view(
-            text(content),
-            Length::Shrink,
-            Color::from_rgb8(245, 245, 255),
-            padding::all(8),
-        ),
-        tooltip::Position::Bottom,
-    )
-    .into()
+    for item in items {
+        column = column.push(tooltip(
+            container(text(item.clone()).wrapping(text::Wrapping::None))
+                .width(Length::Fixed(width))
+                .padding(8)
+                .clip(true),
+            card::view(
+                text(item),
+                Length::Shrink,
+                Color::from_rgb8(245, 245, 255),
+                padding::all(8),
+            ),
+            tooltip::Position::Bottom,
+        ));
+    }
+
+    column.width(Length::Fixed(width)).into()
 }

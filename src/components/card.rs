@@ -13,7 +13,7 @@ pub fn view<'a>(
         .style(move |_| container::Style {
             background: Some(color.into()),
             border: Border {
-                radius: 8.0.into(),
+                radius: 4.0.into(),
                 ..Default::default()
             },
             shadow: Shadow {
