@@ -1,15 +1,15 @@
 use iced::{
-    Border, Color, Element, Font, Length, Shadow, Vector,
+    Border, Color, Element, Length,
     alignment::Vertical,
-    font::Weight,
     padding,
     widget::{Space, column, container, row, text},
 };
 
 use crate::{
     app::Message,
-    components::{card, donut},
+    components::{self, card, donut},
     state::Insight,
+    utilities,
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
@@ -17,29 +17,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         column![
             row![
                 Space::new().width(Length::Fill),
-                container(
-                    text("Memory")
-                        .size(24)
-                        .font(Font {
-                            weight: Weight::Bold,
-                            ..Font::DEFAULT
-                        })
-                        .color(Color::from_rgb8(100, 100, 100))
-                )
-                .padding(padding::top(4).bottom(4).left(16).right(16))
-                .style(move |_| container::Style {
-                    background: Some(Color::from_rgb8(245, 245, 255).into()),
-                    border: Border {
-                        radius: 8.0.into(),
-                        ..Default::default()
-                    },
-                    shadow: Shadow {
-                        color: Color::from_rgb8(190, 190, 190),
-                        offset: Vector::new(1.0, 1.0),
-                        blur_radius: 4.0,
-                    },
-                    ..container::Style::default()
-                }),
+                components::title::view("Memory".to_string()),
                 Space::new().width(Length::Fill),
             ],
             row![
@@ -60,10 +38,8 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                         }),
                         text(format!(
                             "Free: {:.1} GB",
-                            (insight.memory.total - insight.memory.used) as f32
-                                / (1024 * 1024 * 1024) as f32,
+                            utilities::to_gb(insight.memory.total - insight.memory.used),
                         ))
-                        .size(16)
                     ]
                     .spacing(8)
                     .align_y(Vertical::Center),
@@ -83,27 +59,16 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                         }),
                         text(format!(
                             "Used: {:.1} GB",
-                            insight.memory.used as f32 / (1024 * 1024 * 1024) as f32,
+                            utilities::to_gb(insight.memory.used),
                         ))
-                        .size(16)
                     ]
                     .spacing(8)
                     .align_y(Vertical::Center),
                     Space::new().height(Length::Fill),
-                    column![
-                        text("Total")
-                            .size(16)
-                            .color(Color::from_rgb8(100, 100, 100))
-                            .font(Font {
-                                weight: Weight::Bold,
-                                ..Font::DEFAULT
-                            }),
-                        text(format!(
-                            "{:.1} GB",
-                            insight.memory.total as f32 / (1024 * 1024 * 1024) as f32,
-                        ))
-                        .size(16),
-                    ],
+                    components::constant::view(
+                        "Total",
+                        format!("{:.1} GB", utilities::to_gb(insight.memory.total),)
+                    ),
                 ]
                 .spacing(8),
                 donut::view(
@@ -118,5 +83,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         ]
         .spacing(24),
         Length::Shrink,
+        Color::from_rgb8(240, 240, 250),
+        padding::all(20.0),
     )
 }

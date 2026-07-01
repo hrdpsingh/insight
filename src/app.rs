@@ -1,4 +1,4 @@
-use crate::{cards, components::scroll, metrics, state::Insight};
+use crate::{components::scroll, metrics, sections, state::Insight};
 use iced::{
     Background, Color, Element, Length, Subscription, time,
     widget::{column, container, row},
@@ -43,12 +43,12 @@ impl Insight {
             container(
                 column![
                     row![
-                        cards::cpu::view(self),
-                        cards::memory::view(self),
-                        cards::processes::view(self)
+                        sections::cpu::view(self),
+                        sections::memory::view(self),
+                        sections::processes::view(self)
                     ]
                     .spacing(24),
-                    cards::storage::view(self)
+                    sections::storage::view(self)
                 ]
                 .spacing(24),
             )
