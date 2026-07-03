@@ -3,16 +3,16 @@ use iced::widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke, Text};
 use iced::{Color, Element, Pixels, Radians, Rectangle, Renderer, Theme, mouse};
 
 struct DonutChart {
-    used: u64,
-    total: u64,
+    used: f32,
+    total: f32,
     first_arc_color: Color,
     second_arc_color: Color,
     thickness: f32,
 }
 
 pub fn view<'a, Message: 'a>(
-    used: u64,
-    total: u64,
+    used: f32,
+    total: f32,
     first_arc_color: Color,
     second_arc_color: Color,
     thickness: f32,

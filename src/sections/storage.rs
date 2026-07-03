@@ -2,7 +2,6 @@ use crate::{
     app::Message,
     components::{self, card},
     state::Insight,
-    utilities,
 };
 use iced::{
     Color, Element, Length, padding,
@@ -10,8 +9,8 @@ use iced::{
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
-    let total_space: u64 = insight.storage.disks.iter().map(|disk| disk.total).sum();
-    let available_space: u64 = insight
+    let total_space: f32 = insight.storage.disks.iter().map(|disk| disk.total).sum();
+    let available_space: f32 = insight
         .storage
         .disks
         .iter()
@@ -30,7 +29,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 row![
                     text("Usage"),
                     Space::new().width(Length::Fill),
-                    text(format!("{}%", (used_space * 100) / total_space))
+                    text(format!("{:.1}%", (used_space * 100.0) / total_space))
                 ],
                 components::bar::view(
                     used_space,
@@ -43,14 +42,8 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             .spacing(8)
             .width(Length::Fixed(240.0)),
             column![
-                components::constant::view(
-                    "Total",
-                    format!("{:.1} GB", utilities::to_gb(total_space))
-                ),
-                components::constant::view(
-                    "Used",
-                    format!("{:.1} GB", utilities::to_gb(used_space))
-                ),
+                components::constant::view("Total", format!("{:.1} GB", total_space)),
+                components::constant::view("Used", format!("{:.1} GB", used_space)),
             ]
             .spacing(8),
         ]

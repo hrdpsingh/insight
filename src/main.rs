@@ -1,9 +1,10 @@
+#![windows_subsystem = "windows"]
+
 mod app;
 mod components;
 mod metrics;
 mod sections;
 mod state;
-mod utilities;
 
 use iced::{Pixels, Size, window};
 use state::Insight;
@@ -22,5 +23,6 @@ fn main() -> iced::Result {
             min_size: Some(Size::new(800.0, 450.0)),
             ..Default::default()
         })
+        .centered()
         .run()
 }

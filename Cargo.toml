@@ -4,9 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-iced = { version = "0.14", default-features = false, features = ["wgpu", "tokio", "canvas"] }
-sysinfo = "0.39.5"
+iced = { version = "0.14", default-features = false, features = ["wgpu", "tokio", "canvas", "crisp"] }
+sysinfo = { version = "0.39.5", default-features = false, features = ["disk", "system", "multithread"] }
 
 [profile.release]
 lto = true
 codegen-units = 1
+panic = "abort"

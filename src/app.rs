@@ -16,23 +16,25 @@ impl Insight {
     pub fn update(&mut self, message: Message) {
         match message {
             Message::Tick => {
-                self.system.refresh_all();
+                self.system.refresh_specifics(metrics::refresh_system());
+                self.disks
+                    .refresh_specifics(false, metrics::refresh_disks());
 
-                metrics::update_cpu_usage(self);
-                metrics::update_memory_usage(self);
-                metrics::get_processes(self);
+                metrics::update_cpu(self);
+                metrics::update_memory(self);
+                metrics::update_processes(self);
                 metrics::update_storage(self);
             }
             Message::Previous => {
-                if self.page > 1 {
-                    self.page -= 1;
+                if self.processes.page > 1 {
+                    self.processes.page -= 1;
                 }
             }
             Message::Next => {
-                let count = self.processes.len().div_ceil(6);
+                let count = self.processes.list.len().div_ceil(6);
 
-                if self.page < count {
-                    self.page += 1;
+                if self.processes.page < count {
+                    self.processes.page += 1;
                 }
             }
         }

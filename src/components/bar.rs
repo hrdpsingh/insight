@@ -2,16 +2,16 @@ use iced::widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke};
 use iced::{Color, Element, Length, Point, Rectangle, Renderer, Theme, mouse};
 
 struct ProgressBar {
-    used: u64,
-    total: u64,
+    used: f32,
+    total: f32,
     first_color: Color,
     second_color: Color,
     thickness: f32,
 }
 
 pub fn view<'a, Message: 'a>(
-    used: u64,
-    total: u64,
+    used: f32,
+    total: f32,
     first_color: Color,
     second_color: Color,
     thickness: f32,

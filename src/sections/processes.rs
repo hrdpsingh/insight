@@ -2,7 +2,6 @@ use crate::{
     app::Message,
     components::{self, button, card},
     state::Insight,
-    utilities,
 };
 
 use iced::{
@@ -15,12 +14,13 @@ use iced::{
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
     let count = 6;
-    let pages = insight.processes.len().div_ceil(count);
+    let pages = insight.processes.list.len().div_ceil(count);
 
     let displayed_processes: Vec<_> = insight
         .processes
+        .list
         .iter()
-        .skip((insight.page - 1) * count)
+        .skip((insight.processes.page - 1) * count)
         .take(count)
         .collect();
 
@@ -45,7 +45,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             "Memory",
             displayed_processes
                 .iter()
-                .map(|process| format!("{:.1} MB", utilities::to_mb(process.memory)))
+                .map(|process| format!("{:.1} MB", process.memory))
                 .collect(),
             108.0
         ),
@@ -56,9 +56,16 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         Space::new().width(Length::Fill),
         card::view(
             row![
-                button::view("Back", (insight.page > 1).then_some(Message::Previous)),
-                text(format!("{} of {}", insight.page, pages)).wrapping(text::Wrapping::None),
-                button::view("Next", (insight.page < pages).then_some(Message::Next)),
+                button::view(
+                    "Back",
+                    (insight.processes.page > 1).then_some(Message::Previous)
+                ),
+                text(format!("{} of {}", insight.processes.page, pages))
+                    .wrapping(text::Wrapping::None),
+                button::view(
+                    "Next",
+                    (insight.processes.page < pages).then_some(Message::Next)
+                ),
             ]
             .align_y(Vertical::Center)
             .spacing(12),
@@ -73,7 +80,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         column![
             row![
                 Space::new().width(Length::Fill),
-                components::title::view(format!("Processes - {}", insight.processes.len())),
+                components::title::view(format!("Processes - {}", insight.processes.list.len())),
                 Space::new().width(Length::Fill),
             ],
             column![table, navigation].spacing(12).width(Length::Shrink)

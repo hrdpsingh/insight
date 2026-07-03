@@ -6,6 +6,7 @@ pub fn view(content: &str, navigate: Option<Message>) -> Element<'_, Message> {
         Some(message) => button(content)
             .on_press(message)
             .padding(padding::horizontal(8).vertical(4))
+            .clip(true)
             .style(move |_, _| button::Style {
                 text_color: Color::from_rgb8(255, 255, 255),
                 background: Some(Color::from_rgb8(150, 150, 255).into()),
@@ -17,6 +18,7 @@ pub fn view(content: &str, navigate: Option<Message>) -> Element<'_, Message> {
             }),
         None => button(content)
             .padding(padding::horizontal(8).vertical(4))
+            .clip(true)
             .style(move |_, _| button::Style {
                 text_color: Color::from_rgb8(225, 225, 255),
                 background: Some(Color::from_rgb8(180, 180, 255).into()),

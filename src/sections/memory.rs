@@ -7,7 +7,6 @@ use crate::{
     app::Message,
     components::{self, card, donut},
     state::Insight,
-    utilities,
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
@@ -22,20 +21,11 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 column![
                     components::variable::view(
                         "Free",
-                        format!(
-                            "{:.1} GB",
-                            utilities::to_gb(insight.memory.total - insight.memory.used),
-                        )
+                        format!("{:.1} GB", insight.memory.total - insight.memory.used,)
                     ),
-                    components::variable::view(
-                        "Used",
-                        format!("{:.1} GB ", utilities::to_gb(insight.memory.used),)
-                    ),
+                    components::variable::view("Used", format!("{:.1} GB ", insight.memory.used)),
                     Space::new().height(Length::Fill),
-                    components::constant::view(
-                        "Total",
-                        format!("{:.1} GB", utilities::to_gb(insight.memory.total),)
-                    ),
+                    components::constant::view("Total", format!("{:.1} GB", insight.memory.total)),
                 ]
                 .spacing(8),
                 donut::view(

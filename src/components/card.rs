@@ -17,7 +17,7 @@ pub fn view<'a>(
                 ..Default::default()
             },
             shadow: Shadow {
-                color: Color::from_rgb8(190, 190, 190),
+                color: Color::from_rgb8(180, 180, 180),
                 offset: Vector::new(1.0, 1.0),
                 blur_radius: 4.0,
             },
