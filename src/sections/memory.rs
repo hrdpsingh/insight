@@ -1,11 +1,12 @@
 use iced::{
-    Color, Element, Length, padding,
+    Element, Length, padding,
     widget::{Space, column, row},
 };
 
 use crate::{
     app::Message,
     components::{self, card, donut},
+    palette,
     state::Insight,
 };
 
@@ -31,8 +32,8 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 donut::view(
                     insight.memory.used,
                     insight.memory.total,
-                    Color::from_rgb8(150, 150, 255),
-                    Color::from_rgb8(200, 200, 255),
+                    palette::ACCENT,
+                    palette::ACCENT_LIGHT,
                     12.0,
                 ),
             ]
@@ -40,7 +41,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         ]
         .spacing(24),
         Length::Shrink,
-        Color::from_rgb8(240, 240, 250),
+        palette::CARD,
         padding::all(20.0),
     )
 }

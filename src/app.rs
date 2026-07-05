@@ -1,6 +1,6 @@
-use crate::{components::scroll, metrics, sections, state::Insight};
+use crate::{components::scroll, metrics, palette, sections, state::Insight};
 use iced::{
-    Background, Color, Element, Length, Subscription, time,
+    Background, Element, Length, Subscription, time,
     widget::{column, container, row},
 };
 use std::time::Duration;
@@ -10,6 +10,7 @@ pub enum Message {
     Tick,
     Previous,
     Next,
+    Refresh,
 }
 
 impl Insight {
@@ -23,7 +24,6 @@ impl Insight {
                 metrics::update_cpu(self);
                 metrics::update_memory(self);
                 metrics::update_processes(self);
-                metrics::update_storage(self);
             }
             Message::Previous => {
                 if self.processes.page > 1 {
@@ -36,6 +36,9 @@ impl Insight {
                 if self.processes.page < count {
                     self.processes.page += 1;
                 }
+            }
+            Message::Refresh => {
+                metrics::update_storage(self);
             }
         }
     }
@@ -60,7 +63,7 @@ impl Insight {
         .width(Length::Fill)
         .height(Length::Fill)
         .style(|_| container::Style {
-            background: Some(Background::Color(Color::from_rgb8(235, 235, 245))),
+            background: Some(Background::Color(palette::BACKGROUND)),
             ..container::Style::default()
         })
         .into()

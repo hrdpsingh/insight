@@ -1,5 +1,5 @@
 use iced::{
-    Color, Element, Length, Rectangle, Renderer, Theme, mouse,
+    Color, Element, Length, Point, Rectangle, Renderer, Theme, mouse,
     widget::canvas::{self, Canvas, Frame, Geometry, Path},
 };
 
@@ -44,6 +44,11 @@ impl<Message> canvas::Program<Message> for Graph {
 
         let width = bounds.width;
         let height = bounds.height;
+
+        if self.data.is_empty() {
+            return vec![frame.into_geometry()];
+        }
+
         let gap = width / ((self.data.len() - 1) as f32);
 
         let points: Vec<iced::Point> = self
@@ -58,9 +63,22 @@ impl<Message> canvas::Program<Message> for Graph {
             .collect();
 
         let filled_area = Path::new(|builder| {
-            builder.move_to(iced::Point::new(0.0, height));
-            points.iter().for_each(|&point| builder.line_to(point));
-            builder.line_to(iced::Point::new(width, height));
+            builder.move_to(Point::new(0.0, height));
+            builder.line_to(points[0]);
+
+            for i in 0..points.len() - 1 {
+                let point_1 = points[i];
+                let point_2 = points[i + 1];
+
+                let mid_point =
+                    Point::new((point_1.x + point_2.x) / 2.0, (point_1.y + point_2.y) / 2.0);
+                builder.quadratic_curve_to(point_1, mid_point);
+            }
+
+            if let Some(&last_point) = points.last() {
+                builder.line_to(last_point);
+            }
+            builder.line_to(Point::new(width, height));
         });
 
         frame.fill(&filled_area, self.filled_color);

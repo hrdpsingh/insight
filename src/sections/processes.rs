@@ -1,15 +1,16 @@
 use crate::{
     app::Message,
     components::{self, button, card},
+    palette,
     state::Insight,
 };
 
 use iced::{
-    Color, Element, Font, Length,
+    Element, Font, Length,
     alignment::Vertical,
     font::Weight,
     padding,
-    widget::{Space, column, container, row, text, tooltip},
+    widget::{Space, column, container, row, svg, text, tooltip},
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
@@ -57,21 +58,25 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         card::view(
             row![
                 button::view(
-                    "Back",
+                    svg(svg::Handle::from_memory(
+                        include_bytes!("../../icons/left_arrow.svg").as_ref()
+                    )),
                     (insight.processes.page > 1).then_some(Message::Previous)
                 ),
                 text(format!("{} of {}", insight.processes.page, pages))
                     .wrapping(text::Wrapping::None),
                 button::view(
-                    "Next",
+                    svg(svg::Handle::from_memory(
+                        include_bytes!("../../icons/right_arrow.svg").as_ref()
+                    )),
                     (insight.processes.page < pages).then_some(Message::Next)
                 ),
             ]
             .align_y(Vertical::Center)
             .spacing(12),
             Length::Shrink,
-            Color::from_rgb8(245, 245, 255),
-            padding::all(12)
+            palette::ELEVATED,
+            padding::all(8)
         ),
         Space::new().width(Length::Fill),
     ];
@@ -87,7 +92,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         ]
         .spacing(16),
         Length::Shrink,
-        Color::from_rgb8(240, 240, 250),
+        palette::CARD,
         padding::all(20.0),
     )
 }
@@ -96,7 +101,7 @@ fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a
     let mut column = column![
         container(
             text(name)
-                .color(Color::from_rgb8(150, 150, 255))
+                .color(palette::ACCENT)
                 .wrapping(text::Wrapping::None)
                 .font(Font {
                     weight: Weight::Bold,
@@ -109,17 +114,12 @@ fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a
     ];
 
     for item in items {
-        column = column.push(tooltip(
+        column = column.push(components::tooltip::view(
             container(text(item.clone()).wrapping(text::Wrapping::None))
                 .width(Length::Fixed(width))
                 .padding(8)
                 .clip(true),
-            card::view(
-                text(item),
-                Length::Shrink,
-                Color::from_rgb8(245, 245, 255),
-                padding::all(8),
-            ),
+            text(item),
             tooltip::Position::Bottom,
         ));
     }

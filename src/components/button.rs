@@ -1,33 +1,36 @@
-use crate::app::Message;
-use iced::{Border, Color, Element, border::Radius, padding, widget::button};
+use crate::{app::Message, palette};
+use iced::{
+    Element,
+    widget::{Svg, button, svg},
+};
 
-pub fn view(content: &str, navigate: Option<Message>) -> Element<'_, Message> {
+pub fn view(icon: Svg<'_>, navigate: Option<Message>) -> Element<'_, Message> {
+    let enabled = navigate.is_some();
+
+    let standard_color = if enabled {
+        palette::MUTED
+    } else {
+        palette::DISABLED
+    };
+
+    let button_widget = button(
+        icon.height(20)
+            .width(20)
+            .style(move |_, status| svg::Style {
+                color: Some(match status {
+                    svg::Status::Hovered if enabled => palette::ACCENT,
+                    _ => standard_color,
+                }),
+            }),
+    )
+    .padding(0)
+    .style(move |_, _| button::Style {
+        background: Some(palette::TRANSPARENT.into()),
+        ..Default::default()
+    });
+
     match navigate {
-        Some(message) => button(content)
-            .on_press(message)
-            .padding(padding::horizontal(8).vertical(4))
-            .clip(true)
-            .style(move |_, _| button::Style {
-                text_color: Color::from_rgb8(255, 255, 255),
-                background: Some(Color::from_rgb8(150, 150, 255).into()),
-                border: Border {
-                    radius: Radius::from(4.0),
-                    ..Default::default()
-                },
-                ..button::Style::default()
-            }),
-        None => button(content)
-            .padding(padding::horizontal(8).vertical(4))
-            .clip(true)
-            .style(move |_, _| button::Style {
-                text_color: Color::from_rgb8(225, 225, 255),
-                background: Some(Color::from_rgb8(180, 180, 255).into()),
-                border: Border {
-                    radius: Radius::from(4.0),
-                    ..Default::default()
-                },
-                ..button::Style::default()
-            }),
+        Some(message) => button_widget.on_press(message).into(),
+        None => button_widget.into(),
     }
-    .into()
 }

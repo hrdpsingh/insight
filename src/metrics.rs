@@ -1,3 +1,4 @@
+use chrono::Local;
 use sysinfo::{
     CpuRefreshKind, DiskRefreshKind, Disks, MemoryRefreshKind, ProcessRefreshKind, RefreshKind,
     System,
@@ -28,7 +29,10 @@ pub fn initialize() -> Insight {
             list: Vec::new(),
             page: 1,
         },
-        storage: crate::state::Storage { disks: Vec::new() },
+        storage: crate::state::Storage {
+            disks: Vec::new(),
+            time: "Unavailable".to_string(),
+        },
         system,
         disks,
     };
@@ -93,6 +97,7 @@ pub fn update_processes(insight: &mut Insight) {
 }
 
 pub fn update_storage(insight: &mut Insight) {
+    insight.storage.time = Local::now().format("%H:%M:%S").to_string();
     insight.disks.refresh_specifics(false, refresh_disks());
     insight.storage.disks.clear();
 

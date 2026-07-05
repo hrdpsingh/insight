@@ -1,11 +1,12 @@
 use crate::{
     app::Message,
     components::{self, card},
+    palette,
     state::Insight,
 };
 use iced::{
-    Color, Element, Length, padding,
-    widget::{Space, column, row, text},
+    Element, Length, alignment, padding,
+    widget::{Space, column, row, svg, text, tooltip},
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
@@ -21,10 +22,20 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
     card::view(
         column![
             row![
-                Space::new().width(Length::Fill),
                 components::title::view("Storage".to_string()),
                 Space::new().width(Length::Fill),
-            ],
+                components::tooltip::view(
+                    components::button::view(
+                        svg(svg::Handle::from_memory(
+                            include_bytes!("../../icons/refresh.svg").as_ref()
+                        )),
+                        Option::Some(Message::Refresh)
+                    ),
+                    components::constant::view("Last Refreshed", insight.storage.time.clone()),
+                    tooltip::Position::Top
+                )
+            ]
+            .align_y(alignment::Vertical::Center),
             column![
                 row![
                     text("Usage"),
@@ -34,8 +45,8 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 components::bar::view(
                     used_space,
                     total_space,
-                    Color::from_rgb8(150, 150, 255),
-                    Color::from_rgb8(200, 200, 255),
+                    palette::ACCENT,
+                    palette::ACCENT_LIGHT,
                     12.0,
                 ),
             ]
@@ -49,7 +60,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         ]
         .spacing(24),
         Length::Shrink,
-        Color::from_rgb8(240, 240, 250),
+        palette::CARD,
         padding::all(20.0),
     )
 }

@@ -35,6 +35,7 @@ pub struct Process {
 
 pub struct Storage {
     pub disks: Vec<Disk>,
+    pub time: String,
 }
 
 pub struct Disk {

@@ -3,6 +3,7 @@
 mod app;
 mod components;
 mod metrics;
+mod palette;
 mod sections;
 mod state;
 

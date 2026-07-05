@@ -6,4 +6,5 @@ pub mod donut;
 pub mod graph;
 pub mod scroll;
 pub mod title;
+pub mod tooltip;
 pub mod variable;

@@ -1,10 +1,11 @@
 use crate::{
     app::Message,
     components::{self, card, graph},
+    palette,
     state::Insight,
 };
 use iced::{
-    Color, Element, Length, padding,
+    Element, Length, padding,
     widget::{Space, column, row},
 };
 
@@ -22,9 +23,9 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             graph::view(
                 insight.cpu.history.clone(),
                 100.0,
-                150.0,
-                Color::from_rgb8(220, 220, 255),
-                Color::from_rgb8(150, 150, 255),
+                140.0,
+                palette::ACCENT_LIGHT,
+                palette::ACCENT,
             ),
             column![
                 components::constant::view("Name", insight.cpu.name.trim().to_string()),
@@ -35,7 +36,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         ]
         .spacing(20),
         Length::Shrink,
-        Color::from_rgb8(240, 240, 250),
+        palette::CARD,
         padding::all(20.0),
     )
 }

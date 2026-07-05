@@ -1,4 +1,4 @@
-use crate::app::Message;
+use crate::{app::Message, palette};
 use iced::{
     Border, Color, Element, Length, Padding, Renderer, Shadow, Theme, Vector, widget::container,
 };
@@ -17,7 +17,7 @@ pub fn view<'a>(
                 ..Default::default()
             },
             shadow: Shadow {
-                color: Color::from_rgb8(180, 180, 180),
+                color: palette::SHADOW,
                 offset: Vector::new(1.0, 1.0),
                 blur_radius: 4.0,
             },
