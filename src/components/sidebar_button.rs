@@ -15,9 +15,8 @@ pub fn view(icon: Svg<'_>, navigate: Option<Message>) -> Element<'_, Message> {
 
                 svg::Style {
                     color: Some(match (status, enabled) {
-                        (svg::Status::Hovered, true) => palette.accent,
                         (_, true) => palette.faded,
-                        (_, false) => palette.disabled,
+                        (_, false) => palette.accent,
                     }),
                 }
             }),

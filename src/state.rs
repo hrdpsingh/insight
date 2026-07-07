@@ -1,5 +1,6 @@
-use crate::metrics;
-use sysinfo::{Disks, System};
+use crate::palette::Palette;
+use iced::Theme;
+use sysinfo::{Disks, Networks, System};
 
 pub struct Insight {
     pub cpu: Cpu,
@@ -8,6 +9,8 @@ pub struct Insight {
     pub storage: Storage,
     pub system: System,
     pub disks: Disks,
+    pub network: Network,
+    pub mode: Mode,
 }
 
 pub struct Cpu {
@@ -18,8 +21,8 @@ pub struct Cpu {
 }
 
 pub struct Memory {
-    pub used: f32,
-    pub total: f32,
+    pub used: u64,
+    pub total: u64,
 }
 
 pub struct Processes {
@@ -30,7 +33,7 @@ pub struct Processes {
 pub struct Process {
     pub pid: u32,
     pub name: String,
-    pub memory: f32,
+    pub memory: u64,
 }
 
 pub struct Storage {
@@ -39,12 +42,45 @@ pub struct Storage {
 }
 
 pub struct Disk {
-    pub total: f32,
-    pub available: f32,
+    pub total: u64,
+    pub free: u64,
 }
 
-impl Default for Insight {
-    fn default() -> Self {
-        metrics::initialize()
+pub struct Network {
+    pub interfaces: Networks,
+    pub outgoing: u64,
+    pub incoming: u64,
+    pub receiving: bool,
+    pub sending: bool,
+    pub received: u64,
+    pub sent: u64,
+}
+
+#[derive(Default, Clone)]
+pub enum Mode {
+    #[default]
+    Dark,
+    Light,
+}
+
+impl Mode {
+    pub fn convert(&self) -> Theme {
+        match self {
+            Mode::Light => Theme::Light,
+            Mode::Dark => Theme::Dark,
+        }
+    }
+}
+
+pub trait ExtendTheme {
+    fn custom(&self) -> &'static Palette;
+}
+
+impl ExtendTheme for Theme {
+    fn custom(&self) -> &'static Palette {
+        match self {
+            Theme::Dark => &Palette::DARK,
+            _ => &Palette::LIGHT,
+        }
     }
 }

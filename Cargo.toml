@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 iced = { version = "0.14", default-features = false, features = ["wgpu", "tokio", "canvas", "crisp", "svg"] }
-sysinfo = { version = "0.39.5", default-features = false, features = ["disk", "system", "multithread"] }
+sysinfo = { version = "0.39.5", default-features = false, features = ["disk", "system", "network", "multithread"] }
 chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
 
 [profile.release]

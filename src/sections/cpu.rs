@@ -1,7 +1,6 @@
 use crate::{
     app::Message,
     components::{self, card, graph},
-    palette,
     state::Insight,
 };
 use iced::{
@@ -24,19 +23,19 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 insight.cpu.history.clone(),
                 100.0,
                 140.0,
-                palette::ACCENT_LIGHT,
-                palette::ACCENT,
+                insight.palette().accent_light,
+                insight.palette().accent,
             ),
             column![
-                components::constant::view("Name", insight.cpu.name.trim().to_string()),
-                components::constant::view("Logical Cores", insight.cpu.core_count.to_string()),
-                components::constant::view("Architecture", insight.cpu.architecture.clone()),
+                components::stacked::view("Name", insight.cpu.name.trim().to_string()),
+                components::stacked::view("Logical Cores", insight.cpu.core_count.to_string()),
+                components::stacked::view("Architecture", insight.cpu.architecture.clone()),
             ]
             .spacing(8),
         ]
         .spacing(20),
         Length::Shrink,
-        palette::CARD,
+        |palette| palette.surface,
         padding::all(20.0),
     )
 }

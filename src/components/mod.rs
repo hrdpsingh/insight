@@ -1,10 +1,11 @@
 pub mod bar;
 pub mod button;
 pub mod card;
-pub mod constant;
 pub mod donut;
 pub mod graph;
+pub mod inline;
 pub mod scroll;
+pub mod sidebar_button;
+pub mod stacked;
 pub mod title;
 pub mod tooltip;
-pub mod variable;

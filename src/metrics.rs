@@ -1,14 +1,15 @@
 use chrono::Local;
 use sysinfo::{
-    CpuRefreshKind, DiskRefreshKind, Disks, MemoryRefreshKind, ProcessRefreshKind, RefreshKind,
-    System,
+    CpuRefreshKind, DiskRefreshKind, Disks, MemoryRefreshKind, Networks, ProcessRefreshKind,
+    RefreshKind, System,
 };
 
-use crate::state::{Cpu, Disk, Insight, Process, Processes};
+use crate::state::{Cpu, Disk, Insight, Mode, Network, Process, Processes};
 
 pub fn initialize() -> Insight {
     let system = System::new_with_specifics(refresh_system());
     let disks = Disks::new_with_refreshed_list_specifics(DiskRefreshKind::nothing().with_storage());
+    let networks = Networks::new_with_refreshed_list();
 
     let mut insight = Insight {
         cpu: Cpu {
@@ -21,10 +22,7 @@ pub fn initialize() -> Insight {
             core_count: system.cpus().len(),
             history: vec![0.0; 60],
         },
-        memory: crate::state::Memory {
-            used: 0.0,
-            total: 0.0,
-        },
+        memory: crate::state::Memory { used: 0, total: 0 },
         processes: Processes {
             list: Vec::new(),
             page: 1,
@@ -35,6 +33,16 @@ pub fn initialize() -> Insight {
         },
         system,
         disks,
+        network: Network {
+            interfaces: networks,
+            incoming: 0,
+            outgoing: 0,
+            receiving: false,
+            sending: false,
+            received: 0,
+            sent: 0,
+        },
+        mode: Mode::default(),
     };
 
     update_memory(&mut insight);
@@ -69,8 +77,8 @@ pub fn update_cpu(insight: &mut Insight) {
 }
 
 pub fn update_memory(insight: &mut Insight) {
-    insight.memory.used = to_gb(insight.system.used_memory());
-    insight.memory.total = to_gb(insight.system.total_memory());
+    insight.memory.used = insight.system.used_memory();
+    insight.memory.total = insight.system.total_memory();
 }
 
 pub fn update_processes(insight: &mut Insight) {
@@ -87,13 +95,13 @@ pub fn update_processes(insight: &mut Insight) {
                 .map(|(pid, process)| Process {
                     pid: pid.as_u32(),
                     name: process.name().to_string_lossy().to_string(),
-                    memory: to_mb(process.memory()),
+                    memory: process.memory(),
                 }),
         );
     insight
         .processes
         .list
-        .sort_by(|p1, p2| p2.memory.total_cmp(&p1.memory));
+        .sort_by_key(|p2| std::cmp::Reverse(p2.memory));
 }
 
 pub fn update_storage(insight: &mut Insight) {
@@ -105,15 +113,48 @@ pub fn update_storage(insight: &mut Insight) {
         .storage
         .disks
         .extend(insight.disks.list().iter().map(|disk| Disk {
-            total: to_gb(disk.total_space()),
-            available: to_gb(disk.available_space()),
+            total: disk.total_space(),
+            free: disk.available_space(),
         }));
 }
 
-fn to_gb(bytes: u64) -> f32 {
-    bytes as f32 / (1024 * 1024 * 1024) as f32
+pub fn update_network(insight: &mut Insight) {
+    insight.network.interfaces.refresh(true);
+
+    insight.network.incoming = insight
+        .network
+        .interfaces
+        .values()
+        .map(|data| data.received())
+        .sum();
+
+    insight.network.outgoing = insight
+        .network
+        .interfaces
+        .values()
+        .map(|data| data.transmitted())
+        .sum();
+
+    insight.network.receiving = insight.network.incoming != 0;
+    insight.network.sending = insight.network.outgoing != 0;
+
+    insight.network.received += insight.network.incoming;
+    insight.network.sent += insight.network.outgoing;
 }
 
-fn to_mb(bytes: u64) -> f32 {
-    bytes as f32 / (1024 * 1024) as f32
+pub fn format_bytes(bytes: u64) -> String {
+    let units = ["B", "KiB", "MiB", "GiB"];
+    let mut index = 0;
+    let mut number = bytes as f64;
+
+    while number >= 1024.0 && index < 3 {
+        number /= 1024.0;
+        index += 1;
+    }
+
+    if index == 0 {
+        format!("{:.0} {}", number, units[index])
+    } else {
+        format!("{:.1} {}", number, units[index])
+    }
 }

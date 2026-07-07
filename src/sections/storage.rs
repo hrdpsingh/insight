@@ -1,7 +1,7 @@
 use crate::{
     app::Message,
     components::{self, card},
-    palette,
+    metrics::format_bytes,
     state::Insight,
 };
 use iced::{
@@ -10,14 +10,9 @@ use iced::{
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
-    let total_space: f32 = insight.storage.disks.iter().map(|disk| disk.total).sum();
-    let available_space: f32 = insight
-        .storage
-        .disks
-        .iter()
-        .map(|disk| disk.available)
-        .sum();
-    let used_space = total_space - available_space;
+    let free: u64 = insight.storage.disks.iter().map(|disk| disk.free).sum();
+    let total: u64 = insight.storage.disks.iter().map(|disk| disk.total).sum();
+    let used = total - free;
 
     card::view(
         column![
@@ -31,7 +26,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                         )),
                         Option::Some(Message::Refresh)
                     ),
-                    components::constant::view("Last Refreshed", insight.storage.time.clone()),
+                    components::stacked::view("Last Refreshed", insight.storage.time.clone()),
                     tooltip::Position::Top
                 )
             ]
@@ -40,27 +35,27 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 row![
                     text("Usage"),
                     Space::new().width(Length::Fill),
-                    text(format!("{:.1}%", (used_space * 100.0) / total_space))
+                    text(format!("{:.1}%", (used * 100) as f32 / total as f32))
                 ],
                 components::bar::view(
-                    used_space,
-                    total_space,
-                    palette::ACCENT,
-                    palette::ACCENT_LIGHT,
+                    used,
+                    total,
+                    insight.palette().accent,
+                    insight.palette().accent_light,
                     12.0,
                 ),
             ]
             .spacing(8)
             .width(Length::Fixed(240.0)),
             column![
-                components::constant::view("Total", format!("{:.1} GB", total_space)),
-                components::constant::view("Used", format!("{:.1} GB", used_space)),
+                components::stacked::view("Used", format_bytes(used)),
+                components::stacked::view("Total", format_bytes(total)),
             ]
-            .spacing(8),
+            .spacing(4),
         ]
         .spacing(24),
         Length::Shrink,
-        palette::CARD,
+        |palette| palette.surface,
         padding::all(20.0),
     )
 }

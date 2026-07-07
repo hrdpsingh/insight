@@ -1,7 +1,7 @@
 use crate::{
     app::Message,
     components::{self, button, card},
-    palette,
+    metrics::format_bytes,
     state::Insight,
 };
 
@@ -27,6 +27,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
 
     let table = row![
         build_column(
+            insight,
             "PID",
             displayed_processes
                 .iter()
@@ -35,6 +36,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             80.0
         ),
         build_column(
+            insight,
             "Name",
             displayed_processes
                 .iter()
@@ -43,10 +45,11 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             148.0
         ),
         build_column(
+            insight,
             "Memory",
             displayed_processes
                 .iter()
-                .map(|process| format!("{:.1} MB", process.memory))
+                .map(|process| format_bytes(process.memory))
                 .collect(),
             108.0
         ),
@@ -75,7 +78,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             .align_y(Vertical::Center)
             .spacing(12),
             Length::Shrink,
-            palette::ELEVATED,
+            |palette| palette.elevated,
             padding::all(8)
         ),
         Space::new().width(Length::Fill),
@@ -92,16 +95,21 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         ]
         .spacing(16),
         Length::Shrink,
-        palette::CARD,
+        |palette| palette.surface,
         padding::all(20.0),
     )
 }
 
-fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a, Message> {
+fn build_column<'a>(
+    insight: &'a Insight,
+    name: &'a str,
+    items: Vec<String>,
+    width: f32,
+) -> Element<'a, Message> {
     let mut column = column![
         container(
             text(name)
-                .color(palette::ACCENT)
+                .color(insight.palette().accent)
                 .wrapping(text::Wrapping::None)
                 .font(Font {
                     weight: Weight::Bold,

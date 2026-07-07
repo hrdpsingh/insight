@@ -6,7 +6,7 @@ use iced::{
     },
 };
 
-use crate::palette;
+use crate::state::ExtendTheme;
 
 pub fn view<'a, Message: 'a>(content: impl Into<Element<'a, Message>>) -> Element<'a, Message> {
     scrollable(content)
@@ -16,7 +16,7 @@ pub fn view<'a, Message: 'a>(content: impl Into<Element<'a, Message>>) -> Elemen
         .style(|theme, status| {
             let mut base_style = scrollable::default(theme, status);
             base_style.vertical_rail.background =
-                Some(Background::Color(palette::SCROLLBAR_BACKGROUND));
+                Some(Background::Color(theme.custom().background));
 
             match status {
                 scrollable::Status::Hovered {
@@ -25,18 +25,18 @@ pub fn view<'a, Message: 'a>(content: impl Into<Element<'a, Message>>) -> Elemen
                 } => {
                     base_style.vertical_rail.scroller.background =
                         Background::Color(if is_vertical_scrollbar_hovered {
-                            palette::SCROLLER_HOVERED
+                            theme.custom().scroller_hovered
                         } else {
-                            palette::SCROLLER
+                            theme.custom().scroller
                         });
                 }
                 scrollable::Status::Dragged { .. } => {
                     base_style.vertical_rail.scroller.background =
-                        Background::Color(palette::SCROLLER_HOVERED);
+                        Background::Color(theme.custom().scroller_hovered);
                 }
                 scrollable::Status::Active { .. } => {
                     base_style.vertical_rail.scroller.background =
-                        Background::Color(palette::SCROLLER);
+                        Background::Color(theme.custom().scroller);
                 }
             }
 

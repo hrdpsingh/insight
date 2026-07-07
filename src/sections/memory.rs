@@ -6,7 +6,7 @@ use iced::{
 use crate::{
     app::Message,
     components::{self, card, donut},
-    palette,
+    metrics::format_bytes,
     state::Insight,
 };
 
@@ -20,20 +20,20 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             ],
             row![
                 column![
-                    components::variable::view(
+                    components::inline::view(
                         "Free",
-                        format!("{:.1} GB", insight.memory.total - insight.memory.used,)
+                        format_bytes(insight.memory.total - insight.memory.used)
                     ),
-                    components::variable::view("Used", format!("{:.1} GB ", insight.memory.used)),
+                    components::inline::view("Used", format_bytes(insight.memory.used)),
                     Space::new().height(Length::Fill),
-                    components::constant::view("Total", format!("{:.1} GB", insight.memory.total)),
+                    components::stacked::view("Total", format_bytes(insight.memory.total)),
                 ]
                 .spacing(8),
                 donut::view(
                     insight.memory.used,
                     insight.memory.total,
-                    palette::ACCENT,
-                    palette::ACCENT_LIGHT,
+                    insight.palette().accent,
+                    insight.palette().accent_light,
                     12.0,
                 ),
             ]
@@ -41,7 +41,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         ]
         .spacing(24),
         Length::Shrink,
-        palette::CARD,
+        |palette| palette.surface,
         padding::all(20.0),
     )
 }

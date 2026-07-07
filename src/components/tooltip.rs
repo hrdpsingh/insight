@@ -1,6 +1,6 @@
 use iced::{Element, Length, Renderer, Theme, padding, widget::tooltip};
 
-use crate::{app::Message, components::card, palette};
+use crate::{app::Message, components::card};
 
 pub fn view<'a>(
     content: impl Into<Element<'a, Message, Theme, Renderer>>,
@@ -12,7 +12,7 @@ pub fn view<'a>(
         card::view(
             tooltip_content,
             Length::Shrink,
-            palette::ELEVATED,
+            |palette| palette.elevated,
             padding::all(8),
         ),
         position,

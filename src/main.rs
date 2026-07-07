@@ -14,6 +14,7 @@ fn main() -> iced::Result {
     iced::application(Insight::default, Insight::update, Insight::view)
         .subscription(Insight::subscription)
         .title("Insight")
+        .theme(|insight: &Insight| insight.mode.convert())
         .settings(iced::Settings {
             default_text_size: Pixels(16.0),
             vsync: false,
