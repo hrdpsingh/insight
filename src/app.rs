@@ -6,9 +6,8 @@ use crate::{
     state::{ExtendTheme, Insight, Mode},
 };
 use iced::{
-    Alignment, Background, Color, Element, Length, Shadow, Subscription, Theme, Vector, border,
-    padding, time,
-    widget::{column, container, row, rule, svg},
+    Alignment, Background, Element, Length, Subscription, Theme, padding, time,
+    widget::{column, container, responsive, row, svg},
 };
 use std::time::Duration;
 
@@ -66,7 +65,7 @@ impl Insight {
     pub fn view(&self) -> Element<'_, Message> {
         container(
             row![
-                container(
+                container(components::card::view(
                     column![
                         components::sidebar_button::view(
                             svg(svg::Handle::from_memory(
@@ -87,52 +86,83 @@ impl Insight {
                             }
                         ),
                     ]
-                    .spacing(16)
-                )
-                .padding(padding::vertical(20))
-                .align_x(Alignment::Center)
-                .height(Length::Fill)
-                .width(Length::Fixed(52.0))
-                .style(|theme: &Theme| container::Style {
-                    background: Some(Background::Color(theme.custom().surface)),
-                    shadow: Shadow {
-                        color: theme.custom().shadow,
-                        offset: Vector::new(1.0, 1.0),
-                        blur_radius: 4.0,
-                    },
-                    ..container::Style::default()
-                }),
-                rule::vertical(2).style(|theme: &Theme| rule::Style {
-                    color: Color {
-                        r: theme.custom().surface.r * 1.15,
-                        g: theme.custom().surface.g * 1.15,
-                        b: theme.custom().surface.b * 1.15,
-                        a: theme.custom().surface.a,
-                    },
-                    fill_mode: rule::FillMode::Full,
-                    radius: border::radius(0.0),
-                    snap: true,
-                }),
-                scroll::view(
-                    container(
-                        column![
-                            row![
-                                sections::cpu::view(self),
-                                sections::memory::view(self),
-                                sections::processes::view(self)
-                            ]
-                            .spacing(24),
-                            row![sections::storage::view(self), sections::network::view(self)]
+                    .spacing(16),
+                    Length::Shrink,
+                    |palette| palette.surface,
+                    padding::all(12.0),
+                ))
+                .padding(padding::top(24).left(24)),
+                scroll::view(responsive(|size| {
+                    if size.width > 800.0 {
+                        container(
+                            column![
+                                row![
+                                    sections::memory::view(self),
+                                    sections::cpu::view(self),
+                                    sections::storage::view(self),
+                                ]
+                                .align_y(Alignment::End)
                                 .spacing(24),
-                        ]
-                        .spacing(24),
-                    )
-                    .width(Length::Fill)
-                    .padding(24),
-                )
+                                row![
+                                    sections::processes::view(self),
+                                    sections::network::view(self),
+                                ]
+                                .align_y(Alignment::Start)
+                                .spacing(24),
+                            ]
+                            .align_x(Alignment::Center)
+                            .spacing(24),
+                        )
+                        .width(Length::Fill)
+                        .center_x(Length::Fill)
+                        .padding(24)
+                        .into()
+                    } else if size.width > 400.0 {
+                        container(
+                            row![
+                                column![
+                                    sections::memory::view(self),
+                                    sections::cpu::view(self),
+                                    sections::storage::view(self),
+                                ]
+                                .align_x(Alignment::End)
+                                .spacing(24),
+                                column![
+                                    sections::processes::view(self),
+                                    sections::network::view(self),
+                                ]
+                                .align_x(Alignment::Start)
+                                .spacing(24),
+                            ]
+                            .align_y(Alignment::Center)
+                            .spacing(24),
+                        )
+                        .width(Length::Fill)
+                        .center_x(Length::Fill)
+                        .padding(24)
+                        .into()
+                    } else {
+                        container(
+                                column![
+                                    sections::memory::view(self),
+                                    sections::cpu::view(self),
+                                    sections::storage::view(self),
+                                    sections::processes::view(self),
+                                    sections::network::view(self),
+                                ]
+                                .align_x(Alignment::Start)
+                                .spacing(24)
+                        )
+                        .width(Length::Fill)
+                        .center_x(Length::Fill)
+                        .padding(24)
+                        .into()
+                    }
+                }))
             ]
             .spacing(0),
         )
+        .padding(4)
         .width(Length::Fill)
         .height(Length::Fill)
         .style(|theme: &Theme| container::Style {

@@ -49,7 +49,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 .spacing(8)
                 .align_y(alignment::Vertical::Center),
             ]
-            .spacing(8),
+            .spacing(12),
             column![
                 stacked::view("Sent", format_bytes(insight.network.sent)),
                 stacked::view("Received", format_bytes(insight.network.received)),

@@ -22,7 +22,7 @@ fn main() -> iced::Result {
         })
         .window(window::Settings {
             size: iced::Size::new(800.0, 450.0),
-            min_size: Some(Size::new(800.0, 450.0)),
+            min_size: Some(Size::new(480.0, 360.0)),
             ..Default::default()
         })
         .centered()

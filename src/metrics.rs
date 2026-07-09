@@ -56,7 +56,7 @@ pub fn refresh_system() -> RefreshKind {
     RefreshKind::nothing()
         .with_cpu(CpuRefreshKind::nothing().with_cpu_usage())
         .with_memory(MemoryRefreshKind::nothing().with_ram())
-        .with_processes(ProcessRefreshKind::nothing().with_memory())
+        .with_processes(ProcessRefreshKind::nothing().with_memory().with_cpu())
 }
 
 pub fn refresh_disks() -> DiskRefreshKind {
@@ -96,6 +96,7 @@ pub fn update_processes(insight: &mut Insight) {
                     pid: pid.as_u32(),
                     name: process.name().to_string_lossy().to_string(),
                     memory: process.memory(),
+                    cpu: process.cpu_usage() / insight.system.cpus().len() as f32,
                 }),
         );
     insight

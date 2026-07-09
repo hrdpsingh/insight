@@ -5,7 +5,8 @@ use crate::{app::Message, components::card, state::ExtendTheme};
 pub fn view<'a>(label: String) -> Element<'a, Message> {
     card::view(
         text(label)
-            .size(24)
+            .size(20)
+            .wrapping(text::Wrapping::None)
             .font(Font {
                 weight: Weight::Bold,
                 ..Font::DEFAULT
@@ -15,6 +16,6 @@ pub fn view<'a>(label: String) -> Element<'a, Message> {
             }),
         Length::Shrink,
         |palette| palette.elevated,
-        padding::horizontal(16).vertical(4),
+        padding::horizontal(16).vertical(8),
     )
 }

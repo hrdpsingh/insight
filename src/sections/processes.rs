@@ -2,11 +2,12 @@ use crate::{
     app::Message,
     components::{self, button, card},
     metrics::format_bytes,
+    state::ExtendTheme,
     state::Insight,
 };
 
 use iced::{
-    Element, Font, Length,
+    Element, Font, Length, Theme,
     alignment::Vertical,
     font::Weight,
     padding,
@@ -14,7 +15,7 @@ use iced::{
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
-    let count = 6;
+    let count = 5;
     let pages = insight.processes.list.len().div_ceil(count);
 
     let displayed_processes: Vec<_> = insight
@@ -27,31 +28,39 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
 
     let table = row![
         build_column(
-            insight,
             "PID",
             displayed_processes
                 .iter()
                 .map(|process| process.pid.to_string())
                 .collect(),
-            80.0
+            60.0
         ),
         build_column(
-            insight,
             "Name",
             displayed_processes
                 .iter()
                 .map(|process| process.name.clone())
                 .collect(),
-            148.0
+            120.0
         ),
         build_column(
-            insight,
             "Memory",
             displayed_processes
                 .iter()
                 .map(|process| format_bytes(process.memory))
                 .collect(),
-            108.0
+            96.0
+        ),
+        build_column(
+            "CPU",
+            displayed_processes
+                .iter()
+                .map(|process| match process.cpu {
+                    0.0 => "0%".to_string(),
+                    _ => format!("{:.1}%", process.cpu),
+                })
+                .collect(),
+            60.0
         ),
     ]
     .spacing(8);
@@ -100,20 +109,17 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
     )
 }
 
-fn build_column<'a>(
-    insight: &'a Insight,
-    name: &'a str,
-    items: Vec<String>,
-    width: f32,
-) -> Element<'a, Message> {
+fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a, Message> {
     let mut column = column![
         container(
             text(name)
-                .color(insight.palette().accent)
                 .wrapping(text::Wrapping::None)
                 .font(Font {
                     weight: Weight::Bold,
                     ..Font::DEFAULT
+                })
+                .style(move |theme: &Theme| text::Style {
+                    color: Some(theme.custom().accent),
                 }),
         )
         .clip(true)
