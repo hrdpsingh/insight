@@ -18,7 +18,7 @@ pub struct Palette {
 
 impl Palette {
     pub const LIGHT: Self = Self {
-        background: Color::from_rgb(0.9, 0.93, 0.94),
+        background: Color::from_rgb(0.91, 0.95, 0.97),
         surface: Color::from_rgb(0.95, 0.98, 0.99),
         elevated: Color::from_rgb(0.96, 0.99, 1.0),
         accent: Color::from_rgb(0.3, 0.45, 0.8),
@@ -39,7 +39,7 @@ impl Palette {
         accent: Color::from_rgb(0.3, 0.45, 0.8),
         accent_light: Color::from_rgb(0.7, 0.85, 1.0),
         text: Color::from_rgb(1.00, 1.00, 1.00),
-        faded: Color::from_rgb(0.7, 0.7, 0.7),
+        faded: Color::from_rgb(0.6, 0.6, 0.6),
         disabled: Color::from_rgb(0.47, 0.47, 0.47),
         shadow: Color::from_rgba(0.0, 0.0, 0.0, 0.3),
         scroller: Color::from_rgb(0.21, 0.22, 0.23),

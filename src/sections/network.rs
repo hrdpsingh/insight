@@ -6,13 +6,17 @@ use crate::{
 };
 use iced::{
     Element, Length, alignment, padding,
-    widget::{column, row, svg},
+    widget::{Space, column, row, svg},
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
     card::view(
         column![
+            row![
+                Space::new().width(Length::Fill),
             title::view("Network".to_string()),
+            Space::new().width(Length::Fill),
+            ],
             column![
                 row![
                     svg(svg::Handle::from_memory(
@@ -50,14 +54,15 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 .align_y(alignment::Vertical::Center),
             ]
             .spacing(12),
-            column![
+            row![
                 stacked::view("Sent", format_bytes(insight.network.sent)),
+                Space::new().width(Length::Fill),
                 stacked::view("Received", format_bytes(insight.network.received)),
             ]
             .spacing(4)
         ]
         .spacing(20),
-        Length::Shrink,
+        Length::Fixed(340.0),
         |palette| palette.surface,
         padding::all(20.0),
     )

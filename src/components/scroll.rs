@@ -16,7 +16,7 @@ pub fn view<'a, Message: 'a>(content: impl Into<Element<'a, Message>>) -> Elemen
         .style(|theme, status| {
             let mut base_style = scrollable::default(theme, status);
             base_style.vertical_rail.background =
-                Some(Background::Color(theme.custom().background));
+                Some(Background::Color(theme.custom().transparent));
 
             match status {
                 scrollable::Status::Hovered {

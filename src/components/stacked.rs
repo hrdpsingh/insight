@@ -10,7 +10,6 @@ pub fn view<'a>(label: &'a str, value: String) -> Element<'a, Message> {
     container(column![
         text(label).size(12).wrapping(text::Wrapping::None),
         text(value)
-            .wrapping(text::Wrapping::None)
             .style(move |theme: &Theme| text::Style {
                 color: Some(theme.custom().faded),
             })

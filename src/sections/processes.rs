@@ -103,7 +103,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             column![table, navigation].spacing(12).width(Length::Shrink)
         ]
         .spacing(16),
-        Length::Shrink,
+        Length::Fixed(340.0),
         |palette| palette.surface,
         padding::all(20.0),
     )

@@ -1,12 +1,12 @@
 use crate::{
     components::{self, scroll},
-    metrics,
+    helper, metrics,
     palette::Palette,
     sections,
     state::{ExtendTheme, Insight, Mode},
 };
 use iced::{
-    Alignment, Background, Element, Length, Subscription, Theme, padding, time,
+    Background, Element, Length, Size, Subscription, Theme, padding, time, gradient, Color,
     widget::{column, container, responsive, row, svg},
 };
 use std::time::Duration;
@@ -47,7 +47,7 @@ impl Insight {
                 }
             }
             Message::Next => {
-                let count = self.processes.list.len().div_ceil(6);
+                let count = self.processes.list.len().div_ceil(5);
 
                 if self.processes.page < count {
                     self.processes.page += 1;
@@ -92,73 +92,30 @@ impl Insight {
                     padding::all(12.0),
                 ))
                 .padding(padding::top(24).left(24)),
-                scroll::view(responsive(|size| {
-                    if size.width > 800.0 {
-                        container(
-                            column![
-                                row![
-                                    sections::memory::view(self),
-                                    sections::cpu::view(self),
-                                    sections::storage::view(self),
-                                ]
-                                .align_y(Alignment::End)
-                                .spacing(24),
-                                row![
-                                    sections::processes::view(self),
-                                    sections::network::view(self),
-                                ]
-                                .align_y(Alignment::Start)
-                                .spacing(24),
-                            ]
-                            .align_x(Alignment::Center)
-                            .spacing(24),
-                        )
-                        .width(Length::Fill)
-                        .center_x(Length::Fill)
-                        .padding(24)
-                        .into()
-                    } else if size.width > 400.0 {
-                        container(
-                            row![
-                                column![
-                                    sections::memory::view(self),
-                                    sections::cpu::view(self),
-                                    sections::storage::view(self),
-                                ]
-                                .align_x(Alignment::End)
-                                .spacing(24),
-                                column![
-                                    sections::processes::view(self),
-                                    sections::network::view(self),
-                                ]
-                                .align_x(Alignment::Start)
-                                .spacing(24),
-                            ]
-                            .align_y(Alignment::Center)
-                            .spacing(24),
-                        )
-                        .width(Length::Fill)
-                        .center_x(Length::Fill)
-                        .padding(24)
-                        .into()
-                    } else {
-                        container(
-                                column![
-                                    sections::memory::view(self),
-                                    sections::cpu::view(self),
-                                    sections::storage::view(self),
-                                    sections::processes::view(self),
-                                    sections::network::view(self),
-                                ]
-                                .align_x(Alignment::Start)
-                                .spacing(24)
-                        )
-                        .width(Length::Fill)
-                        .center_x(Length::Fill)
-                        .padding(24)
-                        .into()
-                    }
-                }))
+                scroll::view(
+                    container(responsive(move |size: Size| {
+                        let spacing = 24.0;
+                        let item_min_width = 340.0;
+
+                        let available_width = size.width;
+                        let mut column_count = ((available_width + spacing)
+                            / (item_min_width + spacing))
+                            .floor() as usize;
+
+                        let items: Vec<Element<'_, Message>> = vec![
+                            sections::memory::view(self),
+                            sections::cpu::view(self),
+                            sections::storage::view(self),
+                            sections::processes::view(self),
+                            sections::network::view(self),
+                        ];
+
+                        column_count = column_count.max(1).min(items.len());
+                        helper::masonry_layout(items, column_count, spacing)
+                    }))
+                    .width(Length::Fill)
+                    .padding(24)
+                )
             ]
             .spacing(0),
         )
@@ -166,7 +123,20 @@ impl Insight {
         .width(Length::Fill)
         .height(Length::Fill)
         .style(|theme: &Theme| container::Style {
-            background: Some(Background::Color(theme.custom().background)),
+            background: Some(Background::Gradient(
+                            gradient::Linear::new(180_f32.to_radians())
+                                .add_stop(0.0, theme.custom().background)
+                                .add_stop(
+                                    1.0,
+                                    Color {
+                                        r: theme.custom().background.r * 0.95,
+                                        g: theme.custom().background.g * 0.95,
+                                        b: theme.custom().background.b * 0.95,
+                                        a: theme.custom().background.a,
+                                    },
+                                )
+                                .into(),
+                        )),
             ..container::Style::default()
         })
         .into()

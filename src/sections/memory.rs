@@ -29,6 +29,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                     components::stacked::view("Total", format_bytes(insight.memory.total)),
                 ]
                 .spacing(8),
+                Space::new().width(Length::Fill),
                 donut::view(
                     insight.memory.used,
                     insight.memory.total,
@@ -40,7 +41,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             .spacing(28),
         ]
         .spacing(24),
-        Length::Shrink,
+        Length::Fixed(340.0),
         |palette| palette.surface,
         padding::all(20.0),
     )
