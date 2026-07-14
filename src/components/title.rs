@@ -1,6 +1,5 @@
+use crate::{app::Message, components::card, palette::Palette};
 use iced::{Element, Font, Length, Theme, font::Weight, padding, widget::text};
-
-use crate::{app::Message, components::card, state::ExtendTheme};
 
 pub fn view<'a>(label: String) -> Element<'a, Message> {
     card::view(
@@ -12,7 +11,7 @@ pub fn view<'a>(label: String) -> Element<'a, Message> {
                 ..Font::DEFAULT
             })
             .style(move |theme: &Theme| text::Style {
-                color: Some(theme.custom().faded),
+                color: Some(Palette::from(theme).faded),
             }),
         Length::Shrink,
         |palette| palette.elevated,

@@ -2,21 +2,21 @@ use iced::alignment::Vertical;
 use iced::widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke, Text};
 use iced::{Color, Element, Pixels, Radians, Rectangle, Renderer, Theme, mouse};
 
-use crate::state::ExtendTheme;
+use crate::palette::Palette;
 
 struct DonutChart {
     used: u64,
     total: u64,
-    first_arc_color: Color,
-    second_arc_color: Color,
+    first_arc_color: fn(&Palette) -> Color,
+    second_arc_color: fn(&Palette) -> Color,
     thickness: f32,
 }
 
 pub fn view<'a, Message: 'a>(
     used: u64,
     total: u64,
-    first_arc_color: Color,
-    second_arc_color: Color,
+    first_arc_color: fn(&Palette) -> Color,
+    second_arc_color: fn(&Palette) -> Color,
     thickness: f32,
 ) -> Element<'a, Message, Theme, Renderer> {
     Canvas::new(DonutChart {
@@ -74,7 +74,7 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for DonutChart {
             frame.stroke(
                 &first_arc_path,
                 Stroke {
-                    style: canvas::Style::Solid(self.first_arc_color),
+                    style: canvas::Style::Solid((self.first_arc_color)(Palette::from(theme))),
                     width: self.thickness,
                     line_cap: canvas::LineCap::Round,
                     ..Stroke::default()
@@ -94,7 +94,7 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for DonutChart {
             frame.stroke(
                 &second_arc_path,
                 Stroke {
-                    style: canvas::Style::Solid(self.second_arc_color),
+                    style: canvas::Style::Solid((self.second_arc_color)(Palette::from(theme))),
                     width: self.thickness,
                     line_cap: canvas::LineCap::Round,
                     ..Stroke::default()
@@ -105,7 +105,7 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for DonutChart {
         let text = Text {
             content: format!("{:.1}%", percentage * 100.0),
             position: center,
-            color: theme.custom().text,
+            color: Palette::from(theme).text,
             size: Pixels(20.0),
             align_x: iced::widget::text::Alignment::Center,
             align_y: Vertical::Center,

@@ -1,19 +1,20 @@
+use crate::palette::Palette;
 use iced::widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke};
 use iced::{Color, Element, Length, Point, Rectangle, Renderer, Theme, mouse};
 
 struct ProgressBar {
     used: u64,
     total: u64,
-    first_color: Color,
-    second_color: Color,
+    first_color: fn(&Palette) -> Color,
+    second_color: fn(&Palette) -> Color,
     thickness: f32,
 }
 
 pub fn view<'a, Message: 'a>(
     used: u64,
     total: u64,
-    first_color: Color,
-    second_color: Color,
+    first_color: fn(&Palette) -> Color,
+    second_color: fn(&Palette) -> Color,
     thickness: f32,
 ) -> Element<'a, Message, Theme, Renderer> {
     Canvas::new(ProgressBar {
@@ -35,7 +36,7 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for ProgressBar {
         &self,
         _: &Self::State,
         renderer: &Renderer,
-        _: &Theme,
+        theme: &Theme,
         bounds: Rectangle,
         _: mouse::Cursor,
     ) -> Vec<Geometry> {
@@ -63,7 +64,7 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for ProgressBar {
             frame.stroke(
                 &first_path,
                 Stroke {
-                    style: canvas::Style::Solid(self.first_color),
+                    style: canvas::Style::Solid((self.first_color)(Palette::from(theme))),
                     width: self.thickness,
                     line_cap: canvas::LineCap::Round,
                     ..Stroke::default()
@@ -82,7 +83,7 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for ProgressBar {
             frame.stroke(
                 &second_path,
                 Stroke {
-                    style: canvas::Style::Solid(self.second_color),
+                    style: canvas::Style::Solid((self.second_color)(Palette::from(theme))),
                     width: self.thickness,
                     line_cap: canvas::LineCap::Round,
                     ..Stroke::default()

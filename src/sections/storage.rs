@@ -6,14 +6,10 @@ use crate::{
 };
 use iced::{
     Element, Length, alignment, padding,
-    widget::{Space, column, row, svg, text, tooltip},
+    widget::{Space, column, row, text, tooltip},
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
-    let free: u64 = insight.storage.disks.iter().map(|disk| disk.free).sum();
-    let total: u64 = insight.storage.disks.iter().map(|disk| disk.total).sum();
-    let used = total - free;
-
     card::view(
         column![
             row![
@@ -21,10 +17,9 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 Space::new().width(Length::Fill),
                 components::tooltip::view(
                     components::button::view(
-                        svg(svg::Handle::from_memory(
-                            include_bytes!("../../icons/refresh.svg").as_ref()
-                        )),
-                        Option::Some(Message::Refresh)
+                        components::svg::view(include_bytes!("../../icons/refresh.svg").as_ref()),
+                        Option::Some(Message::Refresh),
+                        false
                     ),
                     components::stacked::view("Last Refreshed", insight.storage.time.clone()),
                     tooltip::Position::Top
@@ -35,22 +30,25 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 row![
                     text("Usage"),
                     Space::new().width(Length::Fill),
-                    text(format!("{:.1}%", (used * 100) as f32 / total as f32))
+                    text(format!(
+                        "{:.1}%",
+                        (insight.storage.used * 100) as f32 / insight.storage.total as f32
+                    ))
                 ],
                 components::bar::view(
-                    used,
-                    total,
-                    insight.palette().accent,
-                    insight.palette().accent_light,
+                    insight.storage.used,
+                    insight.storage.total,
+                    |palette| palette.accent,
+                    |palette| palette.accent_light,
                     12.0,
                 ),
             ]
             .spacing(8)
             .width(Length::Fill),
             row![
-                components::stacked::view("Used", format_bytes(used)),
+                components::stacked::view("Used", format_bytes(insight.storage.used)),
                 Space::new().width(Length::Fill),
-                components::stacked::view("Total", format_bytes(total)),
+                components::stacked::view("Total", format_bytes(insight.storage.total)),
             ]
             .spacing(4),
         ]

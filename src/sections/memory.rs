@@ -33,8 +33,8 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 donut::view(
                     insight.memory.used,
                     insight.memory.total,
-                    insight.palette().accent,
-                    insight.palette().accent_light,
+                    |palette| palette.accent,
+                    |palette| palette.accent_light,
                     12.0,
                 ),
             ]

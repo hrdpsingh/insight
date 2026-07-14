@@ -1,30 +1,38 @@
-use crate::{app::Message, state::ExtendTheme};
+use crate::{app::Message, palette::Palette};
 use iced::{
     Element, Theme,
     widget::{Svg, button, svg},
 };
 
-pub fn view(icon: Svg<'_>, navigate: Option<Message>) -> Element<'_, Message> {
+pub fn view(icon: Svg<'_>, navigate: Option<Message>, sidebar: bool) -> Element<'_, Message> {
     let enabled = navigate.is_some();
 
     let button_widget = button(
         icon.height(20)
             .width(20)
             .style(move |theme: &Theme, status| {
-                let palette = theme.custom();
+                let palette = Palette::from(theme);
 
-                svg::Style {
-                    color: Some(match (status, enabled) {
-                        (svg::Status::Hovered, true) => palette.accent,
-                        (_, true) => palette.faded,
-                        (_, false) => palette.disabled,
-                    }),
+                if sidebar {
+                    svg::Style {
+                        color: Some(match (status, enabled) {
+                            (_, true) => palette.faded,
+                            (_, false) => palette.accent,
+                        }),
+                    }
+                } else {
+                    svg::Style {
+                        color: Some(match (status, enabled) {
+                            (_, true) => palette.faded,
+                            (_, false) => palette.disabled,
+                        }),
+                    }
                 }
             }),
     )
     .padding(0)
     .style(move |theme: &Theme, _| button::Style {
-        background: Some(theme.custom().transparent.into()),
+        background: Some(Palette::from(theme).transparent.into()),
         ..Default::default()
     });
 

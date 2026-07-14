@@ -1,3 +1,4 @@
+use crate::palette::Palette;
 use iced::{
     Color, Element, Length, Point, Rectangle, Renderer, Theme, mouse,
     widget::canvas::{self, Canvas, Frame, Geometry, Path},
@@ -6,16 +7,16 @@ use iced::{
 struct Graph {
     data: Vec<f32>,
     maximum_value: f32,
-    background_color: Color,
-    filled_color: Color,
+    background_color: fn(&Palette) -> Color,
+    filled_color: fn(&Palette) -> Color,
 }
 
 pub fn view<Message: 'static>(
     data: Vec<f32>,
     maximum_value: f32,
     height: f32,
-    background_color: Color,
-    filled_color: Color,
+    background_color: fn(&Palette) -> Color,
+    filled_color: fn(&Palette) -> Color,
 ) -> Element<'static, Message> {
     Canvas::new(Graph {
         data,
@@ -35,12 +36,16 @@ impl<Message> canvas::Program<Message> for Graph {
         &self,
         _: &Self::State,
         renderer: &Renderer,
-        _: &Theme,
+        theme: &Theme,
         bounds: Rectangle,
         _: mouse::Cursor,
     ) -> Vec<Geometry> {
         let mut frame = Frame::new(renderer, bounds.size());
-        frame.fill_rectangle(iced::Point::ORIGIN, bounds.size(), self.background_color);
+        frame.fill_rectangle(
+            iced::Point::ORIGIN,
+            bounds.size(),
+            (self.background_color)(Palette::from(theme)),
+        );
 
         let width = bounds.width;
         let height = bounds.height;
@@ -81,7 +86,7 @@ impl<Message> canvas::Program<Message> for Graph {
             builder.line_to(Point::new(width, height));
         });
 
-        frame.fill(&filled_area, self.filled_color);
+        frame.fill(&filled_area, (self.filled_color)(Palette::from(theme)));
         vec![frame.into_geometry()]
     }
 }

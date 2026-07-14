@@ -2,7 +2,7 @@ use crate::{
     app::Message,
     components::{self, button, card},
     metrics::format_bytes,
-    state::ExtendTheme,
+    palette::Palette,
     state::Insight,
 };
 
@@ -11,7 +11,7 @@ use iced::{
     alignment::Vertical,
     font::Weight,
     padding,
-    widget::{Space, column, container, row, svg, text, tooltip},
+    widget::{Space, column, container, row, text, tooltip},
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
@@ -51,17 +51,6 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 .collect(),
             96.0
         ),
-        build_column(
-            "CPU",
-            displayed_processes
-                .iter()
-                .map(|process| match process.cpu {
-                    0.0 => "0%".to_string(),
-                    _ => format!("{:.1}%", process.cpu),
-                })
-                .collect(),
-            60.0
-        ),
     ]
     .spacing(8);
 
@@ -70,18 +59,16 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         card::view(
             row![
                 button::view(
-                    svg(svg::Handle::from_memory(
-                        include_bytes!("../../icons/left_arrow.svg").as_ref()
-                    )),
-                    (insight.processes.page > 1).then_some(Message::Previous)
+                    components::svg::view(include_bytes!("../../icons/left_arrow.svg").as_ref()),
+                    (insight.processes.page > 1).then_some(Message::Previous),
+                    false
                 ),
                 text(format!("{} of {}", insight.processes.page, pages))
                     .wrapping(text::Wrapping::None),
                 button::view(
-                    svg(svg::Handle::from_memory(
-                        include_bytes!("../../icons/right_arrow.svg").as_ref()
-                    )),
-                    (insight.processes.page < pages).then_some(Message::Next)
+                    components::svg::view(include_bytes!("../../icons/right_arrow.svg").as_ref()),
+                    (insight.processes.page < pages).then_some(Message::Next),
+                    false
                 ),
             ]
             .align_y(Vertical::Center)
@@ -119,7 +106,7 @@ fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a
                     ..Font::DEFAULT
                 })
                 .style(move |theme: &Theme| text::Style {
-                    color: Some(theme.custom().accent),
+                    color: Some(Palette::from(theme).accent),
                 }),
         )
         .clip(true)

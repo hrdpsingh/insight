@@ -1,15 +1,15 @@
 use crate::{
-    components::{self, scroll},
-    helper, metrics,
+    components, helper, metrics,
     palette::Palette,
     sections,
-    state::{ExtendTheme, Insight, Mode},
+    state::{Cpu, Insight, Memory, Network, Processes, Storage},
 };
 use iced::{
-    Background, Element, Length, Size, Subscription, Theme, padding, time, gradient, Color,
-    widget::{column, container, responsive, row, svg},
+    Background, Element, Length, Size, Subscription, Theme, padding, time,
+    widget::{column, container, responsive, row},
 };
 use std::time::Duration;
+use sysinfo::{Disks, Networks, System};
 
 #[derive(Clone)]
 pub enum Message {
@@ -17,24 +17,61 @@ pub enum Message {
     Previous,
     Next,
     Refresh,
-    Change(Mode),
+    Change(Theme),
 }
 
 impl Insight {
     pub fn default() -> Self {
-        metrics::initialize()
-    }
+        let system = System::new_with_specifics(metrics::refresh_system());
+        let disks = Disks::new_with_refreshed_list_specifics(metrics::refresh_disks());
+        let networks = Networks::new();
 
-    pub fn palette(&self) -> &'static Palette {
-        self.mode.convert().custom()
+        let mut insight = Self {
+            cpu: Cpu {
+                name: system
+                    .cpus()
+                    .first()
+                    .map(|cpu| cpu.brand().to_string())
+                    .unwrap_or_else(|| "Unavailable".to_string()),
+                architecture: System::cpu_arch().to_string(),
+                core_count: system.cpus().len(),
+                history: vec![0.0; 60],
+            },
+            memory: Memory { used: 0, total: 0 },
+            processes: Processes {
+                list: Vec::new(),
+                page: 1,
+            },
+            storage: Storage {
+                total: 0,
+                used: 0,
+                time: "Unavailable".to_string(),
+            },
+            network: Network {
+                incoming: 0,
+                outgoing: 0,
+                receiving: false,
+                sending: false,
+                received: 0,
+                sent: 0,
+            },
+            system,
+            disks,
+            networks,
+            theme: Theme::Light,
+        };
+
+        metrics::update_memory(&mut insight);
+        metrics::update_processes(&mut insight);
+        metrics::update_storage(&mut insight);
+
+        insight
     }
 
     pub fn update(&mut self, message: Message) {
         match message {
             Message::Tick => {
                 self.system.refresh_specifics(metrics::refresh_system());
-                self.disks
-                    .refresh_specifics(false, metrics::refresh_disks());
 
                 metrics::update_cpu(self);
                 metrics::update_memory(self);
@@ -47,17 +84,15 @@ impl Insight {
                 }
             }
             Message::Next => {
-                let count = self.processes.list.len().div_ceil(5);
-
-                if self.processes.page < count {
+                if self.processes.page < self.processes.list.len().div_ceil(5) {
                     self.processes.page += 1;
                 }
             }
             Message::Refresh => {
                 metrics::update_storage(self);
             }
-            Message::Change(mode) => {
-                self.mode = mode;
+            Message::Change(theme) => {
+                self.theme = theme;
             }
         }
     }
@@ -67,23 +102,25 @@ impl Insight {
             row![
                 container(components::card::view(
                     column![
-                        components::sidebar_button::view(
-                            svg(svg::Handle::from_memory(
+                        components::button::view(
+                            components::svg::view(
                                 include_bytes!("../icons/light_mode.svg").as_ref()
-                            )),
-                            match self.mode {
-                                Mode::Light => None,
-                                Mode::Dark => Some(Message::Change(Mode::Light)),
-                            }
+                            ),
+                            match self.theme {
+                                Theme::Light => None,
+                                _ => Some(Message::Change(Theme::Light)),
+                            },
+                            true
                         ),
-                        components::sidebar_button::view(
-                            svg(svg::Handle::from_memory(
+                        components::button::view(
+                            components::svg::view(
                                 include_bytes!("../icons/dark_mode.svg").as_ref()
-                            )),
-                            match self.mode {
-                                Mode::Dark => None,
-                                Mode::Light => Some(Message::Change(Mode::Dark)),
-                            }
+                            ),
+                            match self.theme {
+                                Theme::Dark => None,
+                                _ => Some(Message::Change(Theme::Dark)),
+                            },
+                            true
                         ),
                     ]
                     .spacing(16),
@@ -92,14 +129,14 @@ impl Insight {
                     padding::all(12.0),
                 ))
                 .padding(padding::top(24).left(24)),
-                scroll::view(
+                components::scroll::view(
                     container(responsive(move |size: Size| {
                         let spacing = 24.0;
-                        let item_min_width = 340.0;
-
+                        let minimum_width = 340.0;
                         let available_width = size.width;
+
                         let mut column_count = ((available_width + spacing)
-                            / (item_min_width + spacing))
+                            / (minimum_width + spacing))
                             .floor() as usize;
 
                         let items: Vec<Element<'_, Message>> = vec![
@@ -119,24 +156,13 @@ impl Insight {
             ]
             .spacing(0),
         )
-        .padding(4)
         .width(Length::Fill)
         .height(Length::Fill)
-        .style(|theme: &Theme| container::Style {
-            background: Some(Background::Gradient(
-                            gradient::Linear::new(180_f32.to_radians())
-                                .add_stop(0.0, theme.custom().background)
-                                .add_stop(
-                                    1.0,
-                                    Color {
-                                        r: theme.custom().background.r * 0.95,
-                                        g: theme.custom().background.g * 0.95,
-                                        b: theme.custom().background.b * 0.95,
-                                        a: theme.custom().background.a,
-                                    },
-                                )
-                                .into(),
-                        )),
+        .style(move |theme| container::Style {
+            background: Some(Background::Gradient(components::gradient::view(
+                Palette::from(theme).background,
+                0.03,
+            ))),
             ..container::Style::default()
         })
         .into()

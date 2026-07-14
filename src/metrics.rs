@@ -1,56 +1,7 @@
+use crate::state::{Insight, Process};
 use chrono::Local;
-use sysinfo::{
-    CpuRefreshKind, DiskRefreshKind, Disks, MemoryRefreshKind, Networks, ProcessRefreshKind,
-    RefreshKind, System,
-};
-
-use crate::state::{Cpu, Disk, Insight, Mode, Network, Process, Processes};
-
-pub fn initialize() -> Insight {
-    let system = System::new_with_specifics(refresh_system());
-    let disks = Disks::new_with_refreshed_list_specifics(DiskRefreshKind::nothing().with_storage());
-    let networks = Networks::new_with_refreshed_list();
-
-    let mut insight = Insight {
-        cpu: Cpu {
-            name: system
-                .cpus()
-                .first()
-                .map(|cpu| cpu.brand().to_string())
-                .unwrap_or_else(|| "Unavailable".to_string()),
-            architecture: System::cpu_arch().to_string(),
-            core_count: system.cpus().len(),
-            history: vec![0.0; 60],
-        },
-        memory: crate::state::Memory { used: 0, total: 0 },
-        processes: Processes {
-            list: Vec::new(),
-            page: 1,
-        },
-        storage: crate::state::Storage {
-            disks: Vec::new(),
-            time: "Unavailable".to_string(),
-        },
-        system,
-        disks,
-        network: Network {
-            interfaces: networks,
-            incoming: 0,
-            outgoing: 0,
-            receiving: false,
-            sending: false,
-            received: 0,
-            sent: 0,
-        },
-        mode: Mode::default(),
-    };
-
-    update_memory(&mut insight);
-    update_processes(&mut insight);
-    update_storage(&mut insight);
-
-    insight
-}
+use sysinfo::DiskRefreshKind;
+use sysinfo::{CpuRefreshKind, MemoryRefreshKind, ProcessRefreshKind, RefreshKind};
 
 pub fn refresh_system() -> RefreshKind {
     RefreshKind::nothing()
@@ -96,7 +47,6 @@ pub fn update_processes(insight: &mut Insight) {
                     pid: pid.as_u32(),
                     name: process.name().to_string_lossy().to_string(),
                     memory: process.memory(),
-                    cpu: process.cpu_usage() / insight.system.cpus().len() as f32,
                 }),
         );
     insight
@@ -106,32 +56,35 @@ pub fn update_processes(insight: &mut Insight) {
 }
 
 pub fn update_storage(insight: &mut Insight) {
-    insight.storage.time = Local::now().format("%H:%M:%S").to_string();
-    insight.disks.refresh_specifics(false, refresh_disks());
-    insight.storage.disks.clear();
-
     insight
-        .storage
         .disks
-        .extend(insight.disks.list().iter().map(|disk| Disk {
-            total: disk.total_space(),
-            free: disk.available_space(),
-        }));
+        .refresh_specifics(false, DiskRefreshKind::nothing().with_storage());
+
+    insight.storage.total = insight
+        .disks
+        .list()
+        .iter()
+        .map(|disk| disk.total_space())
+        .sum();
+
+    let free: u64 = insight
+        .disks
+        .list()
+        .iter()
+        .map(|disk| disk.available_space())
+        .sum();
+
+    insight.storage.used = insight.storage.total - free;
+    insight.storage.time = Local::now().format("%H:%M:%S").to_string();
 }
 
 pub fn update_network(insight: &mut Insight) {
-    insight.network.interfaces.refresh(true);
+    insight.networks.refresh(true);
 
-    insight.network.incoming = insight
-        .network
-        .interfaces
-        .values()
-        .map(|data| data.received())
-        .sum();
+    insight.network.incoming = insight.networks.values().map(|data| data.received()).sum();
 
     insight.network.outgoing = insight
-        .network
-        .interfaces
+        .networks
         .values()
         .map(|data| data.transmitted())
         .sum();

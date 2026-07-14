@@ -23,8 +23,8 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 insight.cpu.history.clone(),
                 100.0,
                 140.0,
-                insight.palette().accent_light,
-                insight.palette().accent,
+                |palette| palette.accent_light,
+                |palette| palette.accent,
             ),
             column![
                 components::stacked::view("Name", insight.cpu.name.trim().to_string()),

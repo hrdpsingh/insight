@@ -6,7 +6,7 @@ use iced::{
     },
 };
 
-use crate::state::ExtendTheme;
+use crate::{components, palette::Palette};
 
 pub fn view<'a, Message: 'a>(content: impl Into<Element<'a, Message>>) -> Element<'a, Message> {
     scrollable(content)
@@ -16,7 +16,7 @@ pub fn view<'a, Message: 'a>(content: impl Into<Element<'a, Message>>) -> Elemen
         .style(|theme, status| {
             let mut base_style = scrollable::default(theme, status);
             base_style.vertical_rail.background =
-                Some(Background::Color(theme.custom().transparent));
+                Some(Background::Color(Palette::from(theme).transparent));
 
             match status {
                 scrollable::Status::Hovered {
@@ -24,19 +24,21 @@ pub fn view<'a, Message: 'a>(content: impl Into<Element<'a, Message>>) -> Elemen
                     ..
                 } => {
                     base_style.vertical_rail.scroller.background =
-                        Background::Color(if is_vertical_scrollbar_hovered {
-                            theme.custom().scroller_hovered
+                        Background::Gradient(if is_vertical_scrollbar_hovered {
+                            components::gradient::view(Palette::from(theme).scroller_hovered, 0.03)
                         } else {
-                            theme.custom().scroller
+                            components::gradient::view(Palette::from(theme).scroller, 0.03)
                         });
                 }
                 scrollable::Status::Dragged { .. } => {
-                    base_style.vertical_rail.scroller.background =
-                        Background::Color(theme.custom().scroller_hovered);
+                    base_style.vertical_rail.scroller.background = Background::Gradient(
+                        components::gradient::view(Palette::from(theme).scroller_hovered, 0.03),
+                    );
                 }
                 scrollable::Status::Active { .. } => {
-                    base_style.vertical_rail.scroller.background =
-                        Background::Color(theme.custom().scroller);
+                    base_style.vertical_rail.scroller.background = Background::Gradient(
+                        components::gradient::view(Palette::from(theme).scroller, 0.03),
+                    );
                 }
             }
 
