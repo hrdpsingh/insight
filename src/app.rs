@@ -1,11 +1,10 @@
 use crate::{
-    components, helper, metrics,
+    components, layout, metrics,
     palette::Palette,
-    sections,
     state::{Cpu, Insight, Memory, Network, Processes, Storage},
 };
 use iced::{
-    Background, Element, Length, Size, Subscription, Theme, padding, time,
+    Background, Element, Length, Subscription, Theme, padding, time,
     widget::{column, container, responsive, row},
 };
 use std::time::Duration;
@@ -84,7 +83,7 @@ impl Insight {
                 }
             }
             Message::Next => {
-                if self.processes.page < self.processes.list.len().div_ceil(5) {
+                if self.processes.page < self.processes.list.len().div_ceil(10) {
                     self.processes.page += 1;
                 }
             }
@@ -124,45 +123,26 @@ impl Insight {
                         ),
                     ]
                     .spacing(16),
-                    Length::Shrink,
-                    |palette| palette.surface,
                     padding::all(12.0),
+                    Length::Shrink
                 ))
                 .padding(padding::top(24).left(24)),
-                components::scroll::view(
-                    container(responsive(move |size: Size| {
-                        let spacing = 24.0;
-                        let minimum_width = 340.0;
-                        let available_width = size.width;
-
-                        let mut column_count = ((available_width + spacing)
-                            / (minimum_width + spacing))
-                            .floor() as usize;
-
-                        let items: Vec<Element<'_, Message>> = vec![
-                            sections::memory::view(self),
-                            sections::cpu::view(self),
-                            sections::storage::view(self),
-                            sections::processes::view(self),
-                            sections::network::view(self),
-                        ];
-
-                        column_count = column_count.max(1).min(items.len());
-                        helper::masonry_layout(items, column_count, spacing)
-                    }))
-                    .width(Length::Fill)
-                    .padding(24)
-                )
+                components::scroll::view(responsive(|size| {
+                    container(layout::view(self, size))
+                        .align_x(iced::Alignment::Center)
+                        .align_y(iced::Alignment::Center)
+                        .width(Length::Fill)
+                        .height(Length::Fill)
+                        .padding(24)
+                        .into()
+                }))
             ]
             .spacing(0),
         )
         .width(Length::Fill)
         .height(Length::Fill)
         .style(move |theme| container::Style {
-            background: Some(Background::Gradient(components::gradient::view(
-                Palette::from(theme).background,
-                0.03,
-            ))),
+            background: Some(Background::Color(Palette::from(theme).background)),
             ..container::Style::default()
         })
         .into()

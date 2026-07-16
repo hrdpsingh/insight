@@ -13,8 +13,7 @@ pub fn view<'a>(label: String) -> Element<'a, Message> {
             .style(move |theme: &Theme| text::Style {
                 color: Some(Palette::from(theme).faded),
             }),
-        Length::Shrink,
-        |palette| palette.elevated,
         padding::horizontal(16).vertical(8),
+        Length::Shrink,
     )
 }

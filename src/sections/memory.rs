@@ -25,8 +25,6 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                         format_bytes(insight.memory.total - insight.memory.used)
                     ),
                     components::inline::view("Used", format_bytes(insight.memory.used)),
-                    Space::new().height(Length::Fill),
-                    components::stacked::view("Total", format_bytes(insight.memory.total)),
                 ]
                 .spacing(8),
                 Space::new().width(Length::Fill),
@@ -37,12 +35,11 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                     |palette| palette.accent_light,
                     12.0,
                 ),
-            ]
-            .spacing(28),
+            ],
+            components::stacked::view("Total", format_bytes(insight.memory.total))
         ]
         .spacing(24),
-        Length::Fixed(340.0),
-        |palette| palette.surface,
         padding::all(20.0),
+        Length::Fixed(340.0),
     )
 }

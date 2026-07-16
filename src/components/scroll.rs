@@ -6,7 +6,7 @@ use iced::{
     },
 };
 
-use crate::{components, palette::Palette};
+use crate::palette::Palette;
 
 pub fn view<'a, Message: 'a>(content: impl Into<Element<'a, Message>>) -> Element<'a, Message> {
     scrollable(content)
@@ -24,21 +24,19 @@ pub fn view<'a, Message: 'a>(content: impl Into<Element<'a, Message>>) -> Elemen
                     ..
                 } => {
                     base_style.vertical_rail.scroller.background =
-                        Background::Gradient(if is_vertical_scrollbar_hovered {
-                            components::gradient::view(Palette::from(theme).scroller_hovered, 0.03)
+                        Background::Color(if is_vertical_scrollbar_hovered {
+                            Palette::from(theme).scroller_hovered
                         } else {
-                            components::gradient::view(Palette::from(theme).scroller, 0.03)
+                            Palette::from(theme).scroller
                         });
                 }
                 scrollable::Status::Dragged { .. } => {
-                    base_style.vertical_rail.scroller.background = Background::Gradient(
-                        components::gradient::view(Palette::from(theme).scroller_hovered, 0.03),
-                    );
+                    base_style.vertical_rail.scroller.background =
+                        Background::Color(Palette::from(theme).scroller_hovered);
                 }
                 scrollable::Status::Active { .. } => {
-                    base_style.vertical_rail.scroller.background = Background::Gradient(
-                        components::gradient::view(Palette::from(theme).scroller, 0.03),
-                    );
+                    base_style.vertical_rail.scroller.background =
+                        Background::Color(Palette::from(theme).scroller);
                 }
             }
 

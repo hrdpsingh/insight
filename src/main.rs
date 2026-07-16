@@ -2,7 +2,7 @@
 
 mod app;
 mod components;
-mod helper;
+mod layout;
 mod metrics;
 mod palette;
 mod sections;

@@ -55,8 +55,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             .spacing(4)
         ]
         .spacing(20),
-        Length::Fixed(340.0),
-        |palette| palette.surface,
         padding::all(20.0),
+        Length::Fixed(340.0),
     )
 }

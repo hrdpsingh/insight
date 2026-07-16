@@ -9,12 +9,7 @@ pub fn view<'a>(
 ) -> Element<'a, Message, Theme, Renderer> {
     tooltip(
         content,
-        card::view(
-            tooltip_content,
-            Length::Shrink,
-            |palette| palette.elevated,
-            padding::all(8),
-        ),
+        card::view(tooltip_content, padding::all(8), Length::Shrink),
         position,
     )
     .into()

@@ -45,16 +45,14 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             ]
             .spacing(8)
             .width(Length::Fill),
-            row![
+            column![
                 components::stacked::view("Used", format_bytes(insight.storage.used)),
-                Space::new().width(Length::Fill),
                 components::stacked::view("Total", format_bytes(insight.storage.total)),
             ]
-            .spacing(4),
+            .spacing(8),
         ]
         .spacing(24),
-        Length::Fixed(340.0),
-        |palette| palette.surface,
         padding::all(20.0),
+        Length::Fixed(340.0),
     )
 }
