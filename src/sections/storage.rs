@@ -35,13 +35,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                         (insight.storage.used * 100) as f32 / insight.storage.total as f32
                     ))
                 ],
-                components::bar::view(
-                    insight.storage.used,
-                    insight.storage.total,
-                    |palette| palette.accent,
-                    |palette| palette.accent_light,
-                    12.0,
-                ),
+                components::bar::view(insight.storage.used, insight.storage.total, 12.0,),
             ]
             .spacing(8)
             .width(Length::Fill),

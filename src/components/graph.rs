@@ -1,28 +1,22 @@
 use crate::palette::Palette;
 use iced::{
-    Color, Element, Length, Point, Rectangle, Renderer, Theme, mouse,
+    Element, Length, Point, Rectangle, Renderer, Theme, mouse,
     widget::canvas::{self, Canvas, Frame, Geometry, Path},
 };
 
 struct Graph {
     data: Vec<f32>,
     maximum_value: f32,
-    background_color: fn(&Palette) -> Color,
-    filled_color: fn(&Palette) -> Color,
 }
 
 pub fn view<Message: 'static>(
     data: Vec<f32>,
     maximum_value: f32,
     height: f32,
-    background_color: fn(&Palette) -> Color,
-    filled_color: fn(&Palette) -> Color,
 ) -> Element<'static, Message> {
     Canvas::new(Graph {
         data,
         maximum_value,
-        background_color,
-        filled_color,
     })
     .width(Length::Fill)
     .height(Length::Fixed(height))
@@ -44,7 +38,7 @@ impl<Message> canvas::Program<Message> for Graph {
         frame.fill_rectangle(
             iced::Point::ORIGIN,
             bounds.size(),
-            (self.background_color)(Palette::from(theme)),
+            Palette::from(theme).accent_light,
         );
 
         let width = bounds.width;
@@ -86,7 +80,7 @@ impl<Message> canvas::Program<Message> for Graph {
             builder.line_to(Point::new(width, height));
         });
 
-        frame.fill(&filled_area, (self.filled_color)(Palette::from(theme)));
+        frame.fill(&filled_area, Palette::from(theme).accent);
         vec![frame.into_geometry()]
     }
 }

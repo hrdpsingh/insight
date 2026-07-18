@@ -19,13 +19,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                     insight.cpu.history.last().copied().unwrap_or(0.0)
                 )),
             ],
-            graph::view(
-                insight.cpu.history.clone(),
-                100.0,
-                140.0,
-                |palette| palette.accent_light,
-                |palette| palette.accent,
-            ),
+            graph::view(insight.cpu.history.clone(), 100.0, 140.0,),
             column![
                 components::stacked::view("Name", insight.cpu.name.trim().to_string()),
                 components::stacked::view("Logical Cores", insight.cpu.core_count.to_string()),

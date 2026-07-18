@@ -1,29 +1,23 @@
 use iced::alignment::Vertical;
 use iced::widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke, Text};
-use iced::{Color, Element, Pixels, Radians, Rectangle, Renderer, Theme, mouse};
+use iced::{Element, Pixels, Radians, Rectangle, Renderer, Theme, mouse};
 
 use crate::palette::Palette;
 
 struct DonutChart {
     used: u64,
     total: u64,
-    first_arc_color: fn(&Palette) -> Color,
-    second_arc_color: fn(&Palette) -> Color,
     thickness: f32,
 }
 
 pub fn view<'a, Message: 'a>(
     used: u64,
     total: u64,
-    first_arc_color: fn(&Palette) -> Color,
-    second_arc_color: fn(&Palette) -> Color,
     thickness: f32,
 ) -> Element<'a, Message, Theme, Renderer> {
     Canvas::new(DonutChart {
         used,
         total,
-        first_arc_color,
-        second_arc_color,
         thickness,
     })
     .width(140)
@@ -48,53 +42,48 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for DonutChart {
         let outer_radius = bounds.width.min(bounds.height) / 2.0;
         let middle_radius = (outer_radius - self.thickness / 2.0).max(0.0);
 
-        let percentage = self.used as f32 / self.total as f32;
+        let percentage = if self.total == 0 {
+            0.0
+        } else {
+            (self.used as f32 / self.total as f32).clamp(0.0, 1.0)
+        };
 
         let start_angle = -std::f32::consts::FRAC_PI_2;
-        let end_angle = start_angle + percentage * 2.0 * std::f32::consts::PI;
+        let end_angle = start_angle + percentage * std::f32::consts::TAU;
 
-        let gap_pixels = self.thickness + 4.0;
-        let gap_angle = gap_pixels / middle_radius;
+        let background = Path::new(|builder| {
+            builder.arc(canvas::path::Arc {
+                center,
+                radius: middle_radius,
+                start_angle: Radians(0.0),
+                end_angle: Radians(std::f32::consts::TAU),
+            });
+        });
 
-        let first_arc_start = start_angle + gap_angle / 2.0;
-        let first_arc_end = end_angle - gap_angle / 2.0;
+        frame.stroke(
+            &background,
+            Stroke {
+                style: canvas::Style::Solid(Palette::from(theme).accent_light),
+                width: self.thickness,
+                line_cap: canvas::LineCap::Round,
+                ..Stroke::default()
+            },
+        );
 
-        let second_arc_start = end_angle + gap_angle / 2.0;
-        let second_arc_end = start_angle + 2.0 * std::f32::consts::PI - gap_angle / 2.0;
-
-        if first_arc_end > first_arc_start {
-            let first_arc_path = Path::new(|builder| {
+        if percentage > 0.0 {
+            let progress = Path::new(|builder| {
                 builder.arc(canvas::path::Arc {
                     center,
                     radius: middle_radius,
-                    start_angle: Radians(first_arc_start),
-                    end_angle: Radians(first_arc_end),
+                    start_angle: Radians(start_angle),
+                    end_angle: Radians(end_angle),
                 });
             });
-            frame.stroke(
-                &first_arc_path,
-                Stroke {
-                    style: canvas::Style::Solid((self.first_arc_color)(Palette::from(theme))),
-                    width: self.thickness,
-                    line_cap: canvas::LineCap::Round,
-                    ..Stroke::default()
-                },
-            );
-        }
 
-        if second_arc_end > second_arc_start {
-            let second_arc_path = Path::new(|builder| {
-                builder.arc(canvas::path::Arc {
-                    center,
-                    radius: middle_radius,
-                    start_angle: Radians(second_arc_start),
-                    end_angle: Radians(second_arc_end),
-                });
-            });
             frame.stroke(
-                &second_arc_path,
+                &progress,
                 Stroke {
-                    style: canvas::Style::Solid((self.second_arc_color)(Palette::from(theme))),
+                    style: canvas::Style::Solid(Palette::from(theme).accent),
                     width: self.thickness,
                     line_cap: canvas::LineCap::Round,
                     ..Stroke::default()

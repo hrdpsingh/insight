@@ -25,18 +25,13 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                         format_bytes(insight.memory.total - insight.memory.used)
                     ),
                     components::inline::view("Used", format_bytes(insight.memory.used)),
+                    Space::new().height(Length::Fill),
+                    components::stacked::view("Total", format_bytes(insight.memory.total))
                 ]
                 .spacing(8),
                 Space::new().width(Length::Fill),
-                donut::view(
-                    insight.memory.used,
-                    insight.memory.total,
-                    |palette| palette.accent,
-                    |palette| palette.accent_light,
-                    12.0,
-                ),
+                donut::view(insight.memory.used, insight.memory.total, 12.0,),
             ],
-            components::stacked::view("Total", format_bytes(insight.memory.total))
         ]
         .spacing(24),
         padding::all(20.0),

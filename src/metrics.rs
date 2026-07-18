@@ -16,7 +16,6 @@ pub fn refresh_disks() -> DiskRefreshKind {
 
 pub fn update_cpu(insight: &mut Insight) {
     let cpus = insight.system.cpus();
-
     let average = if cpus.is_empty() {
         0.0
     } else {
@@ -49,6 +48,7 @@ pub fn update_processes(insight: &mut Insight) {
                     memory: process.memory(),
                 }),
         );
+
     insight
         .processes
         .list
