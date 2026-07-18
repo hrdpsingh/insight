@@ -1,6 +1,8 @@
 use crate::palette::Palette;
-use iced::widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke};
-use iced::{Element, Length, Point, Rectangle, Renderer, Theme, mouse};
+use iced::{
+    Element, Length, Point, Rectangle, Renderer, Theme, mouse,
+    widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke},
+};
 
 struct ProgressBar {
     used: u64,

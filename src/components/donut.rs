@@ -1,6 +1,9 @@
-use iced::alignment::Vertical;
-use iced::widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke, Text};
-use iced::{Element, Pixels, Radians, Rectangle, Renderer, Theme, mouse};
+use iced::{
+    Element, Pixels, Radians, Rectangle, Renderer, Theme,
+    alignment::Vertical,
+    mouse,
+    widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke, Text},
+};
 
 use crate::palette::Palette;
 

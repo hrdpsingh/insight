@@ -1,2 +1,2 @@
 # Insight
-A WIP system information viewer for Linux.
+A dashboard for monitoring hardware.

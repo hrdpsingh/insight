@@ -1,7 +1,11 @@
 use crate::palette::Palette;
 use iced::{
-    Element, Length, Point, Rectangle, Renderer, Theme, mouse,
-    widget::canvas::{self, Canvas, Frame, Geometry, Path},
+    Element, Length, Point, Rectangle, Renderer, Theme, alignment, mouse,
+    widget::{
+        Space,
+        canvas::{self, Canvas, Frame, Geometry, Path, Stroke},
+        column, row, text,
+    },
 };
 
 struct Graph {
@@ -14,12 +18,32 @@ pub fn view<Message: 'static>(
     maximum_value: f32,
     height: f32,
 ) -> Element<'static, Message> {
-    Canvas::new(Graph {
-        data,
-        maximum_value,
-    })
-    .width(Length::Fill)
-    .height(Length::Fixed(height))
+    row![
+        column![
+            text("100%").size(12),
+            Space::new().height(Length::Fill),
+            text("50%").size(12),
+            Space::new().height(Length::Fill),
+            text("0%").size(12)
+        ]
+        .height(Length::Fixed(height))
+        .align_x(alignment::Horizontal::Right),
+        column![
+            Canvas::new(Graph {
+                data,
+                maximum_value,
+            })
+            .width(Length::Fill)
+            .height(Length::Fixed(height)),
+            row![
+                Space::new().width(Length::Fill),
+                text("60 seconds").size(12),
+                Space::new().width(Length::Fill),
+            ]
+        ]
+        .spacing(8)
+    ]
+    .spacing(12)
     .into()
 }
 
@@ -35,11 +59,6 @@ impl<Message> canvas::Program<Message> for Graph {
         _: mouse::Cursor,
     ) -> Vec<Geometry> {
         let mut frame = Frame::new(renderer, bounds.size());
-        frame.fill_rectangle(
-            iced::Point::ORIGIN,
-            bounds.size(),
-            Palette::from(theme).accent_light,
-        );
 
         let width = bounds.width;
         let height = bounds.height;
@@ -65,22 +84,39 @@ impl<Message> canvas::Program<Message> for Graph {
             builder.move_to(Point::new(0.0, height));
             builder.line_to(points[0]);
 
-            for i in 0..points.len() - 1 {
-                let point_1 = points[i];
-                let point_2 = points[i + 1];
+            curve(builder, &points);
 
-                let mid_point =
-                    Point::new((point_1.x + point_2.x) / 2.0, (point_1.y + point_2.y) / 2.0);
-                builder.quadratic_curve_to(point_1, mid_point);
-            }
-
-            if let Some(&last_point) = points.last() {
-                builder.line_to(last_point);
-            }
             builder.line_to(Point::new(width, height));
+            builder.close();
         });
 
-        frame.fill(&filled_area, Palette::from(theme).accent);
+        let line = Path::new(|builder| {
+            builder.move_to(points[0]);
+            curve(builder, &points);
+        });
+
+        frame.fill(&filled_area, Palette::from(theme).accent_light);
+        frame.stroke(
+            &line,
+            Stroke::default()
+                .with_width(2.0)
+                .with_color(Palette::from(theme).accent),
+        );
         vec![frame.into_geometry()]
+    }
+}
+
+fn curve(builder: &mut canvas::path::Builder, points: &[Point]) {
+    for i in 0..points.len() - 1 {
+        let p1 = points[i];
+        let p2 = points[i + 1];
+
+        let mid = Point::new((p1.x + p2.x) / 2.0, (p1.y + p2.y) / 2.0);
+
+        builder.quadratic_curve_to(p1, mid);
+    }
+
+    if let Some(&last) = points.last() {
+        builder.line_to(last);
     }
 }
