@@ -20,12 +20,12 @@ pub fn view<'a>(insight: &'a Insight, size: Size) -> Element<'a, Message> {
             column![
                 sections::network::view(insight),
                 sections::memory::view(insight),
-                sections::storage::view(insight),
+                sections::processes::view(insight),
             ]
             .spacing(24),
             column![
                 sections::cpu::view(insight),
-                sections::processes::view(insight),
+                sections::storage::view(insight),
             ]
             .spacing(24),
         ]

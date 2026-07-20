@@ -15,7 +15,7 @@ use iced::{
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
-    let count = 10;
+    let count = 11;
     let pages = insight.processes.list.len().div_ceil(count);
 
     let displayed_processes: Vec<_> = insight
@@ -73,8 +73,10 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             ]
             .align_y(Vertical::Center)
             .spacing(12),
-            padding::all(8),
+            padding::all(4),
             Length::Shrink,
+            Length::Shrink,
+            false
         ),
         Space::new().width(Length::Fill),
     ];
@@ -91,6 +93,8 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         .spacing(16),
         padding::all(20.0),
         Length::Fixed(340.0),
+        Length::Fixed(624.0),
+        true,
     )
 }
 

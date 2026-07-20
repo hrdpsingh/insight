@@ -4,7 +4,7 @@ use crate::{
     state::{Cpu, Insight, Memory, Network, Processes, Storage},
 };
 use iced::{
-    Background, Element, Length, Subscription, Theme, padding, time,
+    Background, Element, Length, Subscription, Theme, alignment, padding, time,
     widget::{column, container, responsive, row},
 };
 use std::time::Duration;
@@ -83,7 +83,7 @@ impl Insight {
                 }
             }
             Message::Next => {
-                if self.processes.page < self.processes.list.len().div_ceil(10) {
+                if self.processes.page < self.processes.list.len().div_ceil(11) {
                     self.processes.page += 1;
                 }
             }
@@ -122,17 +122,22 @@ impl Insight {
                             true
                         ),
                     ]
-                    .spacing(16),
-                    padding::all(12.0),
-                    Length::Shrink
+                    .spacing(4),
+                    padding::all(4.0),
+                    Length::Shrink,
+                    Length::Shrink,
+                    false,
                 ))
-                .padding(padding::top(24).left(24)),
+                .align_x(alignment::Horizontal::Center)
+                .padding(padding::top(16.0))
+                .height(Length::Fill)
+                .width(Length::Fixed(60.0))
+                .style(move |theme| container::Style::default()
+                    .background(Palette::from(theme).surface)),
                 components::scroll::view(responsive(|size| {
                     container(layout::view(self, size))
                         .align_x(iced::Alignment::Center)
-                        .align_y(iced::Alignment::Center)
                         .width(Length::Fill)
-                        .height(Length::Fill)
                         .padding(24)
                         .into()
                 }))

@@ -60,39 +60,46 @@ impl<Message> canvas::Program<Message> for Graph {
     ) -> Vec<Geometry> {
         let mut frame = Frame::new(renderer, bounds.size());
 
-        let width = bounds.width;
-        let height = bounds.height;
-
-        if self.data.is_empty() {
+        if self.data.len() < 2 {
             return vec![frame.into_geometry()];
         }
 
+        let width = bounds.width;
+        let height = bounds.height;
         let gap = width / ((self.data.len() - 1) as f32);
 
-        let points: Vec<iced::Point> = self
+        let points: Vec<Point> = self
             .data
             .iter()
             .enumerate()
             .map(|(index, &value)| {
-                let x = index as f32 * gap;
-                let y = height - (value / self.maximum_value * height);
-                iced::Point::new(x, y)
+                Point::new(
+                    index as f32 * gap,
+                    height - (value / self.maximum_value * height),
+                )
             })
             .collect();
+
+        let build_curve = |builder: &mut canvas::path::Builder| {
+            for window in points.windows(2) {
+                let (p1, p2) = (window[0], window[1]);
+                let mid = Point::new((p1.x + p2.x) / 2.0, (p1.y + p2.y) / 2.0);
+                builder.quadratic_curve_to(p1, mid);
+            }
+            builder.line_to(*points.last().unwrap());
+        };
 
         let filled_area = Path::new(|builder| {
             builder.move_to(Point::new(0.0, height));
             builder.line_to(points[0]);
-
-            curve(builder, &points);
-
+            build_curve(builder);
             builder.line_to(Point::new(width, height));
             builder.close();
         });
 
         let line = Path::new(|builder| {
             builder.move_to(points[0]);
-            curve(builder, &points);
+            build_curve(builder);
         });
 
         frame.fill(&filled_area, Palette::from(theme).accent_light);
@@ -102,21 +109,7 @@ impl<Message> canvas::Program<Message> for Graph {
                 .with_width(2.0)
                 .with_color(Palette::from(theme).accent),
         );
+
         vec![frame.into_geometry()]
-    }
-}
-
-fn curve(builder: &mut canvas::path::Builder, points: &[Point]) {
-    for i in 0..points.len() - 1 {
-        let p1 = points[i];
-        let p2 = points[i + 1];
-
-        let mid = Point::new((p1.x + p2.x) / 2.0, (p1.y + p2.y) / 2.0);
-
-        builder.quadratic_curve_to(p1, mid);
-    }
-
-    if let Some(&last) = points.last() {
-        builder.line_to(last);
     }
 }

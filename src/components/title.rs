@@ -15,5 +15,7 @@ pub fn view<'a>(label: String) -> Element<'a, Message> {
             }),
         padding::horizontal(16).vertical(8),
         Length::Shrink,
+        Length::Shrink,
+        false,
     )
 }

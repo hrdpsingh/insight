@@ -51,7 +51,7 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for ProgressBar {
         frame.stroke(
             &background,
             Stroke {
-                style: canvas::Style::Solid(Palette::from(theme).accent_light),
+                style: canvas::Style::Solid(Palette::from(theme).background),
                 width: self.thickness,
                 line_cap: canvas::LineCap::Round,
                 ..Stroke::default()

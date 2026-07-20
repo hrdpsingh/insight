@@ -18,7 +18,7 @@ fn main() -> iced::Result {
         .theme(|insight: &Insight| insight.theme.clone())
         .settings(iced::Settings {
             default_text_size: Pixels(16.0),
-            vsync: false,
+            vsync: true,
             ..Default::default()
         })
         .window(window::Settings {

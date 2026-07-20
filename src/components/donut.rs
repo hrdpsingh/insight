@@ -23,8 +23,8 @@ pub fn view<'a, Message: 'a>(
         total,
         thickness,
     })
-    .width(140)
-    .height(140)
+    .width(160)
+    .height(160)
     .into()
 }
 
@@ -66,7 +66,7 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for DonutChart {
         frame.stroke(
             &background,
             Stroke {
-                style: canvas::Style::Solid(Palette::from(theme).accent_light),
+                style: canvas::Style::Solid(Palette::from(theme).background),
                 width: self.thickness,
                 line_cap: canvas::LineCap::Round,
                 ..Stroke::default()
