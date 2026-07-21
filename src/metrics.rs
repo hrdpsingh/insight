@@ -97,11 +97,11 @@ pub fn update_network(insight: &mut Insight) {
 }
 
 pub fn format_bytes(bytes: u64) -> String {
-    let units = ["B", "KiB", "MiB", "GiB"];
+    let units = ["B", "KiB", "MiB", "GiB", "TiB"];
     let mut index = 0;
     let mut number = bytes as f64;
 
-    while number >= 1024.0 && index < 3 {
+    while number >= 1024.0 && index < 4 {
         number /= 1024.0;
         index += 1;
     }
