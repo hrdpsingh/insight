@@ -1,10 +1,10 @@
 use crate::{
     components, layout, metrics,
     palette::Palette,
-    state::{Cpu, Insight, Memory, Network, Processes, Storage},
+    state::{Cpu, Insight, Memory, Mode, Network, Processes, Storage},
 };
 use iced::{
-    Background, Element, Length, Subscription, Theme, alignment, padding, time,
+    Background, Element, Length, Subscription, alignment, padding, time,
     widget::{column, container, responsive, row},
 };
 use std::time::Duration;
@@ -16,7 +16,7 @@ pub enum Message {
     Previous,
     Next,
     Refresh,
-    Change(Theme),
+    Change(Mode),
 }
 
 impl Insight {
@@ -57,7 +57,7 @@ impl Insight {
             system,
             disks,
             networks,
-            theme: Theme::Light,
+            mode: Mode::default(),
         };
 
         metrics::update_memory(&mut insight);
@@ -90,8 +90,8 @@ impl Insight {
             Message::Refresh => {
                 metrics::update_storage(self);
             }
-            Message::Change(theme) => {
-                self.theme = theme;
+            Message::Change(mode) => {
+                self.mode = mode;
             }
         }
     }
@@ -102,24 +102,32 @@ impl Insight {
                 container(components::card::view(
                     column![
                         components::button::view(
-                            components::svg::view(
-                                include_bytes!("../icons/light_mode.svg").as_ref()
-                            ),
-                            match self.theme {
-                                Theme::Light => None,
-                                _ => Some(Message::Change(Theme::Light)),
+                            components::svg::view(include_bytes!("../assets/icons/system.svg").as_ref()),
+                            match self.mode {
+                                Mode::System => None,
+                                _ => Some(Message::Change(Mode::System)),
                             },
-                            true
+                            true,
                         ),
                         components::button::view(
                             components::svg::view(
-                                include_bytes!("../icons/dark_mode.svg").as_ref()
+                                include_bytes!("../assets/icons/light_mode.svg").as_ref()
                             ),
-                            match self.theme {
-                                Theme::Dark => None,
-                                _ => Some(Message::Change(Theme::Dark)),
+                            match self.mode {
+                                Mode::Light => None,
+                                _ => Some(Message::Change(Mode::Light)),
                             },
-                            true
+                            true,
+                        ),
+                        components::button::view(
+                            components::svg::view(
+                                include_bytes!("../assets/icons/dark_mode.svg").as_ref()
+                            ),
+                            match self.mode {
+                                Mode::Dark => None,
+                                _ => Some(Message::Change(Mode::Dark)),
+                            },
+                            true,
                         ),
                     ]
                     .spacing(4),

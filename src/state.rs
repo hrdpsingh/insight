@@ -10,7 +10,7 @@ pub struct Insight {
     pub system: System,
     pub disks: Disks,
     pub networks: Networks,
-    pub theme: Theme,
+    pub mode: Mode,
 }
 
 pub struct Cpu {
@@ -49,4 +49,25 @@ pub struct Network {
     pub sending: bool,
     pub received: u64,
     pub sent: u64,
+}
+
+#[derive(Default, Clone)]
+pub enum Mode {
+    #[default]
+    System,
+    Light,
+    Dark,
+}
+
+impl From<Mode> for Theme {
+    fn from(mode: Mode) -> Self {
+        match mode {
+            Mode::Light => Theme::Light,
+            Mode::Dark => Theme::Dark,
+            Mode::System => match dark_light::detect() {
+                Ok(dark_light::Mode::Dark) => Theme::Dark,
+                _ => Theme::Light,
+            },
+        }
+    }
 }

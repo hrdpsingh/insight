@@ -59,14 +59,18 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         card::view(
             row![
                 button::view(
-                    components::svg::view(include_bytes!("../../icons/left_arrow.svg").as_ref()),
+                    components::svg::view(
+                        include_bytes!("../../assets/icons/left_arrow.svg").as_ref()
+                    ),
                     (insight.processes.page > 1).then_some(Message::Previous),
                     false
                 ),
                 text(format!("{} of {}", insight.processes.page, pages))
                     .wrapping(text::Wrapping::None),
                 button::view(
-                    components::svg::view(include_bytes!("../../icons/right_arrow.svg").as_ref()),
+                    components::svg::view(
+                        include_bytes!("../../assets/icons/right_arrow.svg").as_ref()
+                    ),
                     (insight.processes.page < pages).then_some(Message::Next),
                     false
                 ),

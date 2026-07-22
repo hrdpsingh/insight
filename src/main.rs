@@ -8,7 +8,7 @@ mod palette;
 mod sections;
 mod state;
 
-use iced::{Pixels, Size, window};
+use iced::{Pixels, Size, Theme, window};
 use resvg::{tiny_skia, usvg};
 use state::Insight;
 
@@ -16,14 +16,14 @@ fn main() -> iced::Result {
     iced::application(Insight::default, Insight::update, Insight::view)
         .subscription(Insight::subscription)
         .title("Insight")
-        .theme(|insight: &Insight| insight.theme.clone())
+        .theme(|insight: &Insight| Theme::from(insight.mode.clone()))
         .settings(iced::Settings {
             default_text_size: Pixels(16.0),
             vsync: true,
             ..Default::default()
         })
         .window(window::Settings {
-            icon: load_icon(include_bytes!("../icons/insight.svg"), 128, 128),
+            icon: load_icon(include_bytes!("../assets/icons/insight.svg"), 128, 128),
             size: iced::Size::new(960.0, 540.0),
             min_size: Some(Size::new(480.0, 270.0)),
             ..Default::default()

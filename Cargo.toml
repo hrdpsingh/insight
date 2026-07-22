@@ -8,6 +8,7 @@ iced = { version = "0.14", default-features = false, features = ["wgpu", "tokio"
 sysinfo = { version = "0.39.5", default-features = false, features = ["disk", "system", "network", "multithread"] }
 chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
 resvg = {version = "0.47.0", default-features = false}
+dark-light = {version = "2.0.0", default-features = false}
 
 [profile.release]
 lto = true

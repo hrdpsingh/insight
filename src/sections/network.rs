@@ -20,27 +20,31 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             ],
             column![
                 row![
-                    components::svg::view(include_bytes!("../../icons/up_arrow.svg").as_ref())
-                        .style(move |theme, _| svg::Style {
-                            color: Some(if insight.network.sending {
-                                Palette::from(theme).accent
-                            } else {
-                                Palette::from(theme).faded
-                            }),
+                    components::svg::view(
+                        include_bytes!("../../assets/icons/up_arrow.svg").as_ref()
+                    )
+                    .style(move |theme, _| svg::Style {
+                        color: Some(if insight.network.sending {
+                            Palette::from(theme).accent
+                        } else {
+                            Palette::from(theme).faded
                         }),
+                    }),
                     inline::view("Outgoing", format_bytes(insight.network.outgoing)),
                 ]
                 .spacing(8)
                 .align_y(alignment::Vertical::Center),
                 row![
-                    components::svg::view(include_bytes!("../../icons/down_arrow.svg").as_ref())
-                        .style(move |theme, _| svg::Style {
-                            color: Some(if insight.network.receiving {
-                                Palette::from(theme).accent
-                            } else {
-                                Palette::from(theme).faded
-                            }),
+                    components::svg::view(
+                        include_bytes!("../../assets/icons/down_arrow.svg").as_ref()
+                    )
+                    .style(move |theme, _| svg::Style {
+                        color: Some(if insight.network.receiving {
+                            Palette::from(theme).accent
+                        } else {
+                            Palette::from(theme).faded
                         }),
+                    }),
                     inline::view("Incoming", format_bytes(insight.network.incoming)),
                 ]
                 .spacing(8)

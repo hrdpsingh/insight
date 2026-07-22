@@ -10,8 +10,8 @@ pub fn view<'a>(insight: &'a Insight, size: Size) -> Element<'a, Message> {
             sections::memory::view(insight),
             sections::cpu::view(insight),
             sections::storage::view(insight),
-            sections::processes::view(insight),
             sections::network::view(insight),
+            sections::processes::view(insight),
         ]
         .spacing(24)
         .into()

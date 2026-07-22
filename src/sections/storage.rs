@@ -17,7 +17,9 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 Space::new().width(Length::Fill),
                 components::tooltip::view(
                     components::button::view(
-                        components::svg::view(include_bytes!("../../icons/refresh.svg").as_ref()),
+                        components::svg::view(
+                            include_bytes!("../../assets/icons/refresh.svg").as_ref()
+                        ),
                         Option::Some(Message::Refresh),
                         false
                     ),

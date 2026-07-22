@@ -23,11 +23,11 @@ impl Palette {
     }
 
     pub const LIGHT: Self = Self {
-        background: Color::from_rgb(0.88, 0.92, 0.95),
+        background: Color::from_rgb(0.84, 0.89, 0.92),
         surface: Color::from_rgb(0.93, 0.96, 0.98),
         elevated: Color::from_rgb(0.96, 0.98, 1.0),
         text: Color::from_rgb(0.00, 0.00, 0.00),
-        faded: Color::from_rgb(0.39, 0.39, 0.39),
+        faded: Color::from_rgb(0.32, 0.32, 0.32),
         disabled: Color::from_rgb(0.67, 0.67, 0.67),
         scroller: Color::from_rgb(0.8, 0.82, 0.83),
         scroller_hovered: Color::from_rgb(0.75, 0.77, 0.79),
