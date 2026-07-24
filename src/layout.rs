@@ -18,14 +18,14 @@ pub fn view<'a>(insight: &'a Insight, size: Size) -> Element<'a, Message> {
     } else if size.width < 1140.0 {
         row![
             column![
-                sections::network::view(insight),
-                sections::memory::view(insight),
+                sections::cpu::view(insight),
+                sections::storage::view(insight),
                 sections::processes::view(insight),
             ]
             .spacing(24),
             column![
-                sections::cpu::view(insight),
-                sections::storage::view(insight),
+                sections::network::view(insight),
+                sections::memory::view(insight),
             ]
             .spacing(24),
         ]
@@ -34,13 +34,13 @@ pub fn view<'a>(insight: &'a Insight, size: Size) -> Element<'a, Message> {
     } else {
         row![
             column![
-                sections::network::view(insight),
-                sections::memory::view(insight),
+                sections::cpu::view(insight),
+                sections::storage::view(insight),
             ]
             .spacing(24),
             column![
-                sections::cpu::view(insight),
-                sections::storage::view(insight),
+                sections::network::view(insight),
+                sections::memory::view(insight),
             ]
             .spacing(24),
             sections::processes::view(insight),

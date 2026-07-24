@@ -1,22 +1,18 @@
-use crate::{app::Message, palette::Palette};
-use iced::{Background, Border, Element, Length, Padding, Renderer, Theme, widget::container};
+use crate::app::Message;
+use iced::{Border, Color, Element, Length, Padding, Renderer, Theme, widget::container};
 
 pub fn view<'a>(
     content: impl Into<Element<'a, Message, Theme, Renderer>>,
     padding: Padding,
     width: Length,
     height: Length,
-    surface: bool,
+    color: impl Fn(&Theme) -> Color + 'static,
 ) -> Element<'a, Message, Theme, Renderer> {
     container(content)
-        .style(move |theme| container::Style {
-            background: if surface {
-                Some(Background::Color(Palette::from(theme).surface))
-            } else {
-                Some(Background::Color(Palette::from(theme).background))
-            },
-            border: Border::default().rounded(8.0),
-            ..container::Style::default()
+        .style(move |theme| {
+            container::Style::default()
+                .background(color(theme))
+                .border(Border::default().rounded(8.0))
         })
         .padding(padding)
         .height(height)

@@ -22,8 +22,8 @@ pub fn update_cpu(insight: &mut Insight) {
         cpus.iter().map(|cpu| cpu.cpu_usage()).sum::<f32>() / cpus.len() as f32
     };
 
-    insight.cpu.history.remove(0);
-    insight.cpu.history.push(average);
+    insight.cpu.history.pop_front();
+    insight.cpu.history.push_back(average);
 }
 
 pub fn update_memory(insight: &mut Insight) {
@@ -53,6 +53,11 @@ pub fn update_processes(insight: &mut Insight) {
         .processes
         .list
         .sort_by_key(|p2| std::cmp::Reverse(p2.memory));
+
+    let pages = insight.processes.list.len().div_ceil(11).max(1);
+    if insight.processes.page > pages {
+        insight.processes.page = pages;
+    }
 }
 
 pub fn update_storage(insight: &mut Insight) {

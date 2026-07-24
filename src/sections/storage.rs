@@ -2,6 +2,7 @@ use crate::{
     app::Message,
     components::{self, card},
     metrics::format_bytes,
+    palette::Palette,
     state::Insight,
 };
 use iced::{
@@ -52,6 +53,6 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         padding::all(20.0),
         Length::Fixed(340.0),
         Length::Fixed(240.0),
-        true,
+        |theme| Palette::from(theme).surface,
     )
 }

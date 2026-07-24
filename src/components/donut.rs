@@ -23,8 +23,8 @@ pub fn view<'a, Message: 'a>(
         total,
         thickness,
     })
-    .width(160)
-    .height(160)
+    .width(140)
+    .height(140)
     .into()
 }
 

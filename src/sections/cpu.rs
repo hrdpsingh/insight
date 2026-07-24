@@ -1,6 +1,7 @@
 use crate::{
     app::Message,
     components::{self, card, graph},
+    palette::Palette,
     state::Insight,
 };
 use iced::{
@@ -16,7 +17,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 Space::new().width(Length::Fill),
                 components::title::view(format!(
                     "{:.1}%",
-                    insight.cpu.history.last().copied().unwrap_or(0.0)
+                    insight.cpu.history.back().copied().unwrap_or(0.0)
                 )),
             ],
             graph::view(insight.cpu.history.clone(), 100.0, 100.0,),
@@ -34,6 +35,6 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         padding::all(20.0),
         Length::Fixed(340.0),
         Length::Fixed(360.0),
-        true,
+        |theme| Palette::from(theme).surface,
     )
 }

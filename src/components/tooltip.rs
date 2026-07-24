@@ -1,5 +1,5 @@
 use iced::{
-    Background, Border, Element, Length, Renderer, Theme,
+    Border, Element, Length, Renderer, Theme,
     widget::{container, tooltip},
 };
 
@@ -13,10 +13,10 @@ pub fn view<'a>(
     tooltip(
         content,
         container(tooltip_content)
-            .style(move |theme| container::Style {
-                background: Some(Background::Color(Palette::from(theme).elevated)),
-                border: Border::default().rounded(8.0),
-                ..container::Style::default()
+            .style(move |theme| {
+                container::Style::default()
+                    .background(Palette::from(theme).elevated)
+                    .border(Border::default().rounded(8.0))
             })
             .padding(8)
             .height(Length::Shrink)

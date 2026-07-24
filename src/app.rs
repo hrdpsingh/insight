@@ -4,10 +4,10 @@ use crate::{
     state::{Cpu, Insight, Memory, Mode, Network, Processes, Storage},
 };
 use iced::{
-    Background, Element, Length, Subscription, alignment, padding, time,
+    Element, Length, Subscription, alignment, padding, time,
     widget::{column, container, responsive, row},
 };
-use std::time::Duration;
+use std::{collections::VecDeque, time::Duration};
 use sysinfo::{Disks, Networks, System};
 
 #[derive(Clone)]
@@ -17,6 +17,7 @@ pub enum Message {
     Next,
     Refresh,
     Change(Mode),
+    Input(String),
 }
 
 impl Insight {
@@ -34,12 +35,13 @@ impl Insight {
                     .unwrap_or_else(|| "Unavailable".to_string()),
                 architecture: System::cpu_arch().to_string(),
                 core_count: system.cpus().len(),
-                history: vec![0.0; 60],
+                history: VecDeque::from(vec![0.0; 60]),
             },
             memory: Memory { used: 0, total: 0 },
             processes: Processes {
                 list: Vec::new(),
                 page: 1,
+                search_term: String::new(),
             },
             storage: Storage {
                 total: 0,
@@ -83,7 +85,20 @@ impl Insight {
                 }
             }
             Message::Next => {
-                if self.processes.page < self.processes.list.len().div_ceil(11) {
+                let query = self.processes.search_term.trim().to_lowercase();
+                let process_count = self
+                    .processes
+                    .list
+                    .iter()
+                    .filter(|process| {
+                        query.is_empty()
+                            || process.name.to_lowercase().contains(&query)
+                            || process.pid.to_string().contains(&query)
+                    })
+                    .count();
+
+                let max_pages = process_count.div_ceil(11).max(1);
+                if self.processes.page < max_pages {
                     self.processes.page += 1;
                 }
             }
@@ -92,6 +107,10 @@ impl Insight {
             }
             Message::Change(mode) => {
                 self.mode = mode;
+            }
+            Message::Input(search_term) => {
+                self.processes.search_term = search_term;
+                self.processes.page = 1;
             }
         }
     }
@@ -102,7 +121,9 @@ impl Insight {
                 container(components::card::view(
                     column![
                         components::button::view(
-                            components::svg::view(include_bytes!("../assets/icons/system.svg").as_ref()),
+                            components::svg::view(
+                                include_bytes!("../assets/icons/system.svg").as_ref()
+                            ),
                             match self.mode {
                                 Mode::System => None,
                                 _ => Some(Message::Change(Mode::System)),
@@ -134,7 +155,7 @@ impl Insight {
                     padding::all(4.0),
                     Length::Shrink,
                     Length::Shrink,
-                    false,
+                    |theme| Palette::from(theme).background,
                 ))
                 .align_x(alignment::Horizontal::Center)
                 .padding(padding::top(16.0))
@@ -154,10 +175,7 @@ impl Insight {
         )
         .width(Length::Fill)
         .height(Length::Fill)
-        .style(move |theme| container::Style {
-            background: Some(Background::Color(Palette::from(theme).background)),
-            ..container::Style::default()
-        })
+        .style(move |theme| container::Style::default().background(Palette::from(theme).background))
         .into()
     }
 

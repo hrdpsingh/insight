@@ -27,10 +27,10 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                         color: Some(if insight.network.sending {
                             Palette::from(theme).accent
                         } else {
-                            Palette::from(theme).faded
+                            Palette::from(theme).muted
                         }),
                     }),
-                    inline::view("Outgoing", format_bytes(insight.network.outgoing)),
+                    inline::view("Outgoing", format_bytes(insight.network.outgoing), 140),
                 ]
                 .spacing(8)
                 .align_y(alignment::Vertical::Center),
@@ -42,10 +42,10 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                         color: Some(if insight.network.receiving {
                             Palette::from(theme).accent
                         } else {
-                            Palette::from(theme).faded
+                            Palette::from(theme).muted
                         }),
                     }),
-                    inline::view("Incoming", format_bytes(insight.network.incoming)),
+                    inline::view("Incoming", format_bytes(insight.network.incoming), 140),
                 ]
                 .spacing(8)
                 .align_y(alignment::Vertical::Center),
@@ -62,6 +62,6 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         padding::all(20.0),
         Length::Fixed(340.0),
         Length::Fixed(240.0),
-        true,
+        |theme| Palette::from(theme).surface,
     )
 }

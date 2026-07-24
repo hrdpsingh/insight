@@ -1,5 +1,5 @@
 use iced::{
-    Alignment, Element, Length, padding,
+    Element, Length, alignment, padding,
     widget::{Space, column, row},
 };
 
@@ -7,6 +7,7 @@ use crate::{
     app::Message,
     components::{self, card, donut},
     metrics::format_bytes,
+    palette::Palette,
     state::Insight,
 };
 
@@ -18,30 +19,29 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 components::title::view("Memory".to_string()),
                 Space::new().width(Length::Fill),
             ],
-            row![
-                Space::new().width(Length::Fill),
-                donut::view(insight.memory.used, insight.memory.total, 12.0),
-                Space::new().width(Length::Fill),
-            ]
-            .align_y(Alignment::End),
-            row![
-                components::stacked::view("Total", format_bytes(insight.memory.total)),
-                Space::new().width(Length::Fill),
+            column![
+                column![donut::view(insight.memory.used, insight.memory.total, 12.0)]
+                    .width(Length::Fill)
+                    .align_x(alignment::Horizontal::Center),
                 column![
                     components::inline::view(
                         "Free",
-                        format_bytes(insight.memory.total - insight.memory.used)
+                        format_bytes(insight.memory.total - insight.memory.used),
+                        200
                     ),
-                    components::inline::view("Used", format_bytes(insight.memory.used)),
+                    components::inline::view("Used", format_bytes(insight.memory.used), 200),
+                    components::inline::view("Total", format_bytes(insight.memory.total), 200),
                 ]
                 .spacing(8)
+                .width(Length::Fill)
+                .align_x(alignment::Horizontal::Center),
             ]
-            .align_y(Alignment::End),
+            .spacing(20),
         ]
         .spacing(24),
         padding::all(20.0),
         Length::Fixed(340.0),
         Length::Fixed(360.0),
-        true,
+        |theme| Palette::from(theme).surface,
     )
 }

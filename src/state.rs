@@ -1,4 +1,5 @@
 use iced::Theme;
+use std::collections::VecDeque;
 use sysinfo::{Disks, Networks, System};
 
 pub struct Insight {
@@ -17,7 +18,7 @@ pub struct Cpu {
     pub name: String,
     pub architecture: String,
     pub core_count: usize,
-    pub history: Vec<f32>,
+    pub history: VecDeque<f32>,
 }
 
 pub struct Memory {
@@ -28,6 +29,7 @@ pub struct Memory {
 pub struct Processes {
     pub list: Vec<Process>,
     pub page: usize,
+    pub search_term: String,
 }
 
 pub struct Process {

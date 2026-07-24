@@ -7,21 +7,36 @@ use crate::{
 };
 
 use iced::{
-    Element, Font, Length, Theme,
-    alignment::Vertical,
+    Background, Border, Element, Font, Length, Theme,
+    alignment::{self, Vertical},
     font::Weight,
     padding,
-    widget::{Space, column, container, row, text, tooltip},
+    widget::{Space, column, container, row, text, text_input, tooltip},
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
     let count = 11;
-    let pages = insight.processes.list.len().div_ceil(count);
+    let query = insight.processes.search_term.trim().to_lowercase();
 
-    let displayed_processes: Vec<_> = insight
+    let processes: Vec<_> = insight
         .processes
         .list
         .iter()
+        .filter(|process| {
+            if query.is_empty() {
+                true
+            } else {
+                process.name.to_lowercase().contains(&query)
+                    || process.pid.to_string().contains(&query)
+            }
+        })
+        .collect();
+
+    let process_count = processes.len();
+    let pages = processes.len().div_ceil(count).max(1);
+
+    let displayed_processes: Vec<_> = processes
+        .into_iter()
         .skip((insight.processes.page - 1) * count)
         .take(count)
         .collect();
@@ -80,7 +95,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             padding::all(4),
             Length::Shrink,
             Length::Shrink,
-            false
+            |theme| Palette::from(theme).background,
         ),
         Space::new().width(Length::Fill),
     ];
@@ -89,16 +104,52 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         column![
             row![
                 Space::new().width(Length::Fill),
-                components::title::view(format!("Processes - {}", insight.processes.list.len())),
+                components::title::view(format!("Processes - {}", process_count)),
                 Space::new().width(Length::Fill),
             ],
-            column![table, navigation].spacing(12).width(Length::Shrink)
+            column![
+                table,
+                row![
+                    navigation,
+                    text_input("Search...", &insight.processes.search_term)
+                        .on_input(Message::Input)
+                        .padding(8.0)
+                        .width(Length::Fill)
+                        .style(|theme, status| {
+                            match status {
+                                text_input::Status::Focused { .. } => text_input::Style {
+                                    background: Background::Color(Palette::from(theme).background),
+                                    border: Border::default()
+                                        .width(2.0)
+                                        .rounded(12.0)
+                                        .color(Palette::from(theme).accent),
+                                    icon: Palette::from(theme).text,
+                                    placeholder: Palette::from(theme).muted,
+                                    value: Palette::from(theme).text,
+                                    selection: Palette::from(theme).accent,
+                                },
+                                _ => text_input::Style {
+                                    background: Background::Color(Palette::from(theme).background),
+                                    border: Border::default().rounded(8.0),
+                                    icon: Palette::from(theme).text,
+                                    placeholder: Palette::from(theme).muted,
+                                    value: Palette::from(theme).text,
+                                    selection: Palette::from(theme).accent,
+                                },
+                            }
+                        })
+                ]
+                .spacing(8.0)
+                .align_y(alignment::Vertical::Center)
+            ]
+            .spacing(12)
+            .width(Length::Shrink)
         ]
         .spacing(16),
         padding::all(20.0),
         Length::Fixed(340.0),
         Length::Fixed(624.0),
-        true,
+        |theme| Palette::from(theme).surface,
     )
 }
 

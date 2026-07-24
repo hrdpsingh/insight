@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use crate::palette::Palette;
 use iced::{
     Element, Length, Point, Rectangle, Renderer, Theme, alignment, mouse,
@@ -9,12 +11,12 @@ use iced::{
 };
 
 struct Graph {
-    data: Vec<f32>,
+    data: VecDeque<f32>,
     maximum_value: f32,
 }
 
 pub fn view<Message: 'static>(
-    data: Vec<f32>,
+    data: VecDeque<f32>,
     maximum_value: f32,
     height: f32,
 ) -> Element<'static, Message> {
