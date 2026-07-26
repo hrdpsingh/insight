@@ -1,6 +1,6 @@
 use crate::{app::Message, palette::Palette};
 use iced::{
-    Border, Element, Theme,
+    Element, Theme,
     widget::{Svg, button, svg},
 };
 
@@ -14,19 +14,13 @@ pub fn view(icon: Svg<'_>, navigate: Option<Message>, sidebar: bool) -> Element<
             color: Some(match (sidebar, enabled) {
                 (_, true) => palette.muted,
                 (true, false) => palette.accent,
-                (false, false) => palette.muted,
+                (false, false) => palette.disabled,
             }),
         }
     }))
-    .padding(4)
+    .padding(0)
     .style(move |theme: &Theme, _| button::Style {
-        background: match (enabled, sidebar) {
-            (true, true) => Some(Palette::from(theme).background.into()),
-            (false, true) => Some(Palette::from(theme).surface.into()),
-            (true, false) => Some(Palette::from(theme).surface.into()),
-            (false, false) => Some(Palette::from(theme).background.into()),
-        },
-        border: Border::default().rounded(8.0),
+        background: Some(Palette::from(theme).transparent.into()),
         ..Default::default()
     });
 

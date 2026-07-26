@@ -7,7 +7,6 @@ use crate::{
     app::Message,
     components::{self, card, donut},
     metrics::format_bytes,
-    palette::Palette,
     state::Insight,
 };
 
@@ -26,11 +25,10 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 column![
                     components::inline::view(
                         "Free",
-                        format_bytes(insight.memory.total - insight.memory.used),
-                        200
+                        format_bytes(insight.memory.total - insight.memory.used)
                     ),
-                    components::inline::view("Used", format_bytes(insight.memory.used), 200),
-                    components::inline::view("Total", format_bytes(insight.memory.total), 200),
+                    components::inline::view("Used", format_bytes(insight.memory.used)),
+                    components::inline::view("Total", format_bytes(insight.memory.total)),
                 ]
                 .spacing(8)
                 .width(Length::Fill)
@@ -42,6 +40,5 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         padding::all(20.0),
         Length::Fixed(340.0),
         Length::Fixed(360.0),
-        |theme| Palette::from(theme).surface,
     )
 }

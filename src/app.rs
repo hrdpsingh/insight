@@ -5,7 +5,7 @@ use crate::{
 };
 use iced::{
     Element, Length, Subscription, alignment, padding, time,
-    widget::{column, container, responsive, row},
+    widget::{column, container, responsive, row, rule},
 };
 use std::{collections::VecDeque, time::Duration};
 use sysinfo::{Disks, Networks, System};
@@ -97,7 +97,7 @@ impl Insight {
                     })
                     .count();
 
-                let max_pages = process_count.div_ceil(11).max(1);
+                let max_pages = process_count.div_ceil(10).max(1);
                 if self.processes.page < max_pages {
                     self.processes.page += 1;
                 }
@@ -118,7 +118,7 @@ impl Insight {
     pub fn view(&self) -> Element<'_, Message> {
         container(
             row![
-                container(components::card::view(
+                container(
                     column![
                         components::button::view(
                             components::svg::view(
@@ -151,18 +151,20 @@ impl Insight {
                             true,
                         ),
                     ]
-                    .spacing(4),
-                    padding::all(4.0),
-                    Length::Shrink,
-                    Length::Shrink,
-                    |theme| Palette::from(theme).background,
-                ))
+                    .spacing(16)
+                )
                 .align_x(alignment::Horizontal::Center)
                 .padding(padding::top(16.0))
                 .height(Length::Fill)
                 .width(Length::Fixed(60.0))
                 .style(move |theme| container::Style::default()
                     .background(Palette::from(theme).surface)),
+                rule::vertical(1).style(|theme| rule::Style {
+                    color: Palette::from(theme).border,
+                    radius: iced::border::Radius::new(0),
+                    fill_mode: rule::FillMode::Full,
+                    snap: false
+                }),
                 components::scroll::view(responsive(|size| {
                     container(layout::view(self, size))
                         .align_x(iced::Alignment::Center)

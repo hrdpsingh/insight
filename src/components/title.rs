@@ -10,7 +10,7 @@ pub fn view<'a>(label: String) -> Element<'a, Message> {
             ..Font::default()
         })
         .style(move |theme: &Theme| text::Style {
-            color: Some(Palette::from(theme).text),
+            color: Some(Palette::from(theme).muted),
         })
         .into()
 }

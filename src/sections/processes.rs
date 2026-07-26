@@ -15,7 +15,7 @@ use iced::{
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
-    let count = 11;
+    let count = 10;
     let query = insight.processes.search_term.trim().to_lowercase();
 
     let processes: Vec<_> = insight
@@ -70,35 +70,20 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
     .spacing(8);
 
     let navigation = row![
-        Space::new().width(Length::Fill),
-        card::view(
-            row![
-                button::view(
-                    components::svg::view(
-                        include_bytes!("../../assets/icons/left_arrow.svg").as_ref()
-                    ),
-                    (insight.processes.page > 1).then_some(Message::Previous),
-                    false
-                ),
-                text(format!("{} of {}", insight.processes.page, pages))
-                    .wrapping(text::Wrapping::None),
-                button::view(
-                    components::svg::view(
-                        include_bytes!("../../assets/icons/right_arrow.svg").as_ref()
-                    ),
-                    (insight.processes.page < pages).then_some(Message::Next),
-                    false
-                ),
-            ]
-            .align_y(Vertical::Center)
-            .spacing(12),
-            padding::all(4),
-            Length::Shrink,
-            Length::Shrink,
-            |theme| Palette::from(theme).background,
+        button::view(
+            components::svg::view(include_bytes!("../../assets/icons/left_arrow.svg").as_ref()),
+            (insight.processes.page > 1).then_some(Message::Previous),
+            false
         ),
-        Space::new().width(Length::Fill),
-    ];
+        text(format!("{} of {}", insight.processes.page, pages)).wrapping(text::Wrapping::None),
+        button::view(
+            components::svg::view(include_bytes!("../../assets/icons/right_arrow.svg").as_ref()),
+            (insight.processes.page < pages).then_some(Message::Next),
+            false
+        ),
+    ]
+    .align_y(Vertical::Center)
+    .spacing(12);
 
     card::view(
         column![
@@ -108,48 +93,47 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 Space::new().width(Length::Fill),
             ],
             column![
+                text_input("Search...", &insight.processes.search_term)
+                    .on_input(Message::Input)
+                    .padding(8.0)
+                    .width(Length::Fill)
+                    .style(|theme, status| {
+                        match status {
+                            text_input::Status::Focused { .. } => text_input::Style {
+                                background: Background::Color(Palette::from(theme).background),
+                                border: Border::default()
+                                    .width(1.0)
+                                    .rounded(12.0)
+                                    .color(Palette::from(theme).accent),
+                                icon: Palette::from(theme).text,
+                                placeholder: Palette::from(theme).muted,
+                                value: Palette::from(theme).text,
+                                selection: Palette::from(theme).accent,
+                            },
+                            _ => text_input::Style {
+                                background: Background::Color(Palette::from(theme).background),
+                                border: Border::default()
+                                    .width(1.0)
+                                    .rounded(12.0)
+                                    .color(Palette::from(theme).border),
+                                icon: Palette::from(theme).text,
+                                placeholder: Palette::from(theme).muted,
+                                value: Palette::from(theme).text,
+                                selection: Palette::from(theme).accent,
+                            },
+                        }
+                    }),
                 table,
-                row![
-                    navigation,
-                    text_input("Search...", &insight.processes.search_term)
-                        .on_input(Message::Input)
-                        .padding(8.0)
-                        .width(Length::Fill)
-                        .style(|theme, status| {
-                            match status {
-                                text_input::Status::Focused { .. } => text_input::Style {
-                                    background: Background::Color(Palette::from(theme).background),
-                                    border: Border::default()
-                                        .width(2.0)
-                                        .rounded(12.0)
-                                        .color(Palette::from(theme).accent),
-                                    icon: Palette::from(theme).text,
-                                    placeholder: Palette::from(theme).muted,
-                                    value: Palette::from(theme).text,
-                                    selection: Palette::from(theme).accent,
-                                },
-                                _ => text_input::Style {
-                                    background: Background::Color(Palette::from(theme).background),
-                                    border: Border::default().rounded(8.0),
-                                    icon: Palette::from(theme).text,
-                                    placeholder: Palette::from(theme).muted,
-                                    value: Palette::from(theme).text,
-                                    selection: Palette::from(theme).accent,
-                                },
-                            }
-                        })
-                ]
-                .spacing(8.0)
-                .align_y(alignment::Vertical::Center)
+                navigation,
             ]
             .spacing(12)
-            .width(Length::Shrink)
+            .width(Length::Fill)
+            .align_x(alignment::Horizontal::Center)
         ]
         .spacing(16),
         padding::all(20.0),
         Length::Fixed(340.0),
         Length::Fixed(624.0),
-        |theme| Palette::from(theme).surface,
     )
 }
 

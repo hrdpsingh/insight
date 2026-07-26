@@ -51,8 +51,18 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for ProgressBar {
         frame.stroke(
             &background,
             Stroke {
-                style: canvas::Style::Solid(Palette::from(theme).background),
+                style: canvas::Style::Solid(Palette::from(theme).border),
                 width: self.thickness,
+                line_cap: canvas::LineCap::Round,
+                ..Stroke::default()
+            },
+        );
+
+        frame.stroke(
+            &background,
+            Stroke {
+                style: canvas::Style::Solid(Palette::from(theme).background),
+                width: self.thickness - 2.0,
                 line_cap: canvas::LineCap::Round,
                 ..Stroke::default()
             },

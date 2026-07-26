@@ -5,7 +5,7 @@ use iced::{
     Element, Length, Point, Rectangle, Renderer, Theme, alignment, mouse,
     widget::{
         Space,
-        canvas::{self, Canvas, Frame, Geometry, Path, Stroke},
+        canvas::{self, Canvas, Frame, Geometry, Path, Stroke, gradient},
         column, row, text,
     },
 };
@@ -104,7 +104,20 @@ impl<Message> canvas::Program<Message> for Graph {
             build_curve(builder);
         });
 
-        frame.fill(&filled_area, Palette::from(theme).accent_light);
+        let gradient = gradient::Linear::new(
+            iced::Point::new(
+                0.0,
+                points
+                    .iter()
+                    .map(|point| point.y)
+                    .fold(f32::INFINITY, f32::min),
+            ),
+            iced::Point::new(0.0, height),
+        )
+        .add_stop(0.0, Palette::from(theme).accent_light)
+        .add_stop(1.0, Palette::from(theme).transparent);
+
+        frame.fill(&filled_area, gradient);
         frame.stroke(
             &line,
             Stroke::default()

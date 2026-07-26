@@ -30,7 +30,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                             Palette::from(theme).muted
                         }),
                     }),
-                    inline::view("Outgoing", format_bytes(insight.network.outgoing), 140),
+                    inline::view("Outgoing", format_bytes(insight.network.outgoing)),
                 ]
                 .spacing(8)
                 .align_y(alignment::Vertical::Center),
@@ -45,7 +45,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                             Palette::from(theme).muted
                         }),
                     }),
-                    inline::view("Incoming", format_bytes(insight.network.incoming), 140),
+                    inline::view("Incoming", format_bytes(insight.network.incoming)),
                 ]
                 .spacing(8)
                 .align_y(alignment::Vertical::Center),
@@ -62,6 +62,5 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         padding::all(20.0),
         Length::Fixed(340.0),
         Length::Fixed(240.0),
-        |theme| Palette::from(theme).surface,
     )
 }

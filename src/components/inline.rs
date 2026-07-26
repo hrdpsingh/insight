@@ -1,12 +1,12 @@
 use iced::{
     Element, Length,
-    widget::{Space, container, row, text},
+    widget::{Space, row, text},
 };
 
 use crate::{app::Message, palette::Palette};
 
-pub fn view<'a>(label: &'a str, value: String, width: u32) -> Element<'a, Message> {
-    container(row![
+pub fn view<'a>(label: &'a str, value: String) -> Element<'a, Message> {
+    row![
         text(label.to_string())
             .wrapping(text::Wrapping::None)
             .style(|theme| text::Style {
@@ -14,7 +14,6 @@ pub fn view<'a>(label: &'a str, value: String, width: u32) -> Element<'a, Messag
             }),
         Space::new().width(Length::Fill),
         text(value).wrapping(text::Wrapping::None)
-    ])
-    .width(width)
+    ]
     .into()
 }
