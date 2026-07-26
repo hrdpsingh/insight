@@ -172,14 +172,22 @@ fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a
     ];
 
     for item in items {
-        column = column.push(components::tooltip::view(
-            container(text(item.clone()).wrapping(text::Wrapping::None))
-                .width(Length::Fixed(width))
-                .padding(8)
-                .clip(true),
-            text(item),
-            tooltip::Position::Bottom,
-        ));
+        column = match name {
+            "Name" => column.push(components::tooltip::view(
+                container(text(item.clone()).wrapping(text::Wrapping::None))
+                    .width(Length::Fixed(width))
+                    .padding(8)
+                    .clip(true),
+                text(item),
+                tooltip::Position::Bottom,
+            )),
+            _ => column.push(
+                container(text(item.clone()).wrapping(text::Wrapping::None))
+                    .width(Length::Fixed(width))
+                    .padding(8)
+                    .clip(true),
+            ),
+        }
     }
 
     column.width(Length::Fixed(width)).into()

@@ -16,6 +16,5 @@ pub fn view<'a>(label: &'a str, value: String, width: u32) -> Element<'a, Messag
         text(value).wrapping(text::Wrapping::None)
     ])
     .width(width)
-    .clip(true)
     .into()
 }
