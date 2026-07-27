@@ -1,7 +1,8 @@
 use crate::state::{Insight, Process};
 use chrono::Local;
-use sysinfo::DiskRefreshKind;
-use sysinfo::{CpuRefreshKind, MemoryRefreshKind, ProcessRefreshKind, RefreshKind};
+use sysinfo::{
+    CpuRefreshKind, DiskRefreshKind, MemoryRefreshKind, ProcessRefreshKind, RefreshKind,
+};
 
 pub fn refresh_system() -> RefreshKind {
     RefreshKind::nothing()
@@ -54,7 +55,12 @@ pub fn update_processes(insight: &mut Insight) {
         .list
         .sort_by_key(|p2| std::cmp::Reverse(p2.memory));
 
-    let pages = insight.processes.list.len().div_ceil(10).max(1);
+    let pages = insight
+        .processes
+        .list
+        .len()
+        .div_ceil(crate::constant::PROCESS_COUNT)
+        .max(1);
     if insight.processes.page > pages {
         insight.processes.page = pages;
     }

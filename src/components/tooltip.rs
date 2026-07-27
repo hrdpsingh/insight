@@ -3,7 +3,7 @@ use iced::{
     widget::{container, tooltip},
 };
 
-use crate::{app::Message, palette::Palette};
+use crate::{app::Message, constant, palette::Palette};
 
 pub fn view<'a>(
     content: impl Into<Element<'a, Message, Theme, Renderer>>,
@@ -18,12 +18,12 @@ pub fn view<'a>(
                     .background(Palette::from(theme).surface)
                     .border(
                         Border::default()
-                            .rounded(8.0)
-                            .width(1)
+                            .rounded(constant::BORDER_RADIUS)
+                            .width(constant::BORDER_WIDTH)
                             .color(Palette::from(theme).border),
                     )
             })
-            .padding(8)
+            .padding(constant::PADDING_SMALL)
             .height(Length::Shrink)
             .width(Length::Shrink),
         position,

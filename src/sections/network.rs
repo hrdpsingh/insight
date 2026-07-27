@@ -1,12 +1,13 @@
 use crate::{
     app::Message,
     components::{self, card, inline, stacked, title},
+    constant,
     metrics::format_bytes,
     palette::Palette,
     state::Insight,
 };
 use iced::{
-    Element, Length, alignment, padding,
+    Element, Length, alignment,
     widget::{Space, column, row, svg},
 };
 
@@ -28,7 +29,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                     }),
                     inline::view("Outgoing", format_bytes(insight.network.outgoing)),
                 ]
-                .spacing(8)
+                .spacing(constant::SPACE_SMALL)
                 .align_y(alignment::Vertical::Center),
                 row![
                     components::svg::view(
@@ -43,20 +44,18 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                     }),
                     inline::view("Incoming", format_bytes(insight.network.incoming)),
                 ]
-                .spacing(8)
+                .spacing(constant::SPACE_SMALL)
                 .align_y(alignment::Vertical::Center),
             ]
-            .spacing(12),
+            .spacing(constant::SPACE_MEDIUM),
             row![
                 stacked::view("Sent", format_bytes(insight.network.sent)),
                 Space::new().width(Length::Fill),
                 stacked::view("Received", format_bytes(insight.network.received)),
             ]
-            .spacing(4)
+            .spacing(constant::SPACE_SMALL)
         ]
-        .spacing(20),
-        padding::all(20.0),
-        Length::Fixed(340.0),
+        .spacing(constant::SPACE_LARGE),
         Length::Fixed(240.0),
     )
 }

@@ -1,11 +1,12 @@
 use crate::{
     app::Message,
     components::{self, card},
+    constant,
     metrics::format_bytes,
     state::Insight,
 };
 use iced::{
-    Element, Length, alignment, padding,
+    Element, Length, alignment,
     widget::{Space, column, row, text, tooltip},
 };
 
@@ -39,18 +40,16 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 ],
                 components::bar::view(insight.storage.used, insight.storage.total, 12.0,),
             ]
-            .spacing(8)
+            .spacing(constant::SPACE_SMALL)
             .width(Length::Fill),
             row![
                 components::stacked::view("Used", format_bytes(insight.storage.used)),
                 Space::new().width(Length::Fill),
                 components::stacked::view("Total", format_bytes(insight.storage.total)),
             ]
-            .spacing(8),
+            .spacing(constant::SPACE_SMALL),
         ]
-        .spacing(24),
-        padding::all(20.0),
-        Length::Fixed(340.0),
+        .spacing(constant::SPACE_LARGE),
         Length::Fixed(240.0),
     )
 }

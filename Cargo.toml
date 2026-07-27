@@ -4,7 +4,7 @@ version = "0.2.0"
 edition = "2024"
 
 [dependencies]
-iced = { version = "0.14", default-features = false, features = ["wgpu", "tokio", "canvas", "crisp", "svg", "image"] }
+iced = { version = "0.14", default-features = false, features = ["wgpu", "tokio", "canvas", "crisp", "svg"] }
 sysinfo = { version = "0.39.6", default-features = false, features = ["disk", "system", "network", "multithread"] }
 chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
 resvg = {version = "0.47.0", default-features = false}

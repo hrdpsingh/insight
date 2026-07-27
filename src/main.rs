@@ -2,6 +2,7 @@
 
 mod app;
 mod components;
+mod constant;
 mod layout;
 mod metrics;
 mod palette;

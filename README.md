@@ -1,6 +1,6 @@
 # Insight
 
-A dashboard for monitoring hardware.
+A system monitor that presents a complete overview of the hardware in an intuitive dashboard.
 
 ## Screenshots
 

@@ -1,0 +1,10 @@
+pub const PROCESS_COUNT: usize = 10;
+pub const BORDER_WIDTH: u32 = 1;
+pub const BORDER_RADIUS: f32 = 12.0;
+pub const ICON_SIZE: u32 = 20;
+pub const SPACE_SMALL: u32 = 8;
+pub const SPACE_MEDIUM: u32 = 16;
+pub const SPACE_LARGE: u32 = 24;
+pub const PADDING_SMALL: f32 = 8.0;
+pub const PADDING_MEDIUM: f32 = 16.0;
+pub const PADDING_LARGE: f32 = 24.0;

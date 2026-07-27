@@ -1,11 +1,12 @@
 use iced::{
-    Element, Length, alignment, padding,
+    Element, Length, alignment,
     widget::{column, rule},
 };
 
 use crate::{
     app::Message,
     components::{self, card, donut},
+    constant,
     metrics::format_bytes,
     palette::Palette,
     state::Insight,
@@ -39,15 +40,13 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                     }),
                     components::inline::view("Total", format_bytes(insight.memory.total)),
                 ]
-                .spacing(8)
+                .spacing(constant::SPACE_SMALL)
                 .width(Length::Fill)
                 .align_x(alignment::Horizontal::Center),
             ]
-            .spacing(20),
+            .spacing(constant::SPACE_MEDIUM),
         ]
-        .spacing(24),
-        padding::all(20.0),
-        Length::Fixed(340.0),
+        .spacing(constant::SPACE_LARGE),
         Length::Fixed(360.0),
     )
 }

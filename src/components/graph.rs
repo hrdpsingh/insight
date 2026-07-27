@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use crate::palette::Palette;
+use crate::{constant, palette::Palette};
 use iced::{
     Element, Length, Point, Rectangle, Renderer, Theme, alignment, mouse,
     widget::{
@@ -43,9 +43,9 @@ pub fn view<Message: 'static>(
                 Space::new().width(Length::Fill),
             ]
         ]
-        .spacing(8)
+        .spacing(constant::SPACE_SMALL)
     ]
-    .spacing(12)
+    .spacing(constant::SPACE_SMALL)
     .into()
 }
 
@@ -88,7 +88,9 @@ impl<Message> canvas::Program<Message> for Graph {
                 let mid = Point::new((p1.x + p2.x) / 2.0, (p1.y + p2.y) / 2.0);
                 builder.quadratic_curve_to(p1, mid);
             }
-            builder.line_to(*points.last().unwrap());
+            if let Some(last) = points.last() {
+                builder.line_to(*last)
+            };
         };
 
         let filled_area = Path::new(|builder| {

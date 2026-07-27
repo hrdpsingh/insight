@@ -11,7 +11,7 @@ use crate::palette::Palette;
 pub fn view<'a, Message: 'a>(content: impl Into<Element<'a, Message>>) -> Element<'a, Message> {
     scrollable(content)
         .direction(Direction::Vertical(
-            Scrollbar::default().width(8).scroller_width(8).spacing(0),
+            Scrollbar::default().width(8).scroller_width(8),
         ))
         .style(|theme, status| {
             let mut base_style = scrollable::default(theme, status);

@@ -1,5 +1,5 @@
 use crate::{
-    components, layout, metrics,
+    components, constant, layout, metrics,
     palette::Palette,
     state::{Cpu, Insight, Memory, Mode, Network, Processes, Storage},
 };
@@ -97,7 +97,9 @@ impl Insight {
                     })
                     .count();
 
-                let max_pages = process_count.div_ceil(10).max(1);
+                let max_pages = process_count
+                    .div_ceil(crate::constant::PROCESS_COUNT)
+                    .max(1);
                 if self.processes.page < max_pages {
                     self.processes.page += 1;
                 }
@@ -116,65 +118,63 @@ impl Insight {
     }
 
     pub fn view(&self) -> Element<'_, Message> {
-        container(
-            row![
-                container(
-                    column![
-                        components::button::view(
-                            components::svg::view(
-                                include_bytes!("../assets/icons/system.svg").as_ref()
-                            ),
-                            match self.mode {
-                                Mode::System => None,
-                                _ => Some(Message::Change(Mode::System)),
-                            },
-                            true,
+        container(row![
+            container(
+                column![
+                    components::button::view(
+                        components::svg::view(
+                            include_bytes!("../assets/icons/system.svg").as_ref()
                         ),
-                        components::button::view(
-                            components::svg::view(
-                                include_bytes!("../assets/icons/light_mode.svg").as_ref()
-                            ),
-                            match self.mode {
-                                Mode::Light => None,
-                                _ => Some(Message::Change(Mode::Light)),
-                            },
-                            true,
+                        match self.mode {
+                            Mode::System => None,
+                            _ => Some(Message::Change(Mode::System)),
+                        },
+                        true,
+                    ),
+                    components::button::view(
+                        components::svg::view(
+                            include_bytes!("../assets/icons/light_mode.svg").as_ref()
                         ),
-                        components::button::view(
-                            components::svg::view(
-                                include_bytes!("../assets/icons/dark_mode.svg").as_ref()
-                            ),
-                            match self.mode {
-                                Mode::Dark => None,
-                                _ => Some(Message::Change(Mode::Dark)),
-                            },
-                            true,
+                        match self.mode {
+                            Mode::Light => None,
+                            _ => Some(Message::Change(Mode::Light)),
+                        },
+                        true,
+                    ),
+                    components::button::view(
+                        components::svg::view(
+                            include_bytes!("../assets/icons/dark_mode.svg").as_ref()
                         ),
-                    ]
-                    .spacing(16)
-                )
-                .align_x(alignment::Horizontal::Center)
-                .padding(padding::top(16.0))
-                .height(Length::Fill)
-                .width(Length::Fixed(60.0))
-                .style(move |theme| container::Style::default()
-                    .background(Palette::from(theme).surface)),
-                rule::vertical(1).style(|theme| rule::Style {
-                    color: Palette::from(theme).border,
-                    radius: iced::border::Radius::new(0),
-                    fill_mode: rule::FillMode::Full,
-                    snap: false
-                }),
-                components::scroll::view(responsive(|size| {
-                    container(layout::view(self, size))
-                        .align_x(iced::Alignment::Center)
-                        .width(Length::Fill)
-                        .padding(24)
-                        .into()
-                }))
-            ]
-            .spacing(0),
-        )
+                        match self.mode {
+                            Mode::Dark => None,
+                            _ => Some(Message::Change(Mode::Dark)),
+                        },
+                        true,
+                    ),
+                ]
+                .spacing(constant::SPACE_SMALL)
+            )
+            .align_x(alignment::Horizontal::Center)
+            .padding(padding::top(constant::PADDING_MEDIUM))
+            .height(Length::Fill)
+            .width(Length::Fixed(60.0))
+            .style(
+                move |theme| container::Style::default().background(Palette::from(theme).surface)
+            ),
+            rule::vertical(1).style(|theme| rule::Style {
+                color: Palette::from(theme).border,
+                radius: iced::border::Radius::new(0),
+                fill_mode: rule::FillMode::Full,
+                snap: false
+            }),
+            components::scroll::view(responsive(|size| {
+                container(layout::view(self, size))
+                    .align_x(iced::Alignment::Center)
+                    .width(Length::Fill)
+                    .padding(constant::PADDING_LARGE)
+                    .into()
+            }))
+        ])
         .width(Length::Fill)
         .height(Length::Fill)
         .style(move |theme| container::Style::default().background(Palette::from(theme).background))

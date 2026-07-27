@@ -1,10 +1,8 @@
-use crate::{app::Message, palette::Palette};
-use iced::{Border, Element, Length, Padding, Renderer, Theme, widget::container};
+use crate::{app::Message, constant, palette::Palette};
+use iced::{Border, Element, Length, Renderer, Theme, widget::container};
 
 pub fn view<'a>(
     content: impl Into<Element<'a, Message, Theme, Renderer>>,
-    padding: Padding,
-    width: Length,
     height: Length,
 ) -> Element<'a, Message, Theme, Renderer> {
     container(content)
@@ -13,13 +11,13 @@ pub fn view<'a>(
                 .background(Palette::from(theme).surface)
                 .border(
                     Border::default()
-                        .rounded(12.0)
-                        .width(1)
+                        .rounded(constant::BORDER_RADIUS)
+                        .width(constant::BORDER_WIDTH)
                         .color(Palette::from(theme).border),
                 )
         })
-        .padding(padding)
+        .padding(constant::PADDING_LARGE)
+        .width(340.0)
         .height(height)
-        .width(width)
         .into()
 }
