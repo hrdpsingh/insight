@@ -35,7 +35,7 @@ impl Insight {
                     .unwrap_or_else(|| "Unavailable".to_string()),
                 architecture: System::cpu_arch().to_string(),
                 core_count: system.cpus().len(),
-                history: VecDeque::from(vec![0.0; 60]),
+                history: VecDeque::from(vec![0.0; constant::graph::HISTORY_LENGTH]),
             },
             memory: Memory { used: 0, total: 0 },
             processes: Processes {
@@ -98,7 +98,7 @@ impl Insight {
                     .count();
 
                 let max_pages = process_count
-                    .div_ceil(crate::constant::PROCESS_COUNT)
+                    .div_ceil(crate::constant::process::COUNT)
                     .max(1);
                 if self.processes.page < max_pages {
                     self.processes.page += 1;
@@ -152,10 +152,10 @@ impl Insight {
                         true,
                     ),
                 ]
-                .spacing(constant::SPACE_SMALL)
+                .spacing(constant::spacing::MEDIUM)
             )
             .align_x(alignment::Horizontal::Center)
-            .padding(padding::top(constant::PADDING_MEDIUM))
+            .padding(padding::top(constant::padding::MEDIUM))
             .height(Length::Fill)
             .width(Length::Fixed(60.0))
             .style(
@@ -171,7 +171,7 @@ impl Insight {
                 container(layout::view(self, size))
                     .align_x(iced::Alignment::Center)
                     .width(Length::Fill)
-                    .padding(constant::PADDING_LARGE)
+                    .padding(constant::padding::LARGE)
                     .into()
             }))
         ])

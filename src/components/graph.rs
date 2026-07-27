@@ -39,13 +39,13 @@ pub fn view<Message: 'static>(
             .height(Length::Fixed(height)),
             row![
                 Space::new().width(Length::Fill),
-                text("60 seconds").size(12),
+                text(format!("{} seconds", constant::graph::HISTORY_LENGTH)).size(12),
                 Space::new().width(Length::Fill),
             ]
         ]
-        .spacing(constant::SPACE_SMALL)
+        .spacing(constant::spacing::SMALL)
     ]
-    .spacing(constant::SPACE_SMALL)
+    .spacing(constant::spacing::SMALL)
     .into()
 }
 

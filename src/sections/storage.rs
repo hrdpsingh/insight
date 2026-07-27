@@ -40,16 +40,16 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 ],
                 components::bar::view(insight.storage.used, insight.storage.total, 12.0,),
             ]
-            .spacing(constant::SPACE_SMALL)
+            .spacing(constant::spacing::SMALL)
             .width(Length::Fill),
             row![
                 components::stacked::view("Used", format_bytes(insight.storage.used)),
                 Space::new().width(Length::Fill),
                 components::stacked::view("Total", format_bytes(insight.storage.total)),
             ]
-            .spacing(constant::SPACE_SMALL),
+            .spacing(constant::spacing::SMALL),
         ]
-        .spacing(constant::SPACE_LARGE),
-        Length::Fixed(240.0),
+        .spacing(constant::spacing::LARGE),
+        Length::Fixed(constant::card::HEIGHT_SMALL),
     )
 }

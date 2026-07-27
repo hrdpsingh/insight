@@ -2,7 +2,6 @@ use crate::{
     app::Message,
     components::{self, button, card},
     constant,
-    constant::PROCESS_COUNT,
     metrics::format_bytes,
     palette::Palette,
     state::Insight,
@@ -33,12 +32,12 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         .collect();
 
     let process_count = processes.len();
-    let pages = processes.len().div_ceil(PROCESS_COUNT).max(1);
+    let pages = processes.len().div_ceil(constant::process::COUNT).max(1);
 
     let displayed_processes: Vec<_> = processes
         .into_iter()
-        .skip((insight.processes.page - 1) * PROCESS_COUNT)
-        .take(PROCESS_COUNT)
+        .skip((insight.processes.page - 1) * constant::process::COUNT)
+        .take(constant::process::COUNT)
         .collect();
 
     let table = row![
@@ -67,7 +66,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             96.0
         ),
     ]
-    .spacing(constant::SPACE_SMALL);
+    .spacing(constant::spacing::SMALL);
 
     let navigation = container(
         row![
@@ -86,14 +85,14 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             ),
         ]
         .align_y(Vertical::Center)
-        .spacing(constant::SPACE_MEDIUM),
+        .spacing(constant::spacing::SMALL),
     )
-    .padding(constant::PADDING_SMALL)
+    .padding(constant::padding::SMALL)
     .style(move |theme| {
         container::Style::default().border(
             Border::default()
-                .rounded(constant::BORDER_RADIUS)
-                .width(constant::BORDER_WIDTH)
+                .rounded(constant::border::RADIUS)
+                .width(constant::border::WIDTH)
                 .color(Palette::from(theme).border),
         )
     });
@@ -104,7 +103,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
             column![
                 text_input("Search...", &insight.processes.search_term)
                     .on_input(Message::Input)
-                    .padding(constant::PADDING_SMALL)
+                    .padding(constant::padding::SMALL)
                     .width(Length::Fill)
                     .style(|theme, status| {
                         match status {
@@ -112,7 +111,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                                 background: Background::Color(Palette::from(theme).background),
                                 border: Border::default()
                                     .width(1.0)
-                                    .rounded(constant::BORDER_RADIUS)
+                                    .rounded(constant::border::RADIUS)
                                     .color(Palette::from(theme).accent),
                                 icon: Palette::from(theme).text,
                                 placeholder: Palette::from(theme).muted,
@@ -123,7 +122,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                                 background: Background::Color(Palette::from(theme).background),
                                 border: Border::default()
                                     .width(1.0)
-                                    .rounded(constant::BORDER_RADIUS)
+                                    .rounded(constant::border::RADIUS)
                                     .color(Palette::from(theme).border),
                                 icon: Palette::from(theme).text,
                                 placeholder: Palette::from(theme).muted,
@@ -135,12 +134,12 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 table,
                 navigation,
             ]
-            .spacing(constant::SPACE_MEDIUM)
+            .spacing(constant::spacing::MEDIUM)
             .width(Length::Fill)
             .align_x(alignment::Horizontal::Center)
         ]
-        .spacing(constant::SPACE_MEDIUM),
-        Length::Fixed(624.0),
+        .spacing(constant::spacing::MEDIUM),
+        Length::Fixed(constant::card::HEIGHT_LARGE),
     )
 }
 
@@ -159,7 +158,7 @@ fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a
         )
         .clip(true)
         .width(Length::Fixed(width))
-        .padding(constant::PADDING_SMALL)
+        .padding(constant::padding::SMALL)
     ];
 
     for item in items {
@@ -167,7 +166,7 @@ fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a
             "Name" => column.push(components::tooltip::view(
                 container(text(item.clone()).wrapping(text::Wrapping::None))
                     .width(Length::Fixed(width))
-                    .padding(constant::PADDING_SMALL)
+                    .padding(constant::padding::SMALL)
                     .clip(true),
                 text(item),
                 tooltip::Position::Bottom,
@@ -175,7 +174,7 @@ fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a
             _ => column.push(
                 container(text(item.clone()).wrapping(text::Wrapping::None))
                     .width(Length::Fixed(width))
-                    .padding(constant::PADDING_SMALL)
+                    .padding(constant::padding::SMALL)
                     .clip(true),
             ),
         }

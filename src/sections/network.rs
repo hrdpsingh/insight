@@ -29,7 +29,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                     }),
                     inline::view("Outgoing", format_bytes(insight.network.outgoing)),
                 ]
-                .spacing(constant::SPACE_SMALL)
+                .spacing(constant::spacing::SMALL)
                 .align_y(alignment::Vertical::Center),
                 row![
                     components::svg::view(
@@ -44,18 +44,18 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                     }),
                     inline::view("Incoming", format_bytes(insight.network.incoming)),
                 ]
-                .spacing(constant::SPACE_SMALL)
+                .spacing(constant::spacing::SMALL)
                 .align_y(alignment::Vertical::Center),
             ]
-            .spacing(constant::SPACE_MEDIUM),
+            .spacing(constant::spacing::MEDIUM),
             row![
                 stacked::view("Sent", format_bytes(insight.network.sent)),
                 Space::new().width(Length::Fill),
                 stacked::view("Received", format_bytes(insight.network.received)),
             ]
-            .spacing(constant::SPACE_SMALL)
+            .spacing(constant::spacing::SMALL)
         ]
-        .spacing(constant::SPACE_LARGE),
-        Length::Fixed(240.0),
+        .spacing(constant::spacing::LARGE),
+        Length::Fixed(constant::card::HEIGHT_SMALL),
     )
 }

@@ -11,13 +11,13 @@ pub fn view<'a>(
                 .background(Palette::from(theme).surface)
                 .border(
                     Border::default()
-                        .rounded(constant::BORDER_RADIUS)
-                        .width(constant::BORDER_WIDTH)
+                        .rounded(constant::border::RADIUS)
+                        .width(constant::border::WIDTH)
                         .color(Palette::from(theme).border),
                 )
         })
-        .padding(constant::PADDING_LARGE)
-        .width(340.0)
+        .padding(constant::padding::LARGE)
+        .width(constant::card::WIDTH)
         .height(height)
         .into()
 }

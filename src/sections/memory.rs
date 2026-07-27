@@ -40,13 +40,13 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                     }),
                     components::inline::view("Total", format_bytes(insight.memory.total)),
                 ]
-                .spacing(constant::SPACE_SMALL)
+                .spacing(constant::spacing::SMALL)
                 .width(Length::Fill)
                 .align_x(alignment::Horizontal::Center),
             ]
-            .spacing(constant::SPACE_MEDIUM),
+            .spacing(constant::spacing::MEDIUM),
         ]
-        .spacing(constant::SPACE_LARGE),
-        Length::Fixed(360.0),
+        .spacing(constant::spacing::LARGE),
+        Length::Fixed(constant::card::HEIGHT_MEDIUM),
     )
 }

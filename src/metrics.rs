@@ -59,7 +59,7 @@ pub fn update_processes(insight: &mut Insight) {
         .processes
         .list
         .len()
-        .div_ceil(crate::constant::PROCESS_COUNT)
+        .div_ceil(crate::constant::process::COUNT)
         .max(1);
     if insight.processes.page > pages {
         insight.processes.page = pages;

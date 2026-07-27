@@ -18,12 +18,12 @@ pub fn view<'a>(
                     .background(Palette::from(theme).surface)
                     .border(
                         Border::default()
-                            .rounded(constant::BORDER_RADIUS)
-                            .width(constant::BORDER_WIDTH)
+                            .rounded(constant::border::RADIUS)
+                            .width(constant::border::WIDTH)
                             .color(Palette::from(theme).border),
                     )
             })
-            .padding(constant::PADDING_SMALL)
+            .padding(constant::padding::SMALL)
             .height(Length::Shrink)
             .width(Length::Shrink),
         position,

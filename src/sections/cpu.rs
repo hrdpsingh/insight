@@ -1,5 +1,8 @@
 use crate::{
-    app::Message, components::{self, card, graph}, constant, state::Insight,
+    app::Message,
+    components::{self, card, graph},
+    constant,
+    state::Insight,
 };
 use iced::{
     Element, Length,
@@ -26,9 +29,9 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                     components::stacked::view("Architecture", insight.cpu.architecture.clone()),
                 ]
             ]
-            .spacing(constant::SPACE_SMALL),
+            .spacing(constant::spacing::SMALL),
         ]
-        .spacing(constant::SPACE_MEDIUM),
-        Length::Fixed(360.0),
+        .spacing(constant::spacing::MEDIUM),
+        Length::Fixed(constant::card::HEIGHT_MEDIUM),
     )
 }

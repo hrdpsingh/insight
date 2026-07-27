@@ -8,8 +8,8 @@ pub fn view(icon: Svg<'_>, navigate: Option<Message>, sidebar: bool) -> Element<
     let enabled = navigate.is_some();
 
     let button_widget = button(
-        icon.height(constant::ICON_SIZE)
-            .width(constant::ICON_SIZE)
+        icon.height(constant::icon::SIZE)
+            .width(constant::icon::SIZE)
             .style(move |theme: &Theme, _| {
                 let palette = Palette::from(theme);
 
@@ -22,6 +22,7 @@ pub fn view(icon: Svg<'_>, navigate: Option<Message>, sidebar: bool) -> Element<
                 }
             }),
     )
+    .padding(constant::padding::NONE)
     .style(move |theme: &Theme, _| button::Style {
         background: Some(Palette::from(theme).transparent.into()),
         ..Default::default()

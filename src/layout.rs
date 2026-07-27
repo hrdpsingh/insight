@@ -5,7 +5,7 @@ use iced::{
 };
 
 pub fn view<'a>(insight: &'a Insight, size: Size) -> Element<'a, Message> {
-    if size.width < 720.0 {
+    if size.width < constant::breakpoint::NARROW {
         column![
             sections::memory::view(insight),
             sections::cpu::view(insight),
@@ -13,23 +13,23 @@ pub fn view<'a>(insight: &'a Insight, size: Size) -> Element<'a, Message> {
             sections::network::view(insight),
             sections::processes::view(insight),
         ]
-        .spacing(constant::SPACE_LARGE)
+        .spacing(constant::spacing::LARGE)
         .into()
-    } else if size.width < 1140.0 {
+    } else if size.width < constant::breakpoint::WIDE {
         row![
             column![
                 sections::cpu::view(insight),
                 sections::storage::view(insight),
                 sections::processes::view(insight),
             ]
-            .spacing(constant::SPACE_LARGE),
+            .spacing(constant::spacing::LARGE),
             column![
                 sections::network::view(insight),
                 sections::memory::view(insight),
             ]
-            .spacing(constant::SPACE_LARGE),
+            .spacing(constant::spacing::LARGE),
         ]
-        .spacing(constant::SPACE_LARGE)
+        .spacing(constant::spacing::LARGE)
         .into()
     } else {
         row![
@@ -37,15 +37,15 @@ pub fn view<'a>(insight: &'a Insight, size: Size) -> Element<'a, Message> {
                 sections::cpu::view(insight),
                 sections::storage::view(insight),
             ]
-            .spacing(constant::SPACE_LARGE),
+            .spacing(constant::spacing::LARGE),
             column![
                 sections::network::view(insight),
                 sections::memory::view(insight),
             ]
-            .spacing(constant::SPACE_LARGE),
+            .spacing(constant::spacing::LARGE),
             sections::processes::view(insight),
         ]
-        .spacing(constant::SPACE_LARGE)
+        .spacing(constant::spacing::LARGE)
         .into()
     }
 }
