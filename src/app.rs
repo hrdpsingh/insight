@@ -1,11 +1,12 @@
 use crate::{
-    components, constant, layout, metrics,
+    components::{self, separator::Orientation},
+    constant, layout, metrics,
     palette::Palette,
     state::{Cpu, Insight, Memory, Mode, Network, Processes, Storage},
 };
 use iced::{
     Element, Length, Subscription, alignment, padding, time,
-    widget::{column, container, responsive, row, rule},
+    widget::{column, container, responsive, row},
 };
 use std::{collections::VecDeque, time::Duration};
 use sysinfo::{Disks, Networks, System};
@@ -160,12 +161,7 @@ impl Insight {
             .style(
                 move |theme| container::Style::default().background(Palette::from(theme).surface)
             ),
-            rule::vertical(1).style(|theme| rule::Style {
-                color: Palette::from(theme).border,
-                radius: iced::border::Radius::new(0),
-                fill_mode: rule::FillMode::Full,
-                snap: false
-            }),
+            components::separator::view(&Orientation::Vertical),
             components::scroll::view(responsive(|size| {
                 container(layout::view(self, size))
                     .align_x(iced::Alignment::Center)

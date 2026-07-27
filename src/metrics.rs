@@ -92,7 +92,11 @@ pub fn update_storage(insight: &mut Insight) {
 pub fn update_network(insight: &mut Insight) {
     insight.networks.refresh(true);
 
-    insight.network.incoming = insight.networks.values().map(sysinfo::NetworkData::received).sum();
+    insight.network.incoming = insight
+        .networks
+        .values()
+        .map(sysinfo::NetworkData::received)
+        .sum();
 
     insight.network.outgoing = insight
         .networks

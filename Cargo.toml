@@ -14,3 +14,7 @@ dark-light = {version = "2.0.0", default-features = false}
 lto = true
 codegen-units = 1
 panic = "abort"
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+cast_precision_loss = "allow"

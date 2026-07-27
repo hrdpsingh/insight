@@ -1,14 +1,10 @@
-use iced::{
-    Element, Length, alignment,
-    widget::{column, rule},
-};
+use iced::{Element, Length, alignment, widget::column};
 
 use crate::{
     app::Message,
-    components::{self, card, donut},
+    components::{self, card, donut, separator::Orientation},
     constant,
     metrics::format_bytes,
-    palette::Palette,
     state::Insight,
 };
 
@@ -25,19 +21,9 @@ pub fn view(insight: &Insight) -> Element<'_, Message> {
                         "Free",
                         format_bytes(insight.memory.total - insight.memory.used)
                     ),
-                    rule::horizontal(1).style(|theme| rule::Style {
-                        color: Palette::from(theme).border,
-                        radius: iced::border::Radius::new(0),
-                        fill_mode: rule::FillMode::Full,
-                        snap: false,
-                    }),
+                    components::separator::view(&Orientation::Horizontal),
                     components::inline::view("Used", format_bytes(insight.memory.used)),
-                    rule::horizontal(1).style(|theme| rule::Style {
-                        color: Palette::from(theme).border,
-                        radius: iced::border::Radius::new(0),
-                        fill_mode: rule::FillMode::Full,
-                        snap: false,
-                    }),
+                    components::separator::view(&Orientation::Horizontal),
                     components::inline::view("Total", format_bytes(insight.memory.total)),
                 ]
                 .spacing(constant::spacing::SMALL)

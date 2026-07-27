@@ -5,6 +5,7 @@ pub mod donut;
 pub mod graph;
 pub mod inline;
 pub mod scroll;
+pub mod separator;
 pub mod stacked;
 pub mod svg;
 pub mod title;

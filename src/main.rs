@@ -26,12 +26,12 @@ fn main() -> iced::Result {
         .window(window::Settings {
             icon: load_icon(include_bytes!("../assets/icons/insight.svg"), 128, 128),
             size: iced::Size::new(
-                constant::window::INITIAL_HEIGHT,
                 constant::window::INITIAL_WIDTH,
+                constant::window::INITIAL_HEIGHT,
             ),
             min_size: Some(Size::new(
-                constant::window::MINIMUM_HEIGHT,
                 constant::window::MINIMUM_WIDTH,
+                constant::window::MINIMUM_HEIGHT,
             )),
             ..Default::default()
         })
