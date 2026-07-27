@@ -1,11 +1,11 @@
 [package]
 name = "insight"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 
 [dependencies]
 iced = { version = "0.14", default-features = false, features = ["wgpu", "tokio", "canvas", "crisp", "svg", "image"] }
-sysinfo = { version = "0.39.5", default-features = false, features = ["disk", "system", "network", "multithread"] }
+sysinfo = { version = "0.39.6", default-features = false, features = ["disk", "system", "network", "multithread"] }
 chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
 resvg = {version = "0.47.0", default-features = false}
 dark-light = {version = "2.0.0", default-features = false}
