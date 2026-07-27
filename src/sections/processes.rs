@@ -7,11 +7,11 @@ use crate::{
 };
 
 use iced::{
-    Background, Border, Element, Font, Length, Theme,
     alignment::{self, Vertical},
     font::Weight,
     padding,
-    widget::{Space, column, container, row, text, text_input, tooltip},
+    widget::{column, container, row, text, text_input, tooltip},
+    Background, Border, Element, Font, Length, Theme,
 };
 
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
@@ -69,29 +69,38 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
     ]
     .spacing(8);
 
-    let navigation = row![
-        button::view(
-            components::svg::view(include_bytes!("../../assets/icons/left_arrow.svg").as_ref()),
-            (insight.processes.page > 1).then_some(Message::Previous),
-            false
-        ),
-        text(format!("{} of {}", insight.processes.page, pages)).wrapping(text::Wrapping::None),
-        button::view(
-            components::svg::view(include_bytes!("../../assets/icons/right_arrow.svg").as_ref()),
-            (insight.processes.page < pages).then_some(Message::Next),
-            false
-        ),
-    ]
-    .align_y(Vertical::Center)
-    .spacing(12);
+    let navigation = container(
+        row![
+            button::view(
+                components::svg::view(include_bytes!("../../assets/icons/left_arrow.svg").as_ref()),
+                (insight.processes.page > 1).then_some(Message::Previous),
+                false
+            ),
+            text(format!("{} of {}", insight.processes.page, pages)).wrapping(text::Wrapping::None),
+            button::view(
+                components::svg::view(
+                    include_bytes!("../../assets/icons/right_arrow.svg").as_ref()
+                ),
+                (insight.processes.page < pages).then_some(Message::Next),
+                false
+            ),
+        ]
+        .align_y(Vertical::Center)
+        .spacing(12),
+    )
+    .padding(8.0)
+    .style(move |theme| {
+        container::Style::default().border(
+            Border::default()
+                .rounded(12.0)
+                .width(1)
+                .color(Palette::from(theme).border),
+        )
+    });
 
     card::view(
         column![
-            row![
-                Space::new().width(Length::Fill),
-                components::title::view(format!("Processes - {}", process_count)),
-                Space::new().width(Length::Fill),
-            ],
+            components::title::view(format!("Processes - {}", process_count)),
             column![
                 text_input("Search...", &insight.processes.search_term)
                     .on_input(Message::Input)
@@ -138,22 +147,20 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
 }
 
 fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a, Message> {
-    let mut column = column![
-        container(
-            text(name)
-                .wrapping(text::Wrapping::None)
-                .font(Font {
-                    weight: Weight::Bold,
-                    ..Font::DEFAULT
-                })
-                .style(move |theme: &Theme| text::Style {
-                    color: Some(Palette::from(theme).accent),
-                }),
-        )
-        .clip(true)
-        .width(Length::Fixed(width))
-        .padding(8)
-    ];
+    let mut column = column![container(
+        text(name)
+            .wrapping(text::Wrapping::None)
+            .font(Font {
+                weight: Weight::Bold,
+                ..Font::DEFAULT
+            })
+            .style(move |theme: &Theme| text::Style {
+                color: Some(Palette::from(theme).accent),
+            }),
+    )
+    .clip(true)
+    .width(Length::Fixed(width))
+    .padding(8)];
 
     for item in items {
         column = match name {

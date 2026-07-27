@@ -54,7 +54,7 @@ pub fn update_processes(insight: &mut Insight) {
         .list
         .sort_by_key(|p2| std::cmp::Reverse(p2.memory));
 
-    let pages = insight.processes.list.len().div_ceil(11).max(1);
+    let pages = insight.processes.list.len().div_ceil(10).max(1);
     if insight.processes.page > pages {
         insight.processes.page = pages;
     }

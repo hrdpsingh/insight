@@ -13,11 +13,7 @@ use iced::{
 pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
     card::view(
         column![
-            row![
-                Space::new().width(Length::Fill),
-                title::view("Network".to_string()),
-                Space::new().width(Length::Fill),
-            ],
+            title::view("Network".to_string()),
             column![
                 row![
                     components::svg::view(
