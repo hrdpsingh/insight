@@ -9,7 +9,7 @@ use iced::{
     widget::{Space, column, row},
 };
 
-pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
+pub fn view(insight: &Insight) -> Element<'_, Message> {
     card::view(
         column![
             row![

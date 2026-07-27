@@ -12,7 +12,7 @@ use crate::{
     state::Insight,
 };
 
-pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
+pub fn view(insight: &Insight) -> Element<'_, Message> {
     card::view(
         column![
             components::title::view("Memory".to_string()),

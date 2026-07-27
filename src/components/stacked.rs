@@ -6,7 +6,7 @@ use iced::{
 
 use crate::{app::Message, palette::Palette};
 
-pub fn view<'a>(label: &'a str, value: String) -> Element<'a, Message> {
+pub fn view(label: &str, value: String) -> Element<'_, Message> {
     container(column![
         text(label)
             .size(12)

@@ -4,7 +4,7 @@ use crate::{
     constant,
     metrics::format_bytes,
     palette::Palette,
-    state::Insight,
+    state::{Insight, Process},
 };
 
 use iced::{
@@ -14,10 +14,30 @@ use iced::{
     widget::{column, container, row, text, text_input, tooltip},
 };
 
-pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
+pub fn view(insight: &Insight) -> Element<'_, Message> {
+    let (displayed, process_count, pages) = filter(insight);
+
+    card::view(
+        column![
+            components::title::view(format!("Processes - {process_count}")),
+            column![
+                search_input(&insight.processes.search_term),
+                process_table(&displayed),
+                pagination_bar(insight.processes.page, pages),
+            ]
+            .spacing(constant::spacing::MEDIUM)
+            .width(Length::Fill)
+            .align_x(alignment::Horizontal::Center)
+        ]
+        .spacing(constant::spacing::MEDIUM),
+        Length::Fixed(constant::card::HEIGHT_LARGE),
+    )
+}
+
+fn filter(insight: &Insight) -> (Vec<&Process>, usize, usize) {
     let query = insight.processes.search_term.trim().to_lowercase();
 
-    let processes: Vec<_> = insight
+    let filtered: Vec<&Process> = insight
         .processes
         .list
         .iter()
@@ -26,24 +46,56 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 true
             } else {
                 process.name.to_lowercase().contains(&query)
-                    || process.pid.to_string().contains(&query)
             }
         })
         .collect();
 
-    let process_count = processes.len();
-    let pages = processes.len().div_ceil(constant::process::COUNT).max(1);
+    let process_count = filtered.len();
+    let pages = process_count.div_ceil(constant::process::COUNT).max(1);
 
-    let displayed_processes: Vec<_> = processes
+    let displayed = filtered
         .into_iter()
         .skip((insight.processes.page - 1) * constant::process::COUNT)
         .take(constant::process::COUNT)
         .collect();
 
-    let table = row![
+    (displayed, process_count, pages)
+}
+
+fn search_input(search_term: &str) -> Element<'_, Message> {
+    text_input("Search...", search_term)
+        .on_input(Message::Input)
+        .padding(constant::padding::SMALL)
+        .width(Length::Fill)
+        .style(|theme, status| {
+            let text_input_style = text_input::Style {
+                background: Background::Color(Palette::from(theme).background),
+                border: Border::default()
+                    .width(constant::border::WIDTH)
+                    .rounded(constant::border::RADIUS)
+                    .color(Palette::from(theme).border),
+                icon: Palette::from(theme).text,
+                placeholder: Palette::from(theme).muted,
+                value: Palette::from(theme).text,
+                selection: Palette::from(theme).accent,
+            };
+
+            match status {
+                text_input::Status::Focused { .. } => text_input::Style {
+                    border: text_input_style.border.color(Palette::from(theme).accent),
+                    ..text_input_style
+                },
+                _ => text_input_style,
+            }
+        })
+        .into()
+}
+
+fn process_table<'a>(processes: &[&'a Process]) -> Element<'a, Message> {
+    row![
         build_column(
             "PID",
-            displayed_processes
+            processes
                 .iter()
                 .map(|process| process.pid.to_string())
                 .collect(),
@@ -51,7 +103,7 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         ),
         build_column(
             "Name",
-            displayed_processes
+            processes
                 .iter()
                 .map(|process| process.name.clone())
                 .collect(),
@@ -59,28 +111,31 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
         ),
         build_column(
             "Memory",
-            displayed_processes
+            processes
                 .iter()
                 .map(|process| format_bytes(process.memory))
                 .collect(),
             96.0
         ),
     ]
-    .spacing(constant::spacing::SMALL);
+    .spacing(constant::spacing::SMALL)
+    .into()
+}
 
-    let navigation = container(
+fn pagination_bar<'a>(current_page: usize, total_pages: usize) -> Element<'a, Message> {
+    container(
         row![
             button::view(
                 components::svg::view(include_bytes!("../../assets/icons/left_arrow.svg").as_ref()),
-                (insight.processes.page > 1).then_some(Message::Previous),
+                (current_page > 1).then_some(Message::Previous),
                 false
             ),
-            text(format!("{} of {}", insight.processes.page, pages)).wrapping(text::Wrapping::None),
+            text(format!("{current_page} of {total_pages}")).wrapping(text::Wrapping::None),
             button::view(
                 components::svg::view(
                     include_bytes!("../../assets/icons/right_arrow.svg").as_ref()
                 ),
-                (insight.processes.page < pages).then_some(Message::Next),
+                (current_page < total_pages).then_some(Message::Next),
                 false
             ),
         ]
@@ -95,55 +150,11 @@ pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
                 .width(constant::border::WIDTH)
                 .color(Palette::from(theme).border),
         )
-    });
-
-    card::view(
-        column![
-            components::title::view(format!("Processes - {}", process_count)),
-            column![
-                text_input("Search...", &insight.processes.search_term)
-                    .on_input(Message::Input)
-                    .padding(constant::padding::SMALL)
-                    .width(Length::Fill)
-                    .style(|theme, status| {
-                        match status {
-                            text_input::Status::Focused { .. } => text_input::Style {
-                                background: Background::Color(Palette::from(theme).background),
-                                border: Border::default()
-                                    .width(1.0)
-                                    .rounded(constant::border::RADIUS)
-                                    .color(Palette::from(theme).accent),
-                                icon: Palette::from(theme).text,
-                                placeholder: Palette::from(theme).muted,
-                                value: Palette::from(theme).text,
-                                selection: Palette::from(theme).accent,
-                            },
-                            _ => text_input::Style {
-                                background: Background::Color(Palette::from(theme).background),
-                                border: Border::default()
-                                    .width(1.0)
-                                    .rounded(constant::border::RADIUS)
-                                    .color(Palette::from(theme).border),
-                                icon: Palette::from(theme).text,
-                                placeholder: Palette::from(theme).muted,
-                                value: Palette::from(theme).text,
-                                selection: Palette::from(theme).accent,
-                            },
-                        }
-                    }),
-                table,
-                navigation,
-            ]
-            .spacing(constant::spacing::MEDIUM)
-            .width(Length::Fill)
-            .align_x(alignment::Horizontal::Center)
-        ]
-        .spacing(constant::spacing::MEDIUM),
-        Length::Fixed(constant::card::HEIGHT_LARGE),
-    )
+    })
+    .into()
 }
 
-fn build_column<'a>(name: &'a str, items: Vec<String>, width: f32) -> Element<'a, Message> {
+fn build_column(name: &str, items: Vec<String>, width: f32) -> Element<'_, Message> {
     let mut column = column![
         container(
             text(name)

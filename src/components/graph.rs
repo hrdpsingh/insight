@@ -54,7 +54,7 @@ impl<Message> canvas::Program<Message> for Graph {
 
     fn draw(
         &self,
-        _: &Self::State,
+        (): &Self::State,
         renderer: &Renderer,
         theme: &Theme,
         bounds: Rectangle,
@@ -85,12 +85,12 @@ impl<Message> canvas::Program<Message> for Graph {
         let build_curve = |builder: &mut canvas::path::Builder| {
             for window in points.windows(2) {
                 let (p1, p2) = (window[0], window[1]);
-                let mid = Point::new((p1.x + p2.x) / 2.0, (p1.y + p2.y) / 2.0);
+                let mid = Point::new(f32::midpoint(p1.x, p2.x), f32::midpoint(p1.y, p2.y));
                 builder.quadratic_curve_to(p1, mid);
             }
             if let Some(last) = points.last() {
-                builder.line_to(*last)
-            };
+                builder.line_to(*last);
+            }
         };
 
         let filled_area = Path::new(|builder| {

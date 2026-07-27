@@ -4,7 +4,7 @@ use iced::{
     widget::{column, row},
 };
 
-pub fn view<'a>(insight: &'a Insight, size: Size) -> Element<'a, Message> {
+pub fn view(insight: &Insight, size: Size) -> Element<'_, Message> {
     if size.width < constant::breakpoint::NARROW {
         column![
             sections::memory::view(insight),

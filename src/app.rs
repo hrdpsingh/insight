@@ -31,9 +31,8 @@ impl Insight {
                 name: system
                     .cpus()
                     .first()
-                    .map(|cpu| cpu.brand().to_string())
-                    .unwrap_or_else(|| "Unavailable".to_string()),
-                architecture: System::cpu_arch().to_string(),
+                    .map_or_else(|| "Unavailable".to_string(), |cpu| cpu.brand().to_string()),
+                architecture: System::cpu_arch().clone(),
                 core_count: system.cpus().len(),
                 history: VecDeque::from(vec![0.0; constant::graph::HISTORY_LENGTH]),
             },
@@ -181,7 +180,7 @@ impl Insight {
         .into()
     }
 
-    pub fn subscription(&self) -> Subscription<Message> {
+    pub fn subscription(_: &Self) -> Subscription<Message> {
         time::every(Duration::from_secs(1)).map(|_| Message::Tick)
     }
 }

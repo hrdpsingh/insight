@@ -11,7 +11,7 @@ use iced::{
     widget::{Space, column, row, svg},
 };
 
-pub fn view<'a>(insight: &'a Insight) -> Element<'a, Message> {
+pub fn view(insight: &Insight) -> Element<'_, Message> {
     card::view(
         column![
             title::view("Network".to_string()),

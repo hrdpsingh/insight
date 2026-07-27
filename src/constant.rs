@@ -39,3 +39,10 @@ pub mod breakpoint {
     pub const NARROW: f32 = 720.0;
     pub const WIDE: f32 = 1140.0;
 }
+
+pub mod window {
+    pub const INITIAL_WIDTH: f32 = 960.0;
+    pub const INITIAL_HEIGHT: f32 = 540.0;
+    pub const MINIMUM_WIDTH: f32 = 270.0;
+    pub const MINIMUM_HEIGHT: f32 = 480.0;
+}

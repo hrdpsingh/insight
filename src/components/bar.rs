@@ -30,7 +30,7 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for ProgressBar {
 
     fn draw(
         &self,
-        _: &Self::State,
+        (): &Self::State,
         renderer: &Renderer,
         theme: &Theme,
         bounds: Rectangle,

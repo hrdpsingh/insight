@@ -20,7 +20,7 @@ pub fn update_cpu(insight: &mut Insight) {
     let average = if cpus.is_empty() {
         0.0
     } else {
-        cpus.iter().map(|cpu| cpu.cpu_usage()).sum::<f32>() / cpus.len() as f32
+        cpus.iter().map(sysinfo::Cpu::cpu_usage).sum::<f32>() / cpus.len() as f32
     };
 
     insight.cpu.history.pop_front();
@@ -75,14 +75,14 @@ pub fn update_storage(insight: &mut Insight) {
         .disks
         .list()
         .iter()
-        .map(|disk| disk.total_space())
+        .map(sysinfo::Disk::total_space)
         .sum();
 
     let free: u64 = insight
         .disks
         .list()
         .iter()
-        .map(|disk| disk.available_space())
+        .map(sysinfo::Disk::available_space)
         .sum();
 
     insight.storage.used = insight.storage.total - free;
@@ -92,12 +92,12 @@ pub fn update_storage(insight: &mut Insight) {
 pub fn update_network(insight: &mut Insight) {
     insight.networks.refresh(true);
 
-    insight.network.incoming = insight.networks.values().map(|data| data.received()).sum();
+    insight.network.incoming = insight.networks.values().map(sysinfo::NetworkData::received).sum();
 
     insight.network.outgoing = insight
         .networks
         .values()
-        .map(|data| data.transmitted())
+        .map(sysinfo::NetworkData::transmitted)
         .sum();
 
     insight.network.receiving = insight.network.incoming != 0;

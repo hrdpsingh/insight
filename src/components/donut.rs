@@ -33,7 +33,7 @@ impl<Message> canvas::Program<Message, Theme, Renderer> for DonutChart {
 
     fn draw(
         &self,
-        _: &Self::State,
+        (): &Self::State,
         renderer: &Renderer,
         theme: &Theme,
         bounds: Rectangle,
