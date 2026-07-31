@@ -1,17 +1,21 @@
 [package]
-name = "insight"
-version = "0.2.0"
+name = "Insight"
+version = "0.3.0"
 edition = "2024"
 
 [dependencies]
 iced = { version = "0.14", default-features = false, features = ["wgpu", "tokio", "canvas", "crisp", "svg"] }
 sysinfo = { version = "0.39.6", default-features = false, features = ["disk", "system", "network", "multithread"] }
 chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
-resvg = {version = "0.47.0", default-features = false}
 dark-light = {version = "2.0.0", default-features = false}
 directories = {version = "6.0.0", default-features = false}
 serde = {version = "1.0.229", default-features = false, features = ["derive"] }
 toml = {version = "1.1.4", default-features = false, features = ["serde", "parse", "display"] }
+
+[build-dependencies]
+winresource = {version = "0.1.31", default-features = false}
+resvg = {version = "0.47.0", default-features = false}
+image = {version = "0.25.10", default-features = false, features = ["ico"]}
 
 [profile.release]
 lto = true
@@ -21,3 +25,5 @@ panic = "abort"
 [lints.clippy]
 pedantic = { level = "warn", priority = -1 }
 cast_precision_loss = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"

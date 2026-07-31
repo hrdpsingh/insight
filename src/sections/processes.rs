@@ -2,7 +2,7 @@ use crate::{
     app::Message,
     components::{self, button, card},
     constant,
-    metric::format_bytes,
+    utility::format_bytes,
     palette::Palette,
     state::{Insight, Process},
 };
@@ -126,15 +126,13 @@ fn pagination_bar<'a>(current_page: usize, total_pages: usize) -> Element<'a, Me
     container(
         row![
             button::view(
-                components::svg::view(include_bytes!("../../assets/icons/left_arrow.svg").as_ref()),
+                components::svg::view(include_bytes!("../../asset/icon/left_arrow.svg").as_ref()),
                 (current_page > 1).then_some(Message::Previous),
                 false
             ),
             text(format!("{current_page} of {total_pages}")).wrapping(text::Wrapping::None),
             button::view(
-                components::svg::view(
-                    include_bytes!("../../assets/icons/right_arrow.svg").as_ref()
-                ),
+                components::svg::view(include_bytes!("../../asset/icon/right_arrow.svg").as_ref()),
                 (current_page < total_pages).then_some(Message::Next),
                 false
             ),

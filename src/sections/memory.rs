@@ -4,8 +4,8 @@ use crate::{
     app::Message,
     components::{self, card, donut, separator::Orientation},
     constant,
-    metric::format_bytes,
     state::Insight,
+    utility::format_bytes,
 };
 
 pub fn view(insight: &Insight) -> Element<'_, Message> {

@@ -6,8 +6,12 @@ A system monitor that presents a complete overview of the hardware in an intuiti
 
 ### Light Mode
 
-![Insight dashboard in light mode](assets/screenshots/insight-light-mode.png)
+![insight dashboard in light mode](asset/screenshot/insight-light-mode.png)
 
 ### Dark Mode
 
-![Insight dashboard in dark mode](assets/screenshots/insight-dark-mode.png)
+![insight dashboard in dark mode](asset/screenshot/insight-dark-mode.png)
+
+## Download
+
+https://github.com/hrdpsingh/insight/releases

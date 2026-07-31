@@ -11,8 +11,9 @@ mod state;
 mod utility;
 
 use iced::{Pixels, Size, Theme, window};
-use resvg::{tiny_skia, usvg};
 use state::Insight;
+
+const ICON: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/icon.rgba"));
 
 fn main() -> iced::Result {
     iced::application(Insight::default, Insight::update, Insight::view)
@@ -25,7 +26,7 @@ fn main() -> iced::Result {
             ..Default::default()
         })
         .window(window::Settings {
-            icon: load_icon(include_bytes!("../assets/icons/insight.svg"), 128, 128),
+            icon: window::icon::from_rgba(ICON.to_vec(), 128, 128).ok(),
             size: iced::Size::new(
                 constant::window::INITIAL_WIDTH,
                 constant::window::INITIAL_HEIGHT,
@@ -37,18 +38,4 @@ fn main() -> iced::Result {
             ..Default::default()
         })
         .run()
-}
-
-fn load_icon(bytes: &[u8], width: u32, height: u32) -> Option<window::Icon> {
-    let options = usvg::Options::default();
-    let tree = usvg::Tree::from_data(bytes, &options).ok()?;
-
-    let transform = tiny_skia::Transform::from_scale(
-        width as f32 / tree.size().width(),
-        height as f32 / tree.size().height(),
-    );
-
-    let mut pixmap = tiny_skia::Pixmap::new(width, height)?;
-    resvg::render(&tree, transform, &mut pixmap.as_mut());
-    window::icon::from_rgba(pixmap.data().to_vec(), width, height).ok()
 }

@@ -2,9 +2,9 @@ use crate::{
     app::Message,
     components::{self, card, inline, stacked, title},
     constant,
-    metric::format_bytes,
     palette::Palette,
     state::Insight,
+    utility::format_bytes,
 };
 use iced::{
     Element, Length, alignment,
@@ -17,23 +17,21 @@ pub fn view(insight: &Insight) -> Element<'_, Message> {
             title::view("Network".to_string()),
             column![
                 row![
-                    components::svg::view(
-                        include_bytes!("../../assets/icons/up_arrow.svg").as_ref()
-                    )
-                    .style(move |theme, _| svg::Style {
-                        color: Some(if insight.network.sending {
-                            Palette::from(theme).accent
-                        } else {
-                            Palette::from(theme).muted
+                    components::svg::view(include_bytes!("../../asset/icon/up_arrow.svg").as_ref())
+                        .style(move |theme, _| svg::Style {
+                            color: Some(if insight.network.sending {
+                                Palette::from(theme).accent
+                            } else {
+                                Palette::from(theme).muted
+                            }),
                         }),
-                    }),
                     inline::view("Outgoing", format_bytes(insight.network.outgoing)),
                 ]
                 .spacing(constant::spacing::SMALL)
                 .align_y(alignment::Vertical::Center),
                 row![
                     components::svg::view(
-                        include_bytes!("../../assets/icons/down_arrow.svg").as_ref()
+                        include_bytes!("../../asset/icon/down_arrow.svg").as_ref()
                     )
                     .style(move |theme, _| svg::Style {
                         color: Some(if insight.network.receiving {

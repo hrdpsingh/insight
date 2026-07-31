@@ -2,7 +2,7 @@ use crate::{
     app::Message,
     components::{self, card},
     constant,
-    metric::format_bytes,
+    utility::format_bytes,
     state::Insight,
 };
 use iced::{
@@ -19,7 +19,7 @@ pub fn view(insight: &Insight) -> Element<'_, Message> {
                 components::tooltip::view(
                     components::button::view(
                         components::svg::view(
-                            include_bytes!("../../assets/icons/refresh.svg").as_ref()
+                            include_bytes!("../../asset/icon/refresh.svg").as_ref()
                         ),
                         Option::Some(Message::Refresh),
                         false

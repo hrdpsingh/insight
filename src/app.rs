@@ -129,9 +129,7 @@ impl Insight {
             container(
                 column![
                     components::button::view(
-                        components::svg::view(
-                            include_bytes!("../assets/icons/system.svg").as_ref()
-                        ),
+                        components::svg::view(include_bytes!("../asset/icon/system.svg").as_ref()),
                         match self.mode {
                             Mode::System => None,
                             _ => Some(Message::Change(Mode::System)),
@@ -140,7 +138,7 @@ impl Insight {
                     ),
                     components::button::view(
                         components::svg::view(
-                            include_bytes!("../assets/icons/light_mode.svg").as_ref()
+                            include_bytes!("../asset/icon/light_mode.svg").as_ref()
                         ),
                         match self.mode {
                             Mode::Light => None,
@@ -150,7 +148,7 @@ impl Insight {
                     ),
                     components::button::view(
                         components::svg::view(
-                            include_bytes!("../assets/icons/dark_mode.svg").as_ref()
+                            include_bytes!("../asset/icon/dark_mode.svg").as_ref()
                         ),
                         match self.mode {
                             Mode::Dark => None,
