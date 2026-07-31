@@ -1,8 +1,9 @@
 use crate::{
     components::{self, separator::Orientation},
-    constant, layout, metrics,
+    constant, layout, metric,
     palette::Palette,
     state::{Cpu, Insight, Memory, Mode, Network, Processes, Storage},
+    utility::{load_configuration, save_configuration},
 };
 use iced::{
     Element, Length, Subscription, alignment, padding, time,
@@ -23,9 +24,11 @@ pub enum Message {
 
 impl Insight {
     pub fn default() -> Self {
-        let system = System::new_with_specifics(metrics::refresh_system());
-        let disks = Disks::new_with_refreshed_list_specifics(metrics::refresh_disks());
+        let system = System::new_with_specifics(metric::refresh_system());
+        let disks = Disks::new_with_refreshed_list_specifics(metric::refresh_disks());
         let networks = Networks::new();
+
+        let configuration = load_configuration().unwrap_or_default();
 
         let mut insight = Self {
             cpu: Cpu {
@@ -59,12 +62,12 @@ impl Insight {
             system,
             disks,
             networks,
-            mode: Mode::default(),
+            mode: configuration.mode,
         };
 
-        metrics::update_memory(&mut insight);
-        metrics::update_processes(&mut insight);
-        metrics::update_storage(&mut insight);
+        metric::update_memory(&mut insight);
+        metric::update_processes(&mut insight);
+        metric::update_storage(&mut insight);
 
         insight
     }
@@ -72,12 +75,12 @@ impl Insight {
     pub fn update(&mut self, message: Message) {
         match message {
             Message::Tick => {
-                self.system.refresh_specifics(metrics::refresh_system());
+                self.system.refresh_specifics(metric::refresh_system());
 
-                metrics::update_cpu(self);
-                metrics::update_memory(self);
-                metrics::update_processes(self);
-                metrics::update_network(self);
+                metric::update_cpu(self);
+                metric::update_memory(self);
+                metric::update_processes(self);
+                metric::update_network(self);
             }
             Message::Previous => {
                 if self.processes.page > 1 {
@@ -97,18 +100,22 @@ impl Insight {
                     })
                     .count();
 
-                let max_pages = process_count
+                let maximum_pages = process_count
                     .div_ceil(crate::constant::process::COUNT)
                     .max(1);
-                if self.processes.page < max_pages {
+                if self.processes.page < maximum_pages {
                     self.processes.page += 1;
                 }
             }
             Message::Refresh => {
-                metrics::update_storage(self);
+                metric::update_storage(self);
             }
             Message::Change(mode) => {
                 self.mode = mode;
+                match save_configuration(&self.mode) {
+                    Ok(()) => {}
+                    Err(error) => eprintln!("Failed to save configuration: {error}"),
+                }
             }
             Message::Input(search_term) => {
                 self.processes.search_term = search_term;

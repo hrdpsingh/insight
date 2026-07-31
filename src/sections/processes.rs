@@ -2,7 +2,7 @@ use crate::{
     app::Message,
     components::{self, button, card},
     constant,
-    metrics::format_bytes,
+    metric::format_bytes,
     palette::Palette,
     state::{Insight, Process},
 };

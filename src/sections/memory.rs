@@ -4,7 +4,7 @@ use crate::{
     app::Message,
     components::{self, card, donut, separator::Orientation},
     constant,
-    metrics::format_bytes,
+    metric::format_bytes,
     state::Insight,
 };
 

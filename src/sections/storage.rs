@@ -2,7 +2,7 @@ use crate::{
     app::Message,
     components::{self, card},
     constant,
-    metrics::format_bytes,
+    metric::format_bytes,
     state::Insight,
 };
 use iced::{

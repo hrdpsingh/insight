@@ -1,4 +1,5 @@
 use iced::Theme;
+use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
 use sysinfo::{Disks, Networks, System};
 
@@ -53,9 +54,8 @@ pub struct Network {
     pub sent: u64,
 }
 
-#[derive(Default, Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub enum Mode {
-    #[default]
     System,
     Light,
     Dark,
@@ -71,5 +71,16 @@ impl From<Mode> for Theme {
                 _ => Theme::Light,
             },
         }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Configuration {
+    pub mode: Mode,
+}
+
+impl Default for Configuration {
+    fn default() -> Self {
+        Self { mode: Mode::System }
     }
 }

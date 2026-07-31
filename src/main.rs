@@ -4,10 +4,11 @@ mod app;
 mod components;
 mod constant;
 mod layout;
-mod metrics;
+mod metric;
 mod palette;
 mod sections;
 mod state;
+mod utility;
 
 use iced::{Pixels, Size, Theme, window};
 use resvg::{tiny_skia, usvg};
