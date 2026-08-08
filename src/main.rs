@@ -26,7 +26,7 @@ fn main() -> iced::Result {
             ..Default::default()
         })
         .window(window::Settings {
-            icon: window::icon::from_rgba(ICON.to_vec(), 128, 128).ok(),
+            icon: window::icon::from_rgba(ICON.to_vec(), 256, 256).ok(),
             size: iced::Size::new(
                 constant::window::INITIAL_WIDTH,
                 constant::window::INITIAL_HEIGHT,
