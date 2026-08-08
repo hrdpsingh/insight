@@ -1,6 +1,6 @@
 # Insight
 
-A system monitor that presents a complete overview of the hardware in an intuitive dashboard.
+A system monitor that presents an intuitive overview of the various hardware devices.
 
 ## Screenshots
 
@@ -12,6 +12,19 @@ A system monitor that presents a complete overview of the hardware in an intuiti
 
 ![insight dashboard in dark mode](asset/screenshot/insight-dark-mode.png)
 
-## Download
+## Usage
 
-https://github.com/hrdpsingh/insight/releases
+### 1. Install Rust
+
+Install the Rust toolchain on your system.<br>
+https://rust-lang.org/tools/install/
+
+### 2. Build the Application
+
+```bash
+git clone https://github.com/hrdpsingh/insight.git
+cd insight
+cargo build --release
+```
+
+The compiled application can be found at target\release\Insight.exe.
