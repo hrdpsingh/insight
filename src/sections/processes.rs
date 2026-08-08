@@ -2,9 +2,9 @@ use crate::{
     app::Message,
     components::{self, button, card},
     constant,
-    utility::format_bytes,
     palette::Palette,
     state::{Insight, Process},
+    utility::format_bytes,
 };
 
 use iced::{
@@ -22,7 +22,7 @@ pub fn view(insight: &Insight) -> Element<'_, Message> {
             components::title::view(format!("Processes - {process_count}")),
             column![
                 search_input(&insight.processes.search_term),
-                process_table(&displayed),
+                table_or_message(&displayed, &insight.processes.search_term),
                 pagination_bar(insight.processes.page, pages),
             ]
             .spacing(constant::spacing::MEDIUM)
@@ -89,6 +89,20 @@ fn search_input(search_term: &str) -> Element<'_, Message> {
             }
         })
         .into()
+}
+
+fn table_or_message<'a>(processes: &[&'a Process], search_term: &str) -> Element<'a, Message> {
+    if processes.is_empty() && !search_term.trim().is_empty() {
+        container(
+            text("No processes match that search.").style(|theme: &Theme| text::Style {
+                color: Some(Palette::from(theme).muted),
+            }),
+        )
+        .padding(constant::padding::SMALL)
+        .into()
+    } else {
+        process_table(processes)
+    }
 }
 
 fn process_table<'a>(processes: &[&'a Process]) -> Element<'a, Message> {
